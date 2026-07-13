@@ -207,7 +207,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       </div>
       <div class="form-row">
         <div><label>日付</label><input type="date" id="txdate"></div>
-        <div><label>メモ</label><input type="text" id="memo" placeholder="例：ランチ"></div>
+        <div><label>メモ</label><input type="text" id="memo" placeholder="例：ランチ" list="memoSuggest" autocomplete="off"><datalist id="memoSuggest"></datalist></div>
       </div>
       <div class="form-row full">
         <label>備考（任意）</label>
@@ -268,6 +268,28 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
     </div>
   </div>
   <div id="page-history" class="page">
+        <div class="card" style="margin-bottom:.75rem;padding:.75rem .9rem">
+      <input type="text" id="histSearch" placeholder="🔍 メモ・カテゴリ・備考で検索" oninput="renderHistory()" style="margin-bottom:8px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <select id="histFilterType" onchange="renderHistory()">
+          <option value="">種別：すべて</option>
+          <option value="income">収入のみ</option>
+          <option value="expense">支出のみ</option>
+        </select>
+        <select id="histFilterCat" onchange="renderHistory()">
+          <option value="">カテゴリ：すべて</option>
+        </select>
+        <select id="histFilterPayer" onchange="renderHistory()">
+          <option value="">支払者：すべて</option>
+          <option value="me">自分払い</option>
+          <option value="her">相手払い</option>
+          <option value="split">割り勘のみ</option>
+          <option value="adj">調整のみ</option>
+        </select>
+        <button class="btn" onclick="clearHistFilters()" style="padding:8px;font-size:12px;margin:0">クリア</button>
+      </div>
+      <div id="histFilterSummary" style="font-size:11px;color:var(--text2);margin-top:8px;display:none"></div>
+    </div>
     <div class="toggle" style="margin-bottom:.75rem">
       <button class="toggle-btn active sel" id="hist-btn-all" onclick="setHistMode('all')">全体</button>
       <button class="toggle-btn" id="hist-btn-my" onclick="setHistMode('my')">自分だけ（割り勘後）</button>
@@ -471,7 +493,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
     </div>
     <div class="form-row">
       <div><label>日付</label><input type="date" id="edit-date"></div>
-      <div><label>メモ</label><input type="text" id="edit-memo"></div>
+      <div><label>メモ</label><input type="text" id="edit-memo" list="memoSuggest" autocomplete="off"></div>
     </div>
     <div class="form-row full"><label>備考</label><textarea id="edit-note"></textarea></div>
     <div id="edit-adjSection" style="display:none">
@@ -605,7 +627,7 @@ async function cloudPull(){
       localStorage.setItem(SP+'kakeibo_updatedAt',String(data.updatedAt));
       if(data.budgets) restoreAllBudgets(data.budgets);
       postProvisional(viewYear,viewMonth);
-      updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+      updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();updateMemoSuggestions();
       showSyncStatus('☁️ クラウドから復元しました');
     }else{showSyncStatus('☁️ 同期済み');}
   }catch(e){showSyncStatus('⚠️ クラウド接続失敗（ローカルで動作中）','var(--text2)');}
@@ -808,17 +830,66 @@ function addTransaction(){
   document.getElementById('adjRateSection').style.display='none';
   document.getElementById('sharePreview').textContent='';
   setPayer('me');
-  updateHeader();renderHistory();renderSplit();renderReviews();switchTab('history');
+  updateHeader();renderHistory();renderSplit();renderReviews();updateMemoSuggestions();switchTab('history');
 }
 function setHistMode(m){histMode=m;document.getElementById('hist-btn-all').className='toggle-btn'+(m==='all'?' active sel':'');document.getElementById('hist-btn-my').className='toggle-btn'+(m==='my'?' active sel':'');document.getElementById('histSummaryCard').style.display=m==='my'?'':'none';renderHistory();}
+function buildHistCatFilter(){
+  const sel=document.getElementById('histFilterCat');
+  if(!sel||sel.dataset.built) return;
+  const allCats=[...INCOME_CATS,...EXPENSE_CATS].filter((c,i,a)=>a.indexOf(c)===i);
+  sel.innerHTML='<option value="">カテゴリ：すべて</option>'+allCats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  sel.dataset.built='1';
+}
+function clearHistFilters(){
+  const s=document.getElementById('histSearch');if(s) s.value='';
+  ['histFilterType','histFilterCat','histFilterPayer'].forEach(id=>{const el=document.getElementById(id);if(el) el.value='';});
+  renderHistory();
+}
+function applyHistFilters(list){
+  const kw=(document.getElementById('histSearch')?.value||'').trim().toLowerCase();
+  const fType=document.getElementById('histFilterType')?.value||'';
+  const fCat=document.getElementById('histFilterCat')?.value||'';
+  const fPayer=document.getElementById('histFilterPayer')?.value||'';
+  return list.filter(t=>{
+    if(kw){
+      const hay=((t.memo||'')+' '+(t.category||'')+' '+(t.note||'')).toLowerCase();
+      if(!hay.includes(kw)) return false;
+    }
+    if(fType && t.type!==fType) return false;
+    if(fCat && t.category!==fCat) return false;
+    if(fPayer){
+      const isAdj=t.isAdj||t.type==='adjustment';
+      if(fPayer==='me' && !(t.isSplit&&t.payer==='me')) return false;
+      if(fPayer==='her' && !(t.isSplit&&t.payer==='her')) return false;
+      if(fPayer==='split' && !t.isSplit) return false;
+      if(fPayer==='adj' && !isAdj) return false;
+    }
+    return true;
+  });
+}
 function renderHistory(){
-  const tx=monthTx().slice().sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+  buildHistCatFilter();
+  let tx=monthTx().slice().sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+  tx=applyHistFilters(tx);
   const el=document.getElementById('txList');
+  // フィルタサマリー
+  const sumEl=document.getElementById('histFilterSummary');
+  const hasFilter=(document.getElementById('histSearch')?.value||'')||document.getElementById('histFilterType')?.value||document.getElementById('histFilterCat')?.value||document.getElementById('histFilterPayer')?.value;
+  if(sumEl){
+    if(hasFilter){
+      const inc=tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+      const exp=tx.filter(t=>t.type!=='income').reduce((s,t)=>s+((t.isAdj||t.isSplit)?(t.myShare||0):t.amount),0);
+      sumEl.style.display='';
+      sumEl.textContent=`${tx.length}件ヒット${inc?' ・収入'+fmt(inc):''}${exp?' ・支出'+fmt(exp):''}`;
+    }else{
+      sumEl.style.display='none';
+    }
+  }
   if(histMode==='my'){
     const inc=tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
     const exp=realExp(tx);const bal=inc-exp;
     document.getElementById('histSummary').innerHTML=`<div class="detail-row"><span>収入</span><div class="dr-right"><div class="dr-main" style="color:var(--green)">${fmt(inc)}</div></div></div><div class="detail-row"><span>実質支出</span><div class="dr-right"><div class="dr-main" style="color:var(--red)">${fmt(exp)}</div></div></div><div class="detail-row"><span>収支</span><div class="dr-right"><div class="dr-main" style="color:${bal>=0?'var(--blue)':'var(--red)'}">${(bal>=0?'':'-')+fmt(bal)}</div></div></div>`;
-    if(!tx.length){el.innerHTML='<div class="empty">この月の記録がありません</div>';return;}
+    if(!tx.length){el.innerHTML='<div class="empty">該当する記録がありません</div>';return;}
     el.innerHTML=tx.map(t=>{
       let dispAmt,color,sign,note2='';
       if(t.type==='income'){dispAmt=t.amount;color='var(--green)';sign='+';}
@@ -831,7 +902,7 @@ function renderHistory(){
     }).join('');
     return;
   }
-  if(!tx.length){el.innerHTML='<div class="empty">この月の記録がありません</div>';return;}
+  if(!tx.length){el.innerHTML='<div class="empty">該当する記録がありません</div>';return;}
   el.innerHTML=tx.map(t=>{
     const isAdj=t.isAdj||t.type==='adjustment';
     let badge='';
@@ -846,6 +917,24 @@ function renderHistory(){
     return `<div class="tx-item${t.isProvisional?' provisional':''}" onclick="openEdit(${t.id})"><div class="tx-icon" style="background:${bg}">${icon}</div><div class="tx-info"><div class="tx-memo">${t.memo}${badge}</div><div class="tx-sub">${t.date}${t.category?' · '+t.category:''}${t.note?' · '+t.note.slice(0,20):''}</div></div><div class="tx-amount" style="color:${color}">${sign}${fmt(t.amount)}</div><div style="font-size:13px;color:var(--text3)">›</div></div>`;
   }).join('');
 }
+
+function updateMemoSuggestions(){
+  const dl=document.getElementById('memoSuggest');
+  if(!dl) return;
+  // 過去12ヶ月のメモを使用頻度順に集計
+  const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-12);
+  const freq={};
+  transactions.forEach(t=>{
+    if(!t.memo) return;
+    if(new Date(t.date)<cutoff) return;
+    const m=t.memo.trim();
+    if(!m) return;
+    freq[m]=(freq[m]||0)+1;
+  });
+  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,50).map(x=>x[0]);
+  dl.innerHTML=sorted.map(m=>`<option value="${m.replace(/"/g,'&quot;')}"></option>`).join('');
+}
+
 function renderSplit(){
   const tx=monthTx();
   const splitTx=tx.filter(t=>t.isSplit&&t.type==='expense');
