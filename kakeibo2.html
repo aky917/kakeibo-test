@@ -846,7 +846,7 @@ function onAmountInput(){updateSharePreview();updateAdjPreview();}
 function onRateInput(){const v=parseInt(document.getElementById('myRate').value)||0;document.getElementById('herRateDisp').textContent=(100-v)+'%';updateSharePreview();}
 function onDiffInput(){updateSharePreview();}
 function updateAdjPreview(){const amt=parseFloat(document.getElementById('amount').value)||0;const rate=parseInt(document.getElementById('adjRate').value)||50;const prev=document.getElementById('adjPreview');if(!document.getElementById('isAdj').checked||!amt){prev.textContent='-';return;}prev.textContent=`自分+${fmt(Math.ceil(amt*rate/100))} / ${partnerName}-${fmt(Math.floor(amt*(100-rate)/100))}`;}
-function updateSharePreview(){const amt=parseFloat(document.getElementById('amount').value)||0;const el=document.getElementById('sharePreview');if(!amt||!document.getElementById('isSplit').checked){el.textContent='';return;}let myShare,herShare;if(shareMode==='rate'){const rate=parseInt(document.getElementById('myRate').value)||50;({myShare,herShare}=calcShares(amt,rate,splitPayer));}else{const dw=document.getElementById('diffWho').value;const da=parseFloat(document.getElementById('diffAmt').value)||0;({myShare,herShare}=calcSharesByDiff(amt,da,dw,splitPayer));}el.textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}
+function updateSharePreview(){const amt=parseFloat(document.getElementById('amount').value)||0;const el=document.getElementById('sharePreview');if(!amt||!document.getElementById('isSplit').checked){el.textContent='';return;}let myShare,herShare;if(shareMode==='rate'){const rate=parseInt(document.getElementById('myRate').value)||50;({myShare,herShare}=calcShares(amt,rate,splitPayer));}else if(shareMode==='diff'){const dw=document.getElementById('diffWho').value;const da=parseFloat(document.getElementById('diffAmt').value)||0;({myShare,herShare}=calcSharesByDiff(amt,da,dw,splitPayer));}else{const aw=document.getElementById('amountWho').value;const av=parseFloat(document.getElementById('amountShare').value)||0;({myShare,herShare}=calcSharesByAmount(amt,av,aw));}el.textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}
 function addTransaction(){
   const amount=parseFloat(document.getElementById('amount').value);
   if(!amount||amount<=0){alert('金額を入力してください');return;}
@@ -862,9 +862,17 @@ function addTransaction(){
   document.getElementById('isSplit').checked=false;
   document.getElementById('isAdj').checked=false;
   document.getElementById('splitOptions').style.display='none';
+  document.getElementById('splitWrap').className='check-box-wrap';
   document.getElementById('adjRateSection').style.display='none';
+  document.getElementById('adjWrap').className='check-box-wrap';
   document.getElementById('sharePreview').textContent='';
+  document.getElementById('diffAmt').value='';
+  document.getElementById('diffWho').value='me';
+  document.getElementById('amountShare').value='';
+  document.getElementById('amountWho').value='me';
+  document.getElementById('adjRate').value='';
   setPayer('me');
+  setShareMode('rate');
   updateHeader();renderHistory();renderSplit();renderReviews();updateMemoSuggestions();
   showSyncStatus('✅ 記録しました '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}),'var(--green-dark)');
   document.getElementById('amount').focus();
