@@ -377,6 +377,44 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
         <button class="btn" onclick="clearHistFilters()" style="padding:8px;font-size:12px;margin:0">クリア</button>
       </div>
       <div id="histFilterSummary" style="font-size:11px;color:var(--text2);margin-top:8px;display:none"></div>
+
+      <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-bottom:8px">
+          <label style="margin:0;white-space:nowrap">📅 期間</label>
+          <select id="histPeriod" onchange="onHistPeriodChange()">
+            <option value="">月表示（通常）</option>
+            <option value="thismonth">今月</option>
+            <option value="lastmonth">先月</option>
+            <option value="thisyear">今年</option>
+            <option value="last3">過去3ヶ月</option>
+            <option value="last6">過去6ヶ月</option>
+            <option value="all">全期間</option>
+            <option value="custom">カスタム</option>
+          </select>
+        </div>
+        <div id="histCustomRange" style="display:none;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-bottom:8px">
+          <input type="month" id="histFrom" onchange="renderHistory()">
+          <span style="font-size:12px;color:var(--text2)">〜</span>
+          <input type="month" id="histTo" onchange="renderHistory()">
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px;align-items:center;margin-bottom:8px">
+          <label style="margin:0;white-space:nowrap">💰 金額</label>
+          <input type="number" id="histMin" placeholder="下限" inputmode="numeric" oninput="renderHistory()" style="padding:7px 9px">
+          <span style="font-size:12px;color:var(--text2)">〜</span>
+          <input type="number" id="histMax" placeholder="上限" inputmode="numeric" oninput="renderHistory()" style="padding:7px 9px">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="margin:0;white-space:nowrap">並び</label>
+          <select id="histSort" onchange="renderHistory()" style="flex:1">
+            <option value="date_desc">日付（新しい順）</option>
+            <option value="date_asc">日付（古い順）</option>
+            <option value="amount_desc">金額（大きい順）</option>
+            <option value="amount_asc">金額（小さい順）</option>
+            <option value="category">カテゴリ順</option>
+          </select>
+        </div>
+      </div>
+          
     </div>
     <div class="toggle" style="margin-bottom:.75rem">
       <button class="toggle-btn active sel" id="hist-btn-all" onclick="setHistMode('all')">全体</button>
@@ -1028,9 +1066,47 @@ function buildHistCatFilter(){
 }
 function clearHistFilters(){
   const s=document.getElementById('histSearch');if(s) s.value='';
-  ['histFilterType','histFilterCat','histFilterPayer'].forEach(id=>{const el=document.getElementById(id);if(el) el.value='';});
+  ['histFilterType','histFilterCat','histFilterPayer','histPeriod','histSort','histMin','histMax','histFrom','histTo'].forEach(id=>{const el=document.getElementById(id);if(el){if(id==='histSort') el.value='date_desc';else el.value='';}});
+  onHistPeriodChange();
+}
+
+function onHistPeriodChange(){
+  const p=document.getElementById('histPeriod').value;
+  document.getElementById('histCustomRange').style.display=p==='custom'?'grid':'none';
+  // 期間モード時はヘッダー月ナビを無効化
+  const navBtns=document.querySelectorAll('.month-nav .nav-btn');
+  const monthLabel=document.getElementById('monthLabel');
+  if(p){
+    navBtns.forEach(b=>{b.style.opacity='.3';b.style.pointerEvents='none';});
+    if(monthLabel) monthLabel.style.opacity='.4';
+  }else{
+    navBtns.forEach(b=>{b.style.opacity='';b.style.pointerEvents='';});
+    if(monthLabel) monthLabel.style.opacity='';
+  }
   renderHistory();
 }
+// 期間指定に応じた取引リストを返す
+function getHistTargetTx(){
+  const p=document.getElementById('histPeriod')?.value||'';
+  if(!p) return monthTx(); // 通常は表示中の月
+  const now=new Date();
+  let from,to;
+  if(p==='thismonth'){from=new Date(now.getFullYear(),now.getMonth(),1);to=new Date(now.getFullYear(),now.getMonth()+1,0);}
+  else if(p==='lastmonth'){from=new Date(now.getFullYear(),now.getMonth()-1,1);to=new Date(now.getFullYear(),now.getMonth(),0);}
+  else if(p==='thisyear'){from=new Date(now.getFullYear(),0,1);to=new Date(now.getFullYear(),11,31);}
+  else if(p==='last3'){from=new Date(now.getFullYear(),now.getMonth()-2,1);to=new Date(now.getFullYear(),now.getMonth()+1,0);}
+  else if(p==='last6'){from=new Date(now.getFullYear(),now.getMonth()-5,1);to=new Date(now.getFullYear(),now.getMonth()+1,0);}
+  else if(p==='all'){return transactions.slice();}
+  else if(p==='custom'){
+    const f=document.getElementById('histFrom').value;
+    const t=document.getElementById('histTo').value;
+    if(!f&&!t) return transactions.slice();
+    from=f?new Date(f+'-01'):new Date(2000,0,1);
+    to=t?new Date(new Date(t+'-01').getFullYear(),new Date(t+'-01').getMonth()+1,0):new Date(2999,11,31);
+  }
+  return transactions.filter(x=>{const d=new Date(x.date);return d>=from&&d<=to;});
+}
+  
 function applyHistFilters(list){
   const kw=(document.getElementById('histSearch')?.value||'').trim().toLowerCase();
   const fType=document.getElementById('histFilterType')?.value||'';
@@ -1048,6 +1124,15 @@ function applyHistFilters(list){
         if(!hay.includes(kw)) return false;
       }
     }
+
+    const minV=parseFloat(document.getElementById('histMin')?.value)||null;
+    const maxV=parseFloat(document.getElementById('histMax')?.value)||null;
+    if(minV!=null && t.amount<minV) return false;
+    if(maxV!=null && t.amount>maxV) return false;
+    if(fType && t.type!==fType) return false;
+    if(fCat && t.category!==fCat) return false;
+    if(fPayer){
+    
     if(fType && t.type!==fType) return false;
     if(fCat && t.category!==fCat) return false;
     if(fPayer){
@@ -1062,13 +1147,19 @@ function applyHistFilters(list){
 }
 function renderHistory(){
   buildHistCatFilter();
-  let tx=monthTx().slice().sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+  let tx=getHistTargetTx().slice();
   tx=applyHistFilters(tx);
+  // 並び替え
+  const sort=document.getElementById('histSort')?.value||'date_desc';
+  if(sort==='date_desc') tx.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  else if(sort==='date_asc') tx.sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+  else if(sort==='amount_desc') tx.sort((a,b)=>b.amount-a.amount);
+  else if(sort==='amount_asc') tx.sort((a,b)=>a.amount-b.amount);
+  else if(sort==='category') tx.sort((a,b)=>(a.category||'').localeCompare(b.category||'')||a.date.localeCompare(b.date));
   const el=document.getElementById('txList');
   // フィルタサマリー
   const sumEl=document.getElementById('histFilterSummary');
-  const hasFilter=(document.getElementById('histSearch')?.value||'')||document.getElementById('histFilterType')?.value||document.getElementById('histFilterCat')?.value||document.getElementById('histFilterPayer')?.value;
-  
+  const hasFilter=(document.getElementById('histSearch')?.value||'')||document.getElementById('histFilterType')?.value||document.getElementById('histFilterCat')?.value||document.getElementById('histFilterPayer')?.value||document.getElementById('histPeriod')?.value||document.getElementById('histMin')?.value||document.getElementById('histMax')?.value;  
   
   if(sumEl){
     if(hasFilter){
