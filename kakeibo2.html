@@ -379,6 +379,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
     <div class="card"><div class="section-title">累積収支グラフ</div><div style="position:relative;height:180px"><canvas id="cumulChart"></canvas></div></div>
   </div>
   <div id="page-fixed" class="page">
+    <div class="metric-grid" id="fixedAnalysis" style="padding:0 0 .75rem"></div>
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
         <div class="section-title" style="margin:0">&#128204; 固定費・サブスク一覧</div>
@@ -392,7 +393,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       <div class="section-title" id="fixedFormTitle">固定費を追加</div>
       <div class="form-row">
         <div><label>名前</label><input type="text" id="fixedName" placeholder="例：Netflix、家賃"></div>
-        <div><label>金額（円/月）</label><input type="number" id="fixedAmount" inputmode="numeric" placeholder="0"></div>
+        <div><label id="fixedAmountLabel">金額（円/月）</label><input type="number" id="fixedAmount" inputmode="numeric" placeholder="0"></div>
       </div>
       <div class="form-row">
         <div><label>カテゴリ</label>
@@ -411,6 +412,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
           <select id="fixedMode">
             <option value="remind">🔔 リマインド（実額を毎月入力・準固定向け）</option>
             <option value="auto">⚡ 自動計上（登録額そのまま・完全固定向け）</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><label>支払周期</label>
+          <select id="fixedCycle" onchange="onFixedCycleChange()">
+            <option value="monthly">毎月</option>
+            <option value="yearly">年払い</option>
+          </select>
+        </div>
+        <div id="fixedPayMonthWrap" style="display:none"><label>支払月</label>
+          <select id="fixedPayMonth">
+            <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option><option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option><option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
           </select>
         </div>
       </div>
@@ -681,6 +695,7 @@ function postProvisional(y, m){
   fixed.forEach(f=>{
     if(f.mode!==FIXED_MODE_REMIND&&f.mode!==FIXED_MODE_AUTO) return;
     if(f.startYm && ym < f.startYm) return;
+    if(f.cycle==='yearly' && (m+1)!==(f.payMonth||1)) return;
     if((f.skippedYM||[]).includes(ym)) return;
     const ref=fixedRefKey(f);
     if(isAlreadyPosted(ref,y,m)) return;
@@ -1226,7 +1241,31 @@ let fixedSplitPayer='me';
 function toggleFixedSplit(){const checked=document.getElementById('fixedIsSplit').checked;document.getElementById('fixedSplitOptions').style.display=checked?'':'none';document.getElementById('fixedSplitWrap').className='check-box-wrap'+(checked?' active-split':'');}
 function setFixedPayer(p){fixedSplitPayer=p;document.getElementById('fixed-btn-me').className='toggle-btn'+(p==='me'?' active me':'');document.getElementById('fixed-btn-her').className='toggle-btn'+(p==='her'?' active her':'');}
 function onFixedRateInput(){const v=parseInt(document.getElementById('fixedMyRate').value)||0;document.getElementById('fixedHerRateDisp').textContent=(100-v)+'%';}
-function renderFixed(){const arr=loadFixed();const total=arr.reduce((s,f)=>s+Number(f.amount),0);const el=document.getElementById('fixedList');const totalEl=document.getElementById('fixedTotal');if(totalEl) totalEl.textContent='月計 '+fmt(total);if(!arr.length){el.innerHTML='<div class="empty" style="padding:.75rem 0;font-size:12px">固定費がまだ登録されていません</div>';return;}const groups={};arr.forEach((f,i)=>{if(!groups[f.cat]) groups[f.cat]=[];groups[f.cat].push({...f,idx:i});});el.innerHTML=Object.entries(groups).map(([cat,items])=>{const catTotal=items.reduce((s,f)=>s+Number(f.amount),0);return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0 6px;border-bottom:1px solid var(--border);margin-bottom:4px"><div style="font-size:11px;font-weight:700;color:var(--text2)">${cat}</div><div style="font-size:11px;font-weight:600;color:var(--text2)">${fmt(catTotal)}</div></div>${items.map(f=>{const modeIcon=f.mode===FIXED_MODE_AUTO?'⚡':'🔔';const modeLabel=f.mode===FIXED_MODE_AUTO?'自動':'リマインド';const splitTag=f.isSplit?`<span class="badge ${f.payer==='her'?'badge-her':'badge-me'}" style="margin-left:4px">👫${f.myRate??50}%</span>`:'';return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">${f.name} <span style="font-size:10px;color:var(--text3);font-weight:400;margin-left:4px">${modeIcon} ${modeLabel}</span>${splitTag}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${f.billingDay?f.billingDay+'日　':''}${f.note||''}</div></div><div style="font-size:14px;font-weight:700;color:var(--red);flex-shrink:0">${fmt(f.amount)}</div><div style="display:flex;gap:4px;flex-shrink:0"><button onclick="editFixed(${f.idx})" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--text2)">編集</button><button onclick="deleteFixed(${f.idx})" style="background:var(--red-bg);border:1px solid var(--red-dark);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--red-dark)">削除</button></div></div>`;}).join('')}</div>`;}).join('');}
+
+function onFixedCycleChange(){
+  const cycle=document.getElementById('fixedCycle').value;
+  document.getElementById('fixedPayMonthWrap').style.display=cycle==='yearly'?'':'none';
+  document.getElementById('fixedAmountLabel').textContent=cycle==='yearly'?'年額（円）':'金額（円/月）';
+}
+  
+function renderFixed(){const arr=loadFixed();
+  // 月払い分の月計
+  const monthlyTotal=arr.filter(f=>f.cycle!=='yearly').reduce((s,f)=>s+Number(f.amount),0);
+  // 年払い分の年計
+  const yearlyTotal=arr.filter(f=>f.cycle==='yearly').reduce((s,f)=>s+Number(f.amount),0);
+  // 年間固定費（月払い×12 + 年払い）
+  const annualTotal=monthlyTotal*12+yearlyTotal;
+  // 月平均
+  const monthlyAvg=Math.round(annualTotal/12);
+  const el=document.getElementById('fixedList');
+  const totalEl=document.getElementById('fixedTotal');
+  if(totalEl) totalEl.textContent='月計 '+fmt(monthlyTotal);
+  // 年間分析カードを表示
+  const anaEl=document.getElementById('fixedAnalysis');
+  if(anaEl){
+    anaEl.innerHTML=`<div class="metric"><div class="metric-label">年間固定費</div><div class="metric-value" style="color:var(--red)">${fmt(annualTotal)}</div><div class="metric-sub">月払い×12＋年払い</div></div><div class="metric"><div class="metric-label">月平均</div><div class="metric-value">${fmt(monthlyAvg)}</div><div class="metric-sub">${yearlyTotal>0?'年払い '+fmt(yearlyTotal)+' 含む':'年払いなし'}</div></div>`;
+  }
+  if(!arr.length){el.innerHTML='<div class="empty" style="padding:.75rem 0;font-size:12px">固定費がまだ登録されていません</div>';return;}const groups={};arr.forEach((f,i)=>{if(!groups[f.cat]) groups[f.cat]=[];groups[f.cat].push({...f,idx:i});});el.innerHTML=Object.entries(groups).map(([cat,items])=>{const catTotal=items.reduce((s,f)=>s+Number(f.amount),0);return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0 6px;border-bottom:1px solid var(--border);margin-bottom:4px"><div style="font-size:11px;font-weight:700;color:var(--text2)">${cat}</div><div style="font-size:11px;font-weight:600;color:var(--text2)">${fmt(catTotal)}</div></div>${items.map(f=>{const modeIcon=f.mode===FIXED_MODE_AUTO?'⚡':'🔔';const modeLabel=f.mode===FIXED_MODE_AUTO?'自動':'リマインド';const splitTag=f.isSplit?`<span class="badge ${f.payer==='her'?'badge-her':'badge-me'}" style="margin-left:4px">👫${f.myRate??50}%</span>`:'';return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">${f.name} <span style="font-size:10px;color:var(--text3);font-weight:400;margin-left:4px">${modeIcon} ${modeLabel}</span>${splitTag}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">${f.billingDay?f.billingDay+'日　':''}${f.note||''}</div></div><div style="font-size:14px;font-weight:700;color:var(--red);flex-shrink:0">${fmt(f.amount)}</div><div style="display:flex;gap:4px;flex-shrink:0"><button onclick="editFixed(${f.idx})" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--text2)">編集</button><button onclick="deleteFixed(${f.idx})" style="background:var(--red-bg);border:1px solid var(--red-dark);border-radius:7px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--red-dark)">削除</button></div></div>`;}).join('')}</div>`;}).join('');}
 function openFixedForm(idx=null){
   editingFixedIdx=idx;
   const card=document.getElementById('fixedFormCard');
@@ -1240,6 +1279,9 @@ function openFixedForm(idx=null){
     document.getElementById('fixedBillingDay').value=f.billingDay||'';
     document.getElementById('fixedMode').value=f.mode||'remind';
     document.getElementById('fixedStartYm').value=f.startYm||'';
+    document.getElementById('fixedCycle').value=f.cycle||'monthly';
+    document.getElementById('fixedPayMonth').value=f.payMonth||1;
+    onFixedCycleChange();
     document.getElementById('fixedNote').value=f.note||'';
     document.getElementById('fixedIsSplit').checked=!!f.isSplit;
     document.getElementById('fixedSplitOptions').style.display=f.isSplit?'':'none';
@@ -1254,6 +1296,9 @@ function openFixedForm(idx=null){
     document.getElementById('fixedBillingDay').value='';
     document.getElementById('fixedMode').value='remind';
     document.getElementById('fixedStartYm').value=new Date().toISOString().slice(0,7);
+    document.getElementById('fixedCycle').value='monthly';
+    document.getElementById('fixedPayMonth').value=1;
+    onFixedCycleChange();
     document.getElementById('fixedNote').value='';
     document.getElementById('fixedIsSplit').checked=false;
     document.getElementById('fixedSplitOptions').style.display='none';
@@ -1273,7 +1318,9 @@ function saveFixed(){
   const arr=loadFixed();
   const existingSkipped=editingFixedIdx!=null?(arr[editingFixedIdx].skippedYM||[]):[];
   const isSplit=document.getElementById('fixedIsSplit').checked;
-    const item={name,amount,cat:document.getElementById('fixedCat').value,billingDay:document.getElementById('fixedBillingDay').value.trim(),startYm:document.getElementById('fixedStartYm').value||'',mode:document.getElementById('fixedMode').value||'remind',note:document.getElementById('fixedNote').value.trim(),skippedYM:existingSkipped,isSplit,payer:isSplit?fixedSplitPayer:null,myRate:isSplit?(parseInt(document.getElementById('fixedMyRate').value)||50):null};
+  const cycle=document.getElementById('fixedCycle').value||'monthly';
+  const item={name,amount,cat:document.getElementById('fixedCat').value,billingDay:document.getElementById('fixedBillingDay').value.trim(),startYm:document.getElementById('fixedStartYm').value||'',mode:document.getElementById('fixedMode').value||'remind',cycle,payMonth:cycle==='yearly'?(parseInt(document.getElementById('fixedPayMonth').value)||1):null,note:document.getElementById('fixedNote').value.trim(),skippedYM:existingSkipped,isSplit,payer:isSplit?fixedSplitPayer:null,myRate:isSplit?(parseInt(document.getElementById('fixedMyRate').value)||50):null};
+
   if(editingFixedIdx!=null) arr[editingFixedIdx]=item;
   else arr.push(item);
   saveFixedData(arr);
