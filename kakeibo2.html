@@ -137,6 +137,51 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
 .modal-close{font-size:20px;cursor:pointer;color:var(--text2);background:none;border:none;font-family:inherit}
 .prov-chip{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:10px;cursor:pointer;font-family:inherit;color:var(--text2)}
 .prov-chip:active{background:var(--hdr);color:#fff}
+
+/* ===== 割り勘帳票 ===== */
+#reportOverlay{position:fixed;inset:0;background:#ddd;z-index:2000;overflow-y:auto;padding:20px;display:none}
+.report{background:#fff;max-width:640px;margin:0 auto 20px;padding:30px 34px;box-shadow:0 4px 24px rgba(0,0,0,.12);border-radius:8px}
+.rep-head-split{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:16px;border-bottom:2px solid var(--text);margin-bottom:22px}
+.rep-logo{display:inline-flex;align-items:flex-end;gap:8px}
+.rep-logo-yen{position:relative;font-size:20px;font-weight:800;color:var(--text);line-height:1;padding-bottom:4px}
+.rep-logo-yen::after{content:'';position:absolute;left:0;right:2px;bottom:0;height:2.5px;background:#C8A24A;border-radius:2px}
+.rep-logo-word{font-size:20px;font-weight:700;letter-spacing:.5px;color:var(--text)}
+.rep-period{font-size:20px;font-weight:800;text-align:right}
+.rep-hero{border-radius:14px;padding:24px;text-align:center;margin-bottom:24px}
+.rep-hero.receive{background:var(--green-bg);border:2px solid var(--green)}
+.rep-hero.pay{background:var(--red-bg);border:2px solid var(--red)}
+.rep-hero.even{background:var(--bg);border:2px solid var(--border)}
+.rep-hero-label{font-size:13px;font-weight:600;margin-bottom:6px}
+.rep-hero.receive .rep-hero-label{color:var(--green-dark)}
+.rep-hero.pay .rep-hero-label{color:var(--red-dark)}
+.rep-hero-amount{font-size:40px;font-weight:800;letter-spacing:-1px;line-height:1}
+.rep-hero.receive .rep-hero-amount{color:var(--green-dark)}
+.rep-hero.pay .rep-hero-amount{color:var(--red-dark)}
+.rep-sec{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.rep-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.rep-tbl th{text-align:left;padding:7px 9px;background:var(--bg);color:var(--text2);font-weight:600;font-size:11px;border-bottom:2px solid var(--border)}
+.rep-tbl th.num{text-align:right}
+.rep-tbl td{padding:8px 9px;border-bottom:1px solid var(--border);vertical-align:top}
+.rep-tbl td.num{text-align:right;font-weight:600;white-space:nowrap}
+.rep-item-name{font-weight:600}
+.rep-item-logic{font-size:10px;color:var(--purple);margin-top:2px}
+.rep-pay-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700}
+.rep-pay-me{background:#EEF0FB;color:#4845A8}
+.rep-pay-her{background:#FBF0F5;color:#8C2E5C}
+.rep-summary{background:var(--bg);border-radius:12px;padding:14px 16px;margin-top:6px}
+.rep-sum-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:var(--text2)}
+.rep-sum-row .val{font-weight:700;color:var(--text)}
+.rep-sum-row.total{border-top:2px solid var(--text);margin-top:6px;padding-top:11px;font-size:15px}
+.rep-sum-row.total .val{font-size:20px}
+.rep-foot{margin-top:24px;padding-top:12px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--text3)}
+.rep-actions{max-width:640px;margin:0 auto 16px;display:flex;gap:8px}
+@media print{
+  #reportOverlay{position:static;background:#fff;padding:0;overflow:visible}
+  .report{box-shadow:none;border-radius:0;max-width:100%;margin:0;padding:16px}
+  .rep-actions{display:none!important}
+  body>.container{display:none!important}
+}
+  
 @media print{body{background:#fff}.no-print{display:none!important}.container{max-width:100%;padding:0}.card{border:1px solid #ccc;break-inside:avoid}}
 </style>
 </head>
@@ -349,7 +394,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
   <div id="page-split" class="page">
     <div id="splitResult"></div>
     <div class="card"><div class="section-title">今月の割り勘明細</div><div id="splitList"><div class="empty">割り勘の記録がありません</div></div></div>
-    <button class="btn no-print" style="background:#F0F4FB;color:var(--blue);border-color:var(--blue)" onclick="window.print()">&#128424;&#65039; PDF出力</button>
+       <button class="btn no-print" style="background:#F0F4FB;color:var(--blue);border-color:var(--blue)" onclick="openReport()">&#128424;&#65039; 精算書を作成（PDF）</button>
   </div>
   <div id="page-budget" class="page">
     <div class="metric-grid" id="budgetSummary" style="padding:0 0 .75rem"></div>
@@ -582,6 +627,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
     <button class="btn danger" style="margin-top:8px" onclick="deleteTransaction()">この取引を削除する</button>
   </div>
 </div>
+
+<div id="reportOverlay">
+  <div class="rep-actions no-print">
+  <button class="btn" onclick="closeReport()" style="flex:1">閉じる</button>
+  <button class="btn primary" onclick="window.print()" style="flex:2;margin-top:0">🖨️ 印刷 / PDF保存</button>
+  </div>
+  <div id="reportBody"></div>
+</div>
+  
 <script>
 /* ===== テスト環境判定 ===== */
 const IS_TEST = window.location.pathname.includes('kakeibo-test') || window.location.pathname.includes('kakeibo2');
@@ -1041,6 +1095,69 @@ function renderSplit(){
   });
   el.innerHTML=rows||'<div class="empty">データなし</div>';
 }
+
+function openReport(){
+  const tx=monthTx();
+  const splitTx=tx.filter(t=>t.isSplit&&t.type==='expense');
+  const adjTx=tx.filter(t=>t.isAdj||t.type==='adjustment');
+  if(!splitTx.length&&!adjTx.length){alert('この月には割り勘の記録がありません');return;}
+  // 精算計算（renderSplitと同じロジック）
+  let herOwesMe=0,iOweHer=0;
+  splitTx.forEach(t=>{if(t.payer==='me') herOwesMe+=t.herShare||0;else iOweHer+=t.myShare||0;});
+  const adjHerSub=adjTx.reduce((s,t)=>s+(t.herShare||0),0);
+  const net=(herOwesMe-adjHerSub)-iOweHer;
+  // ヒーロー
+  let heroClass,heroLabel,heroAmount;
+  if(net>0){heroClass='receive';heroLabel=partnerName+' から受け取る';heroAmount=fmt(net);}
+  else if(net<0){heroClass='pay';heroLabel=myName+' が払う';heroAmount=fmt(-net);}
+  else{heroClass='even';heroLabel='精算なし';heroAmount='¥0';}
+  // 明細行
+  let rows='';
+  splitTx.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>{
+    const payClass=t.payer==='me'?'rep-pay-me':'rep-pay-her';
+    const payLabel=t.payer==='me'?myName+'払い':partnerName+'払い';
+    const shareLabel=t.payer==='me'?partnerName+' '+fmt(t.herShare||0):myName+' '+fmt(t.myShare||0);
+    const d=t.date.slice(5).replace('-','/');
+    rows+=`<tr><td>${d}</td><td><div class="rep-item-name">${t.memo} <span class="rep-pay-badge ${payClass}">${payLabel}</span></div><div class="rep-item-logic">${shareModeLabel(t)}</div></td><td class="num">${fmt(t.amount)}</td><td class="num">${shareLabel}</td></tr>`;
+  });
+  adjTx.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>{
+    const d=t.date.slice(5).replace('-','/');
+    rows+=`<tr><td>${d}</td><td><div class="rep-item-name" style="color:var(--orange)">🔧 ${t.memo}</div><div class="rep-item-logic">調整（${myName}${t.myRate??50}%:${partnerName}${100-(t.myRate??50)}%）</div></td><td class="num">${fmt(t.amount)}</td><td class="num" style="color:var(--orange)">${partnerName} ▲${fmt(t.herShare||0)}</td></tr>`;
+  });
+  // サマリー
+  const adjRow=adjHerSub>0?`<div class="rep-sum-row"><span>調整 差し引き</span><span class="val" style="color:var(--orange)">▲${fmt(adjHerSub)}</span></div>`:'';
+  const totalColor=net>0?'var(--green-dark)':net<0?'var(--red-dark)':'var(--text)';
+  // 帳票組み立て
+  const today=new Date().toISOString().slice(0,10);
+  document.getElementById('reportBody').innerHTML=`
+    <div class="report">
+      <div class="rep-head-split">
+        <div class="rep-logo"><span class="rep-logo-yen">¥</span><span class="rep-logo-word">kakeibo</span></div>
+        <div class="rep-period">${viewYear}年${viewMonth+1}月</div>
+      </div>
+      <div class="rep-hero ${heroClass}">
+        <div class="rep-hero-label">${heroLabel}</div>
+        <div class="rep-hero-amount">${heroAmount}</div>
+      </div>
+      <div class="rep-sec">明細</div>
+      <table class="rep-tbl">
+        <thead><tr><th>日付</th><th>項目</th><th class="num">元金額</th><th class="num">負担額</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="rep-sec">精算内訳</div>
+      <div class="rep-summary">
+        <div class="rep-sum-row"><span>${myName} 立替 → ${partnerName} 負担</span><span class="val">${fmt(herOwesMe)}</span></div>
+        ${adjRow}
+        <div class="rep-sum-row"><span>${partnerName} 立替 → ${myName} 負担</span><span class="val">${fmt(iOweHer)}</span></div>
+        <div class="rep-sum-row total"><span>差引精算額</span><span class="val" style="color:${totalColor}">${heroAmount}</span></div>
+      </div>
+      <div class="rep-foot">作成 ${today}</div>
+    </div>`;
+  document.getElementById('reportOverlay').style.display='block';
+  window.scrollTo(0,0);
+}
+function closeReport(){document.getElementById('reportOverlay').style.display='none';}
+  
 function openEdit(id){
   const t=transactions.find(x=>x.id===id);if(!t) return;
   editingId=id;editTxType=t.type==='adjustment'?'expense':t.type;editSplitPayer=t.payer||'me';editShareMode='rate';
