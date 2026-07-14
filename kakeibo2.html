@@ -1039,7 +1039,14 @@ function applyHistFilters(list){
   return list.filter(t=>{
     if(kw){
       const hay=((t.memo||'')+' '+(t.category||'')+' '+(t.note||'')).toLowerCase();
-      if(!hay.includes(kw)) return false;
+      if(kw.startsWith('#')){
+        // タグ検索：完全一致（前後がスペース/文字列端/別の#）
+        const tags=(hay.match(/#[^\s#　]+/g)||[]);
+        if(!tags.includes(kw)) return false;
+      }else{
+        // 通常検索：部分一致
+        if(!hay.includes(kw)) return false;
+      }
     }
     if(fType && t.type!==fType) return false;
     if(fCat && t.category!==fCat) return false;
