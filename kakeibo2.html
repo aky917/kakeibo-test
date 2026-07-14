@@ -979,7 +979,7 @@ function renderSplit(){
     const rate=t.myRate??50;const herRate=100-rate;
     const shareLabel=t.payer==='me'?`${partnerName}負担`:`${myName}負担`;
     const shareVal=t.payer==='me'?t.herShare:t.myShare;
-    rows+=`<div class="detail-row"><div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--text)">${t.memo}${pb}${t.isProvisional?'<span class="badge badge-prov">仮</span>':''}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${t.date} · 元${fmt(t.amount)} · ${myName}${rate}%:${partnerName}${herRate}%${t.note?' · '+t.note:''}</div></div><div class="dr-right"><div class="dr-main">${shareLabel}: ${fmt(shareVal||0)}</div></div></div>`;
+    rows+=`<div class="detail-row"><div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--text)">${t.memo}${pb}${t.isProvisional?'<span class="badge badge-prov">仮</span>':''}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${t.date} · 元${fmt(t.amount)} · ${shareModeLabel(t)}${t.note?' · '+t.note:''}</div></div><div class="dr-right"><div class="dr-main">${shareLabel}: ${fmt(shareVal||0)}</div></div></div>`;
   });
   adjTx.forEach(t=>{
     const rate=t.myRate??50;
