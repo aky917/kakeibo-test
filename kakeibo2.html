@@ -254,24 +254,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
         <div><label>日付</label><input type="date" id="txdate"></div>
         <div><label>メモ</label><input type="text" id="memo" placeholder="例：ランチ" list="memoSuggest" autocomplete="off"><datalist id="memoSuggest"></datalist></div>
       </div>
-      <div class="form-row full">
+        <div class="form-row full">
         <label>備考（任意）</label>
         <textarea id="note" placeholder="負担率変更の理由など"></textarea>
       </div>
-      <div id="adjSection" style="display:none">
-        <div class="check-box-wrap" id="adjWrap" onclick="document.getElementById('isAdj').click()">
-          <div class="check-row" style="margin-bottom:0">
-            <input type="checkbox" id="isAdj" onchange="onAdjChange()" onclick="event.stopPropagation()">
-            <label for="isAdj" onclick="event.preventDefault()">🔧 調整対象（割り勘済み費用の自己使用分など）</label>
-          </div>
-        </div>
-        <div id="adjRateSection" style="display:none;margin-bottom:8px">
-          <div class="form-row" style="margin-bottom:4px">
-            <div><label>自分の負担率（%）</label><input type="number" id="adjRate" min="0" max="100" placeholder="50" inputmode="numeric" oninput="updateAdjPreview()"></div>
-            <div style="display:flex;align-items:flex-end"><div id="adjPreview" style="font-size:12px;color:var(--text3);padding-bottom:10px">-</div></div>
-          </div>
-        </div>
-      </div>
+      <!-- 割り勘（上に移動） -->
       <div id="splitSection" style="display:none">
         <div class="check-box-wrap" id="splitWrap" onclick="document.getElementById('isSplit').click()">
           <div class="check-row" style="margin-bottom:0">
@@ -319,6 +306,21 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
             </div>
           </div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:6px" id="sharePreview"></div>
+        </div>
+      </div>
+      <!-- 調整（下に移動） -->
+      <div id="adjSection" style="display:none">
+        <div class="check-box-wrap" id="adjWrap" onclick="document.getElementById('isAdj').click()">
+          <div class="check-row" style="margin-bottom:0">
+            <input type="checkbox" id="isAdj" onchange="onAdjChange()" onclick="event.stopPropagation()">
+            <label for="isAdj" onclick="event.preventDefault()">🔧 調整対象（割り勘済み費用の自己使用分など）</label>
+          </div>
+        </div>
+        <div id="adjRateSection" style="display:none;margin-bottom:8px">
+          <div class="form-row" style="margin-bottom:4px">
+            <div><label>自分の負担率（%）</label><input type="number" id="adjRate" min="0" max="100" placeholder="50" inputmode="numeric" oninput="updateAdjPreview()"></div>
+            <div style="display:flex;align-items:flex-end"><div id="adjPreview" style="font-size:12px;color:var(--text3);padding-bottom:10px">-</div></div>
+          </div>
         </div>
       </div>
       <button class="btn primary" onclick="addTransaction()">記録する</button>
