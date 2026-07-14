@@ -240,9 +240,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
             <button class="toggle-btn active me" id="btn-me" onclick="setPayer('me')">自分が払った</button>
             <button class="toggle-btn her" id="btn-her" onclick="setPayer('her')">相手が払った</button>
           </div>
-          <div class="toggle" style="margin-bottom:8px">
-            <button class="toggle-btn active sel" id="mode-rate" onclick="setShareMode('rate')">比率で入力</button>
-            <button class="toggle-btn" id="mode-diff" onclick="setShareMode('diff')">差額で入力</button>
+          <div class="toggle" style="margin-bottom:8px;grid-template-columns:1fr 1fr 1fr">
+            <button class="toggle-btn active sel" id="mode-rate" onclick="setShareMode('rate')">比率</button>
+            <button class="toggle-btn" id="mode-diff" onclick="setShareMode('diff')">差額</button>
+            <button class="toggle-btn" id="mode-amount" onclick="setShareMode('amount')">金額</button>
           </div>
           <div id="share-rate-input">
             <div class="form-row" style="margin-bottom:4px">
@@ -259,6 +260,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
                 </select>
               </div>
               <div><label>差額（円）</label><input type="number" id="diffAmt" min="0" placeholder="0" inputmode="numeric" oninput="onDiffInput()"></div>
+            </div>
+          </div>
+          <div id="share-amount-input" style="display:none">
+            <div class="form-row" style="margin-bottom:4px">
+              <div><label>入力する人</label>
+                <select id="amountWho" onchange="onAmountShareInput()">
+                  <option value="me">自分の負担額</option>
+                  <option value="her">相手の負担額</option>
+                </select>
+              </div>
+              <div><label>負担額（円）</label><input type="number" id="amountShare" min="0" placeholder="0" inputmode="numeric" oninput="onAmountShareInput()"></div>
             </div>
           </div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:6px" id="sharePreview"></div>
@@ -517,9 +529,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
           <button class="toggle-btn active me" id="edit-btn-me" onclick="editSetPayer('me')">自分が払った</button>
           <button class="toggle-btn her" id="edit-btn-her" onclick="editSetPayer('her')">相手が払った</button>
         </div>
-        <div class="toggle" style="margin-bottom:8px">
-          <button class="toggle-btn active sel" id="edit-mode-rate" onclick="editSetShareMode('rate')">比率で入力</button>
-          <button class="toggle-btn" id="edit-mode-diff" onclick="editSetShareMode('diff')">差額で入力</button>
+        <div class="toggle" style="margin-bottom:8px;grid-template-columns:1fr 1fr 1fr">
+          <button class="toggle-btn active sel" id="edit-mode-rate" onclick="editSetShareMode('rate')">比率</button>
+          <button class="toggle-btn" id="edit-mode-diff" onclick="editSetShareMode('diff')">差額</button>
+          <button class="toggle-btn" id="edit-mode-amount" onclick="editSetShareMode('amount')">金額</button>
         </div>
         <div id="edit-share-rate-input">
           <div class="form-row" style="margin-bottom:4px">
@@ -535,6 +548,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
               </select>
             </div>
             <div><label>差額（円）</label><input type="number" id="edit-diffAmt" min="0" placeholder="0" inputmode="numeric" oninput="editOnDiffInput()"></div>
+          </div>
+        </div>
+
+        <div id="edit-share-amount-input" style="display:none">
+          <div class="form-row" style="margin-bottom:4px">
+            <div><label>入力する人</label>
+              <select id="edit-amountWho" onchange="editOnAmountShareInput()">
+                <option value="me">自分の負担額</option><option value="her">相手の負担額</option>
+              </select>
+            </div>
+            <div><label>負担額（円）</label><input type="number" id="edit-amountShare" min="0" placeholder="0" inputmode="numeric" oninput="editOnAmountShareInput()"></div>
           </div>
         </div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:6px" id="edit-sharePreview"></div>
@@ -806,7 +830,14 @@ function updateHeader(){
 function changeMonth(d){viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}postProvisional(viewYear,viewMonth);updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();const sub=document.getElementById('stab-me').classList.contains('active')?'me':'couple';renderCharts(sub);}
 function setType(t){txType=t;document.getElementById('btn-income').className='toggle-btn'+(t==='income'?' active income':'');document.getElementById('btn-expense').className='toggle-btn'+(t==='expense'?' active expense':'');document.getElementById('adjSection').style.display=t==='expense'?'':'none';document.getElementById('splitSection').style.display=t==='expense'?'':'none';buildCatOptions(document.getElementById('category'),t);if(t==='expense') applyDefaultRate();}
 function setPayer(p){splitPayer=p;document.getElementById('btn-me').className='toggle-btn'+(p==='me'?' active me':'');document.getElementById('btn-her').className='toggle-btn'+(p==='her'?' active her':'');updateSharePreview();}
-function setShareMode(m){shareMode=m;document.getElementById('mode-rate').className='toggle-btn'+(m==='rate'?' active sel':'');document.getElementById('mode-diff').className='toggle-btn'+(m==='diff'?' active sel':'');document.getElementById('share-rate-input').style.display=m==='rate'?'':'none';document.getElementById('share-diff-input').style.display=m==='diff'?'':'none';updateSharePreview();}
+function setShareMode(m){shareMode=m;document.getElementById('mode-rate').className='toggle-btn'+(m==='rate'?' active sel':'');document.getElementById('mode-diff').className='toggle-btn'+(m==='diff'?' active sel':'');document.getElementById('mode-amount').className='toggle-btn'+(m==='amount'?' active sel':'');document.getElementById('share-rate-input').style.display=m==='rate'?'':'none';document.getElementById('share-diff-input').style.display=m==='diff'?'':'none';document.getElementById('share-amount-input').style.display=m==='amount'?'':'none';updateSharePreview();}
+function onAmountShareInput(){updateSharePreview();}
+function calcSharesByAmount(amount, inputShare, who){
+  let myShare,herShare;
+  if(who==='me'){myShare=Math.min(inputShare,amount);herShare=amount-myShare;}
+  else{herShare=Math.min(inputShare,amount);myShare=amount-herShare;}
+  return {myShare,herShare,myRate:amount>0?Math.round(myShare/amount*100):50};
+}
 function toggleSplitOptions(){const checked=document.getElementById('isSplit').checked;document.getElementById('splitOptions').style.display=checked?'':'none';document.getElementById('splitWrap').className='check-box-wrap'+(checked?' active-split':'');if(checked){document.getElementById('isAdj').checked=false;document.getElementById('adjRateSection').style.display='none';document.getElementById('adjWrap').className='check-box-wrap';}updateSharePreview();}
 function onAdjChange(){const checked=document.getElementById('isAdj').checked;document.getElementById('adjRateSection').style.display=checked?'':'none';document.getElementById('adjWrap').className='check-box-wrap'+(checked?' active-adj':'');if(checked){document.getElementById('isSplit').checked=false;document.getElementById('splitOptions').style.display='none';document.getElementById('splitWrap').className='check-box-wrap';}updateAdjPreview();}
 function applyDefaultRate(){const cat=document.getElementById('category').value;const rate=catRates[cat]??50;document.getElementById('myRate').value=rate;document.getElementById('herRateDisp').textContent=(100-rate)+'%';updateSharePreview();}
@@ -822,9 +853,9 @@ function addTransaction(){
   const isAdj=document.getElementById('isAdj').checked&&txType==='expense';
   const isSplit=!isAdj&&document.getElementById('isSplit').checked&&txType==='expense';
   let myShare=null,herShare=null,myRate=null;
-  if(isSplit){if(shareMode==='rate'){myRate=parseInt(document.getElementById('myRate').value)||50;({myShare,herShare}=calcShares(amount,myRate,splitPayer));}else{const dw=document.getElementById('diffWho').value;const da=parseFloat(document.getElementById('diffAmt').value)||0;({myShare,herShare,myRate}=calcSharesByDiff(amount,da,dw,splitPayer));}}
+  if(isSplit){if(shareMode==='rate'){myRate=parseInt(document.getElementById('myRate').value)||50;({myShare,herShare}=calcShares(amount,myRate,splitPayer));}else if(shareMode==='diff'){const dw=document.getElementById('diffWho').value;const da=parseFloat(document.getElementById('diffAmt').value)||0;({myShare,herShare,myRate}=calcSharesByDiff(amount,da,dw,splitPayer));}else{const aw=document.getElementById('amountWho').value;const av=parseFloat(document.getElementById('amountShare').value)||0;({myShare,herShare,myRate}=calcSharesByAmount(amount,av,aw));}}
   if(isAdj){myRate=parseInt(document.getElementById('adjRate').value)||50;myShare=Math.ceil(amount*myRate/100);herShare=Math.floor(amount*(100-myRate)/100);}
-  transactions.push({id:Date.now(),type:txType,amount,category:document.getElementById('category').value,date:document.getElementById('txdate').value,memo:document.getElementById('memo').value||document.getElementById('category').value,note:document.getElementById('note').value,isSplit,isAdj,payer:isSplit?splitPayer:null,myShare,herShare,myRate,shareMode:isSplit?shareMode:null,diffAmt:(isSplit&&shareMode==='diff')?(parseFloat(document.getElementById('diffAmt').value)||0):null,diffWho:(isSplit&&shareMode==='diff')?document.getElementById('diffWho').value:null});  save();
+  transactions.push({id:Date.now(),type:txType,amount,category:document.getElementById('category').value,date:document.getElementById('txdate').value,memo:document.getElementById('memo').value||document.getElementById('category').value,note:document.getElementById('note').value,isSplit,isAdj,payer:isSplit?splitPayer:null,myShare,herShare,myRate,shareMode:isSplit?shareMode:null,diffAmt:(isSplit&&shareMode==='diff')?(parseFloat(document.getElementById('diffAmt').value)||0):null,diffWho:(isSplit&&shareMode==='diff')?document.getElementById('diffWho').value:null,amountShare:(isSplit&&shareMode==='amount')?(parseFloat(document.getElementById('amountShare').value)||0):null,amountWho:(isSplit&&shareMode==='amount')?document.getElementById('amountWho').value:null});  save();
   document.getElementById('amount').value='';
   document.getElementById('memo').value='';
   document.getElementById('note').value='';
@@ -1009,21 +1040,29 @@ function openEdit(id){
   document.getElementById('edit-splitOptions').style.display=(t.isSplit&&!isAdj)?'':'none';
   document.getElementById('edit-btn-me').className='toggle-btn'+(editSplitPayer==='me'?' active me':'');
   document.getElementById('edit-btn-her').className='toggle-btn'+(editSplitPayer==='her'?' active her':'');
-  document.getElementById('edit-mode-rate').className='toggle-btn active sel';
-  document.getElementById('edit-mode-diff').className='toggle-btn';
-  document.getElementById('edit-share-rate-input').style.display='';
-  document.getElementById('edit-share-diff-input').style.display='none';
+  const em=t.isSplit?(t.shareMode||'rate'):'rate';
+  editShareMode=em;
+  document.getElementById('edit-mode-rate').className='toggle-btn'+(em==='rate'?' active sel':'');
+  document.getElementById('edit-mode-diff').className='toggle-btn'+(em==='diff'?' active sel':'');
+  document.getElementById('edit-mode-amount').className='toggle-btn'+(em==='amount'?' active sel':'');
+  document.getElementById('edit-share-rate-input').style.display=em==='rate'?'':'none';
+  document.getElementById('edit-share-diff-input').style.display=em==='diff'?'':'none';
+  document.getElementById('edit-share-amount-input').style.display=em==='amount'?'':'none';
   const rate=t.myRate??50;
   document.getElementById('edit-myRate').value=rate;
   document.getElementById('edit-herRateDisp').textContent=(100-rate)+'%';
-  editOnRateInput();
+  document.getElementById('edit-diffWho').value=t.diffWho||'me';
+  document.getElementById('edit-diffAmt').value=t.diffAmt||'';
+  document.getElementById('edit-amountWho').value=t.amountWho||'me';
+  document.getElementById('edit-amountShare').value=t.amountShare||'';
+  if(em==='diff') editOnDiffInput(); else if(em==='amount') editOnAmountShareInput(); else editOnRateInput();
   document.getElementById('editModal').style.display='flex';
 }
 function closeModalDirect(){document.getElementById('editModal').style.display='none';editingId=null;}
 function editSetType(t){editTxType=t;document.getElementById('edit-btn-income').className='toggle-btn'+(t==='income'?' active income':'');document.getElementById('edit-btn-expense').className='toggle-btn'+(t==='expense'?' active expense':'');document.getElementById('edit-adjSection').style.display=t==='expense'?'':'none';document.getElementById('edit-splitSection').style.display=t==='expense'?'':'none';buildCatOptions(document.getElementById('edit-category'),t);}
 function editSetPayer(p){editSplitPayer=p;document.getElementById('edit-btn-me').className='toggle-btn'+(p==='me'?' active me':'');document.getElementById('edit-btn-her').className='toggle-btn'+(p==='her'?' active her':'');editOnRateInput();}
-function editSetShareMode(m){editShareMode=m;document.getElementById('edit-mode-rate').className='toggle-btn'+(m==='rate'?' active sel':'');document.getElementById('edit-mode-diff').className='toggle-btn'+(m==='diff'?' active sel':'');document.getElementById('edit-share-rate-input').style.display=m==='rate'?'':'none';document.getElementById('edit-share-diff-input').style.display=m==='diff'?'':'none';}
-function editToggleSplit(){const checked=document.getElementById('edit-isSplit').checked;document.getElementById('edit-splitOptions').style.display=checked?'':'none';if(checked){document.getElementById('edit-isAdj').checked=false;document.getElementById('edit-adjRateSection').style.display='none';}}
+function editSetShareMode(m){editShareMode=m;document.getElementById('edit-mode-rate').className='toggle-btn'+(m==='rate'?' active sel':'');document.getElementById('edit-mode-diff').className='toggle-btn'+(m==='diff'?' active sel':'');document.getElementById('edit-mode-amount').className='toggle-btn'+(m==='amount'?' active sel':'');document.getElementById('edit-share-rate-input').style.display=m==='rate'?'':'none';document.getElementById('edit-share-diff-input').style.display=m==='diff'?'':'none';document.getElementById('edit-share-amount-input').style.display=m==='amount'?'':'none';}
+function editOnAmountShareInput(){const amt=parseFloat(document.getElementById('edit-amount').value)||0;if(!amt||!document.getElementById('edit-isSplit').checked){document.getElementById('edit-sharePreview').textContent='';return;}const aw=document.getElementById('edit-amountWho').value;const av=parseFloat(document.getElementById('edit-amountShare').value)||0;const {myShare,herShare}=calcSharesByAmount(amt,av,aw);document.getElementById('edit-sharePreview').textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}function editToggleSplit(){const checked=document.getElementById('edit-isSplit').checked;document.getElementById('edit-splitOptions').style.display=checked?'':'none';if(checked){document.getElementById('edit-isAdj').checked=false;document.getElementById('edit-adjRateSection').style.display='none';}}
 function editOnAdjChange(){const checked=document.getElementById('edit-isAdj').checked;document.getElementById('edit-adjRateSection').style.display=checked?'':'none';if(checked){document.getElementById('edit-isSplit').checked=false;document.getElementById('edit-splitOptions').style.display='none';}editUpdateAdjPreview();}
 function editUpdateAdjPreview(){const amt=parseFloat(document.getElementById('edit-amount').value)||0;const rate=parseInt(document.getElementById('edit-adjRate').value)||50;const prev=document.getElementById('edit-adjPreview');if(!document.getElementById('edit-isAdj').checked||!amt){prev.textContent='-';return;}prev.textContent=`自分+${fmt(Math.ceil(amt*rate/100))} / ${partnerName}-${fmt(Math.floor(amt*(100-rate)/100))}`;}
 function editOnAmountInput(){editOnRateInput();editUpdateAdjPreview();}
@@ -1036,11 +1075,11 @@ function saveEdit(){
   const isAdj=document.getElementById('edit-isAdj').checked&&editTxType==='expense';
   const isSplit=!isAdj&&document.getElementById('edit-isSplit').checked&&editTxType==='expense';
   let myShare=null,herShare=null,myRate=null;
-  if(isSplit){if(editShareMode==='rate'){myRate=parseInt(document.getElementById('edit-myRate').value)||50;({myShare,herShare}=calcShares(amount,myRate,editSplitPayer));}else{const dw=document.getElementById('edit-diffWho').value;const da=parseFloat(document.getElementById('edit-diffAmt').value)||0;({myShare,herShare,myRate}=calcSharesByDiff(amount,da,dw,editSplitPayer));}}
+    if(isSplit){if(editShareMode==='rate'){myRate=parseInt(document.getElementById('edit-myRate').value)||50;({myShare,herShare}=calcShares(amount,myRate,editSplitPayer));}else if(editShareMode==='diff'){const dw=document.getElementById('edit-diffWho').value;const da=parseFloat(document.getElementById('edit-diffAmt').value)||0;({myShare,herShare,myRate}=calcSharesByDiff(amount,da,dw,editSplitPayer));}else{const aw=document.getElementById('edit-amountWho').value;const av=parseFloat(document.getElementById('edit-amountShare').value)||0;({myShare,herShare,myRate}=calcSharesByAmount(amount,av,aw));}}
   if(isAdj){myRate=parseInt(document.getElementById('edit-adjRate').value)||50;myShare=Math.ceil(amount*myRate/100);herShare=Math.floor(amount*(100-myRate)/100);}
   const idx=transactions.findIndex(x=>x.id===editingId);
   const orig=transactions[idx];
-  transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:document.getElementById('edit-note').value,isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};  save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+  transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:document.getElementById('edit-note').value,isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,amountShare:(isSplit&&editShareMode==='amount')?(parseFloat(document.getElementById('edit-amountShare').value)||0):null,amountWho:(isSplit&&editShareMode==='amount')?document.getElementById('edit-amountWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};  save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
 }
 function deleteTransaction(){if(!editingId) return;if(!confirm('この取引を削除しますか？')) return;transactions=transactions.filter(x=>x.id!==editingId);save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();}
 let charts={};
