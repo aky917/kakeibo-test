@@ -333,11 +333,16 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       </div>
       <!-- 調整（下に移動） -->
       <div id="adjSection" style="display:none">
-        <div class="check-box-wrap" id="adjWrap" onclick="document.getElementById('isAdj').click()">
-          <div class="check-row" style="margin-bottom:0">
-            <input type="checkbox" id="isAdj" onchange="onAdjChange()" onclick="event.stopPropagation()">
-            <label for="isAdj" onclick="event.preventDefault()">🔧 調整対象（割り勘済み費用の自己使用分など）</label>
+        <div class="tg adj" id="adjWrap" onclick="document.getElementById('isAdj').click()">
+          <div class="tg-main">
+            <span class="tg-emoji">🔧</span>
+            <div class="tg-texts">
+              <div class="tg-label">調整対象</div>
+              <div class="tg-sub" id="adjSub">割り勘済み費用の自己使用分</div>
+            </div>
           </div>
+          <div class="sw"><div class="sw-knob"></div></div>
+          <input type="checkbox" id="isAdj" onchange="onAdjChange()" onclick="event.stopPropagation()" style="display:none">
         </div>
         <div id="adjRateSection" style="display:none;margin-bottom:8px">
           <div class="form-row" style="margin-bottom:4px">
