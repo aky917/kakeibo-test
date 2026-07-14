@@ -89,6 +89,24 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
 .check-box-wrap.active-adj{background:#FFF8EC;border-color:var(--orange)}
 .check-box-wrap.active-split{background:#EEF0FB;border-color:#7F77DD}
 .check-row label{font-size:13px;color:var(--text2);margin:0;cursor:pointer;font-weight:400}
+
+/* ===== トグルスイッチ（割り勘・調整） ===== */
+.tg{border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:8px;cursor:pointer;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background .2s,border-color .2s;user-select:none;-webkit-tap-highlight-color:transparent}
+.tg-main{display:flex;align-items:center;gap:10px;min-width:0}
+.tg-emoji{font-size:18px;flex-shrink:0}
+.tg-texts{min-width:0}
+.tg-label{font-size:14px;font-weight:600;line-height:1.2;color:var(--text)}
+.tg-sub{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.2}
+.sw{width:46px;height:28px;border-radius:14px;background:#D4D2CC;flex-shrink:0;position:relative;transition:background .25s cubic-bezier(.4,0,.2,1)}
+.sw-knob{width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .25s cubic-bezier(.4,0,.2,1),width .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tg.on.split{background:var(--purple-bg);border-color:var(--purple)}
+.tg.on.adj{background:#FFF8EC;border-color:var(--orange)}
+.tg.on.split .sw{background:var(--purple)}
+.tg.on.adj .sw{background:var(--orange)}
+.tg.on .sw-knob{left:21px}
+.tg:active .sw-knob{width:26px}
+.tg:active.on .sw-knob{left:17px}
+  
 .tx-item{display:flex;align-items:center;gap:10px;padding:.65rem 0;border-bottom:1px solid var(--border);cursor:pointer}
 .tx-item:last-child{border-bottom:none}
 .tx-item:active{opacity:.7}
@@ -260,11 +278,16 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       </div>
       <!-- 割り勘（上に移動） -->
       <div id="splitSection" style="display:none">
-        <div class="check-box-wrap" id="splitWrap" onclick="document.getElementById('isSplit').click()">
-          <div class="check-row" style="margin-bottom:0">
-            <input type="checkbox" id="isSplit" onchange="toggleSplitOptions()" onclick="event.stopPropagation()">
-            <label for="isSplit" onclick="event.preventDefault()">👫 割り勘対象にする</label>
+        <div class="tg split" id="splitWrap" onclick="document.getElementById('isSplit').click()">
+          <div class="tg-main">
+            <span class="tg-emoji">👫</span>
+            <div class="tg-texts">
+              <div class="tg-label">割り勘対象</div>
+              <div class="tg-sub" id="splitSub">パートナーと分担しない</div>
+            </div>
           </div>
+          <div class="sw"><div class="sw-knob"></div></div>
+          <input type="checkbox" id="isSplit" onchange="toggleSplitOptions()" onclick="event.stopPropagation()" style="display:none">
         </div>
         <div id="splitOptions" style="display:none">
           <div class="section-title" style="margin-bottom:6px">誰が払った？</div>
@@ -909,8 +932,8 @@ function calcSharesByAmount(amount, inputShare, who){
   else{herShare=Math.min(inputShare,amount);myShare=amount-herShare;}
   return {myShare,herShare,myRate:amount>0?Math.round(myShare/amount*100):50};
 }
-function toggleSplitOptions(){const checked=document.getElementById('isSplit').checked;document.getElementById('splitOptions').style.display=checked?'':'none';document.getElementById('splitWrap').className='check-box-wrap'+(checked?' active-split':'');if(checked){document.getElementById('isAdj').checked=false;document.getElementById('adjRateSection').style.display='none';document.getElementById('adjWrap').className='check-box-wrap';}updateSharePreview();}
-function onAdjChange(){const checked=document.getElementById('isAdj').checked;document.getElementById('adjRateSection').style.display=checked?'':'none';document.getElementById('adjWrap').className='check-box-wrap'+(checked?' active-adj':'');if(checked){document.getElementById('isSplit').checked=false;document.getElementById('splitOptions').style.display='none';document.getElementById('splitWrap').className='check-box-wrap';}updateAdjPreview();}
+function toggleSplitOptions(){const checked=document.getElementById('isSplit').checked;document.getElementById('splitOptions').style.display=checked?'':'none';document.getElementById('splitWrap').className='tg split'+(checked?' on':'');document.getElementById('splitSub').textContent=checked?'パートナーと分担する':'パートナーと分担しない';if(checked){document.getElementById('isAdj').checked=false;document.getElementById('adjRateSection').style.display='none';document.getElementById('adjWrap').className='tg adj';document.getElementById('adjSub').textContent='割り勘済み費用の自己使用分';}updateSharePreview();}
+function onAdjChange(){const checked=document.getElementById('isAdj').checked;document.getElementById('adjRateSection').style.display=checked?'':'none';document.getElementById('adjWrap').className='tg adj'+(checked?' on':'');document.getElementById('adjSub').textContent=checked?'調整を適用する':'割り勘済み費用の自己使用分';if(checked){document.getElementById('isSplit').checked=false;document.getElementById('splitOptions').style.display='none';document.getElementById('splitWrap').className='tg split';document.getElementById('splitSub').textContent='パートナーと分担しない';}updateAdjPreview();}
 function applyDefaultRate(){const cat=document.getElementById('category').value;const rate=catRates[cat]??50;document.getElementById('myRate').value=rate;document.getElementById('herRateDisp').textContent=(100-rate)+'%';updateSharePreview();}
 function onCategoryChange(){if(txType==='expense') applyDefaultRate();}
 function onAmountInput(){updateSharePreview();updateAdjPreview();}
@@ -933,9 +956,11 @@ function addTransaction(){
   document.getElementById('isSplit').checked=false;
   document.getElementById('isAdj').checked=false;
   document.getElementById('splitOptions').style.display='none';
-  document.getElementById('splitWrap').className='check-box-wrap';
+  document.getElementById('splitWrap').className='tg split';
+  document.getElementById('splitSub').textContent='パートナーと分担しない';
   document.getElementById('adjRateSection').style.display='none';
-  document.getElementById('adjWrap').className='check-box-wrap';
+  document.getElementById('adjWrap').className='tg adj';
+  document.getElementById('adjSub').textContent='割り勘済み費用の自己使用分';
   document.getElementById('sharePreview').textContent='';
   document.getElementById('diffAmt').value='';
   document.getElementById('diffWho').value='me';
