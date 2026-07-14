@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="icon" type="image/png" href="./icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -825,6 +825,15 @@ function getAllBudgets(){const budgets={};for(let i=0;i<localStorage.length;i++)
 function restoreAllBudgets(budgets){Object.entries(budgets).forEach(([k,v])=>localStorage.setItem(k,v));}
 function schedulePush(){localStorage.setItem(SP+'kakeibo_updatedAt',String(Date.now()));if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(cloudPush,1500);}
 function save(){try{localStorage.setItem(SP+'kakeibo_v7',JSON.stringify(transactions));}catch(e){}schedulePush();}
+
+let _lastId=0;
+function nextId(){
+  let id=Date.now();
+  if(id<=_lastId) id=_lastId+1;
+  _lastId=id;
+  return id;
+}
+  
 function fmt(n){return '\u00a5'+Math.abs(Math.round(n)).toLocaleString();}
 function fmtS(n){const a=Math.abs(n);return (n<0?'-':'')+(a>=10000?'\u00a5'+(a/10000).toFixed(1)+'\u4e07':'\u00a5'+a.toLocaleString());}
 function monthTx(y,m){const vy=y??viewYear,vm=m??viewMonth;return transactions.filter(t=>{const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});}
@@ -858,7 +867,7 @@ function postProvisional(y, m){
       const shares=calcShares(est,rate,f.payer||'me');
       myShare=shares.myShare;herShare=shares.herShare;
     }
-    transactions.push({id:Date.now()+Math.random(),type:'expense',amount:est,category:expCat,date,memo:f.name,note:isAuto?'(自動計上)':'(仮計上・要確定)',isSplit:!!f.isSplit,isAdj:false,payer:f.isSplit?(f.payer||'me'):null,myShare,herShare,myRate:f.isSplit?(f.myRate??50):null,fixedRef:ref,isProvisional:!isAuto});
+        transactions.push({id:nextId(),type:'expense',amount:est,category:expCat,date,memo:f.name,note:isAuto?'(自動計上)':'(仮計上・要確定)',isSplit:!!f.isSplit,isAdj:false,payer:f.isSplit?(f.payer||'me'):null,myShare,herShare,myRate:f.isSplit?(f.myRate??50):null,fixedRef:ref,isProvisional:!isAuto});
     added++;
   });
   if(added) save();
@@ -1017,7 +1026,7 @@ function addTransaction(){
   let myShare=null,herShare=null,myRate=null;
   if(isSplit){if(shareMode==='rate'){myRate=parseInt(document.getElementById('myRate').value)||50;({myShare,herShare}=calcShares(amount,myRate,splitPayer));}else if(shareMode==='diff'){const dw=document.getElementById('diffWho').value;const da=parseFloat(document.getElementById('diffAmt').value)||0;({myShare,herShare,myRate}=calcSharesByDiff(amount,da,dw,splitPayer));}else{const aw=document.getElementById('amountWho').value;const av=parseFloat(document.getElementById('amountShare').value)||0;({myShare,herShare,myRate}=calcSharesByAmount(amount,av,aw));}}
   if(isAdj){myRate=parseInt(document.getElementById('adjRate').value)||50;myShare=Math.ceil(amount*myRate/100);herShare=Math.floor(amount*(100-myRate)/100);}
-  transactions.push({id:Date.now(),type:txType,amount,category:document.getElementById('category').value,date:document.getElementById('txdate').value,memo:document.getElementById('memo').value||document.getElementById('category').value,note:document.getElementById('note').value,isSplit,isAdj,payer:isSplit?splitPayer:null,myShare,herShare,myRate,shareMode:isSplit?shareMode:null,diffAmt:(isSplit&&shareMode==='diff')?(parseFloat(document.getElementById('diffAmt').value)||0):null,diffWho:(isSplit&&shareMode==='diff')?document.getElementById('diffWho').value:null,amountShare:(isSplit&&shareMode==='amount')?(parseFloat(document.getElementById('amountShare').value)||0):null,amountWho:(isSplit&&shareMode==='amount')?document.getElementById('amountWho').value:null});  save();
+  transactions.push({id:nextId(),type:txType,amount,category:document.getElementById('category').value,date:document.getElementById('txdate').value,memo:document.getElementById('memo').value||document.getElementById('category').value,note:document.getElementById('note').value,isSplit,isAdj,payer:isSplit?splitPayer:null,myShare,herShare,myRate,shareMode:isSplit?shareMode:null,diffAmt:(isSplit&&shareMode==='diff')?(parseFloat(document.getElementById('diffAmt').value)||0):null,diffWho:(isSplit&&shareMode==='diff')?document.getElementById('diffWho').value:null,amountShare:(isSplit&&shareMode==='amount')?(parseFloat(document.getElementById('amountShare').value)||0):null,amountWho:(isSplit&&shareMode==='amount')?document.getElementById('amountWho').value:null});  save();
   document.getElementById('amount').value='';
   document.getElementById('memo').value='';
   document.getElementById('note').value='';
