@@ -1213,7 +1213,7 @@ function saveFixed(){
   const arr=loadFixed();
   const existingSkipped=editingFixedIdx!=null?(arr[editingFixedIdx].skippedYM||[]):[];
   const isSplit=document.getElementById('fixedIsSplit').checked;
-  const item={name,amount,cat:document.getElementById('fixedCat').value,billingDay:document.getElementById('fixedBillingDay').value.trim(),mode:document.getElementById('fixedMode').value||'remind',note:document.getElementById('fixedNote').value.trim(),skippedYM:existingSkipped,isSplit,payer:isSplit?fixedSplitPayer:null,myRate:isSplit?(parseInt(document.getElementById('fixedMyRate').value)||50):null};
+    const item={name,amount,cat:document.getElementById('fixedCat').value,billingDay:document.getElementById('fixedBillingDay').value.trim(),startYm:document.getElementById('fixedStartYm').value||'',mode:document.getElementById('fixedMode').value||'remind',note:document.getElementById('fixedNote').value.trim(),skippedYM:existingSkipped,isSplit,payer:isSplit?fixedSplitPayer:null,myRate:isSplit?(parseInt(document.getElementById('fixedMyRate').value)||50):null};
   if(editingFixedIdx!=null) arr[editingFixedIdx]=item;
   else arr.push(item);
   saveFixedData(arr);
