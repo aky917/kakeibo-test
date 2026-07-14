@@ -601,26 +601,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       <div><label>メモ</label><input type="text" id="edit-memo" list="memoSuggest" autocomplete="off"></div>
     </div>
     <div class="form-row full"><label>備考</label><textarea id="edit-note"></textarea></div>
-       <div id="edit-adjSection" style="display:none">
-      <div class="tg adj" id="edit-adjWrap" onclick="document.getElementById('edit-isAdj').click()">
-        <div class="tg-main">
-          <span class="tg-emoji">🔧</span>
-          <div class="tg-texts">
-            <div class="tg-label">調整対象</div>
-            <div class="tg-sub" id="edit-adjSub">割り勘済み費用の自己使用分</div>
-          </div>
-        </div>
-        <div class="sw"><div class="sw-knob"></div></div>
-        <input type="checkbox" id="edit-isAdj" onchange="editOnAdjChange()" style="display:none">
-      </div>
 
-      <div id="edit-adjRateSection" style="display:none;margin-bottom:8px">
-        <div class="form-row" style="margin-bottom:4px">
-          <div><label>自分の負担率（%）</label><input type="number" id="edit-adjRate" min="0" max="100" inputmode="numeric" oninput="editUpdateAdjPreview()"></div>
-          <div style="display:flex;align-items:flex-end"><div id="edit-adjPreview" style="font-size:12px;color:var(--text3);padding-bottom:10px">-</div></div>
-        </div>
-      </div>
-    </div>
     <div id="edit-splitSection" style="display:none">
       <div class="tg split" id="edit-splitWrap" onclick="document.getElementById('edit-isSplit').click()">
         <div class="tg-main">
@@ -674,6 +655,28 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
         <div style="font-size:11px;color:var(--text3);margin-bottom:6px" id="edit-sharePreview"></div>
       </div>
     </div>
+
+       <div id="edit-adjSection" style="display:none">
+      <div class="tg adj" id="edit-adjWrap" onclick="document.getElementById('edit-isAdj').click()">
+        <div class="tg-main">
+          <span class="tg-emoji">🔧</span>
+          <div class="tg-texts">
+            <div class="tg-label">調整対象</div>
+            <div class="tg-sub" id="edit-adjSub">割り勘済み費用の自己使用分</div>
+          </div>
+        </div>
+        <div class="sw"><div class="sw-knob"></div></div>
+        <input type="checkbox" id="edit-isAdj" onchange="editOnAdjChange()" style="display:none">
+      </div>
+
+      <div id="edit-adjRateSection" style="display:none;margin-bottom:8px">
+        <div class="form-row" style="margin-bottom:4px">
+          <div><label>自分の負担率（%）</label><input type="number" id="edit-adjRate" min="0" max="100" inputmode="numeric" oninput="editUpdateAdjPreview()"></div>
+          <div style="display:flex;align-items:flex-end"><div id="edit-adjPreview" style="font-size:12px;color:var(--text3);padding-bottom:10px">-</div></div>
+        </div>
+      </div>
+    </div>
+    
     <button class="btn primary" onclick="saveEdit()">保存する</button>
     <button class="btn danger" style="margin-top:8px" onclick="deleteTransaction()">この取引を削除する</button>
   </div>
