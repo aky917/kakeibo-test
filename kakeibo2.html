@@ -601,8 +601,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       <div><label>メモ</label><input type="text" id="edit-memo" list="memoSuggest" autocomplete="off"></div>
     </div>
     <div class="form-row full"><label>備考</label><textarea id="edit-note"></textarea></div>
-    <div id="edit-adjSection" style="display:none">
-      <div class="check-row"><input type="checkbox" id="edit-isAdj" onchange="editOnAdjChange()"><label for="edit-isAdj">調整対象</label></div>
+       <div id="edit-adjSection" style="display:none">
+      <div class="tg adj" id="edit-adjWrap" onclick="document.getElementById('edit-isAdj').click()">
+        <div class="tg-main">
+          <span class="tg-emoji">🔧</span>
+          <div class="tg-texts">
+            <div class="tg-label">調整対象</div>
+            <div class="tg-sub" id="edit-adjSub">割り勘済み費用の自己使用分</div>
+          </div>
+        </div>
+        <div class="sw"><div class="sw-knob"></div></div>
+        <input type="checkbox" id="edit-isAdj" onchange="editOnAdjChange()" style="display:none">
+      </div>
+
       <div id="edit-adjRateSection" style="display:none;margin-bottom:8px">
         <div class="form-row" style="margin-bottom:4px">
           <div><label>自分の負担率（%）</label><input type="number" id="edit-adjRate" min="0" max="100" inputmode="numeric" oninput="editUpdateAdjPreview()"></div>
@@ -611,7 +622,18 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       </div>
     </div>
     <div id="edit-splitSection" style="display:none">
-      <div class="check-row"><input type="checkbox" id="edit-isSplit" onchange="editToggleSplit()"><label for="edit-isSplit">割り勘対象にする</label></div>
+          <div id="edit-splitSection" style="display:none">
+      <div class="tg split" id="edit-splitWrap" onclick="document.getElementById('edit-isSplit').click()">
+        <div class="tg-main">
+          <span class="tg-emoji">👫</span>
+          <div class="tg-texts">
+            <div class="tg-label">割り勘対象</div>
+            <div class="tg-sub" id="edit-splitSub">パートナーと分担しない</div>
+          </div>
+        </div>
+        <div class="sw"><div class="sw-knob"></div></div>
+        <input type="checkbox" id="edit-isSplit" onchange="editToggleSplit()" style="display:none">
+      </div>
       <div id="edit-splitOptions" style="display:none">
         <div class="section-title" style="margin-bottom:6px">誰が払った？</div>
         <div class="toggle">
@@ -1206,10 +1228,15 @@ function openEdit(id){
   const isAdj=t.isAdj||t.type==='adjustment';
   document.getElementById('edit-isAdj').checked=isAdj;
   document.getElementById('edit-adjRateSection').style.display=isAdj?'':'none';
+  document.getElementById('edit-adjWrap').className='tg adj'+(isAdj?' on':'');
+  document.getElementById('edit-adjSub').textContent=isAdj?'調整を適用する':'割り勘済み費用の自己使用分';
   if(isAdj) document.getElementById('edit-adjRate').value=t.myRate??50;
   editUpdateAdjPreview();
-  document.getElementById('edit-isSplit').checked=!!t.isSplit&&!isAdj;
-  document.getElementById('edit-splitOptions').style.display=(t.isSplit&&!isAdj)?'':'none';
+  const eSplit=!!t.isSplit&&!isAdj;
+  document.getElementById('edit-isSplit').checked=eSplit;
+  document.getElementById('edit-splitOptions').style.display=eSplit?'':'none';
+  document.getElementById('edit-splitWrap').className='tg split'+(eSplit?' on':'');
+  document.getElementById('edit-splitSub').textContent=eSplit?'パートナーと分担する':'パートナーと分担しない';
   document.getElementById('edit-btn-me').className='toggle-btn'+(editSplitPayer==='me'?' active me':'');
   document.getElementById('edit-btn-her').className='toggle-btn'+(editSplitPayer==='her'?' active her':'');
   const em=t.isSplit?(t.shareMode||'rate'):'rate';
@@ -1234,8 +1261,8 @@ function closeModalDirect(){document.getElementById('editModal').style.display='
 function editSetType(t){editTxType=t;document.getElementById('edit-btn-income').className='toggle-btn'+(t==='income'?' active income':'');document.getElementById('edit-btn-expense').className='toggle-btn'+(t==='expense'?' active expense':'');document.getElementById('edit-adjSection').style.display=t==='expense'?'':'none';document.getElementById('edit-splitSection').style.display=t==='expense'?'':'none';buildCatOptions(document.getElementById('edit-category'),t);}
 function editSetPayer(p){editSplitPayer=p;document.getElementById('edit-btn-me').className='toggle-btn'+(p==='me'?' active me':'');document.getElementById('edit-btn-her').className='toggle-btn'+(p==='her'?' active her':'');editOnRateInput();}
 function editSetShareMode(m){editShareMode=m;document.getElementById('edit-mode-rate').className='toggle-btn'+(m==='rate'?' active sel':'');document.getElementById('edit-mode-diff').className='toggle-btn'+(m==='diff'?' active sel':'');document.getElementById('edit-mode-amount').className='toggle-btn'+(m==='amount'?' active sel':'');document.getElementById('edit-share-rate-input').style.display=m==='rate'?'':'none';document.getElementById('edit-share-diff-input').style.display=m==='diff'?'':'none';document.getElementById('edit-share-amount-input').style.display=m==='amount'?'':'none';}
-function editOnAmountShareInput(){const amt=parseFloat(document.getElementById('edit-amount').value)||0;if(!amt||!document.getElementById('edit-isSplit').checked){document.getElementById('edit-sharePreview').textContent='';return;}const aw=document.getElementById('edit-amountWho').value;const av=parseFloat(document.getElementById('edit-amountShare').value)||0;const {myShare,herShare}=calcSharesByAmount(amt,av,aw);document.getElementById('edit-sharePreview').textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}function editToggleSplit(){const checked=document.getElementById('edit-isSplit').checked;document.getElementById('edit-splitOptions').style.display=checked?'':'none';if(checked){document.getElementById('edit-isAdj').checked=false;document.getElementById('edit-adjRateSection').style.display='none';}}
-function editOnAdjChange(){const checked=document.getElementById('edit-isAdj').checked;document.getElementById('edit-adjRateSection').style.display=checked?'':'none';if(checked){document.getElementById('edit-isSplit').checked=false;document.getElementById('edit-splitOptions').style.display='none';}editUpdateAdjPreview();}
+function editOnAmountShareInput(){const amt=parseFloat(document.getElementById('edit-amount').value)||0;if(!amt||!document.getElementById('edit-isSplit').checked){document.getElementById('edit-sharePreview').textContent='';return;}const aw=document.getElementById('edit-amountWho').value;const av=parseFloat(document.getElementById('edit-amountShare').value)||0;const {myShare,herShare}=calcSharesByAmount(amt,av,aw);document.getElementById('edit-sharePreview').textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}function editToggleSplit(){const checked=document.getElementById('edit-isSplit').checked;document.getElementById('edit-splitOptions').style.display=checked?'':'none';document.getElementById('edit-splitWrap').className='tg split'+(checked?' on':'');document.getElementById('edit-splitSub').textContent=checked?'パートナーと分担する':'パートナーと分担しない';if(checked){document.getElementById('edit-isAdj').checked=false;document.getElementById('edit-adjRateSection').style.display='none';document.getElementById('edit-adjWrap').className='tg adj';document.getElementById('edit-adjSub').textContent='割り勘済み費用の自己使用分';}}
+function editOnAdjChange(){const checked=document.getElementById('edit-isAdj').checked;document.getElementById('edit-adjRateSection').style.display=checked?'':'none';document.getElementById('edit-adjWrap').className='tg adj'+(checked?' on':'');document.getElementById('edit-adjSub').textContent=checked?'調整を適用する':'割り勘済み費用の自己使用分';if(checked){document.getElementById('edit-isSplit').checked=false;document.getElementById('edit-splitOptions').style.display='none';document.getElementById('edit-splitWrap').className='tg split';document.getElementById('edit-splitSub').textContent='パートナーと分担しない';}editUpdateAdjPreview();}
 function editUpdateAdjPreview(){const amt=parseFloat(document.getElementById('edit-amount').value)||0;const rate=parseInt(document.getElementById('edit-adjRate').value)||50;const prev=document.getElementById('edit-adjPreview');if(!document.getElementById('edit-isAdj').checked||!amt){prev.textContent='-';return;}prev.textContent=`自分+${fmt(Math.ceil(amt*rate/100))} / ${partnerName}-${fmt(Math.floor(amt*(100-rate)/100))}`;}
 function editOnAmountInput(){editOnRateInput();editUpdateAdjPreview();}
 function editOnRateInput(){const v=parseInt(document.getElementById('edit-myRate').value)||0;document.getElementById('edit-herRateDisp').textContent=(100-v)+'%';const amt=parseFloat(document.getElementById('edit-amount').value)||0;if(amt&&document.getElementById('edit-isSplit').checked){const {myShare,herShare}=calcShares(amt,v,editSplitPayer);document.getElementById('edit-sharePreview').textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}else document.getElementById('edit-sharePreview').textContent='';}
