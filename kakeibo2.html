@@ -1132,10 +1132,6 @@ function applyHistFilters(list){
     if(fType && t.type!==fType) return false;
     if(fCat && t.category!==fCat) return false;
     if(fPayer){
-    
-    if(fType && t.type!==fType) return false;
-    if(fCat && t.category!==fCat) return false;
-    if(fPayer){
       const isAdj=t.isAdj||t.type==='adjustment';
       if(fPayer==='me' && !(t.isSplit&&t.payer==='me')) return false;
       if(fPayer==='her' && !(t.isSplit&&t.payer==='her')) return false;
@@ -1145,6 +1141,8 @@ function applyHistFilters(list){
     return true;
   });
 }
+
+
 function renderHistory(){
   buildHistCatFilter();
   let tx=getHistTargetTx().slice();
