@@ -300,13 +300,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       <div class="form-row">
         <div><label>金額（円）</label><input type="text" id="amount" placeholder="0 または (100+200)×3" inputmode="numeric" oninput="onAmountInput()"><div id="amountCalc" style="font-size:11px;color:var(--text3);margin-top:2px;min-height:14px"></div>
           <div class="calc-ops">
-            <button type="button" class="calc-op" onclick="appendOp('+')">＋</button>
-            <button type="button" class="calc-op" onclick="appendOp('-')">－</button>
-            <button type="button" class="calc-op" onclick="appendOp('*')">×</button>
-            <button type="button" class="calc-op" onclick="appendOp('/')">÷</button>
-            <button type="button" class="calc-op" onclick="appendOp('(')">(</button>
-            <button type="button" class="calc-op" onclick="appendOp(')')">)</button>
-            <button type="button" class="calc-op clear" onclick="clearAmount()">C</button>
+            <div class="calc-row">
+              <button type="button" class="calc-op" onclick="appendOp('+')">＋</button>
+              <button type="button" class="calc-op" onclick="appendOp('-')">－</button>
+              <button type="button" class="calc-op" onclick="appendOp('*')">×</button>
+              <button type="button" class="calc-op" onclick="appendOp('/')">÷</button>
+            </div>
+            <div class="calc-row">
+              <button type="button" class="calc-op" onclick="appendOp('(')">(</button>
+              <button type="button" class="calc-op" onclick="appendOp(')')">)</button>
+              <button type="button" class="calc-op clear" onclick="clearAmount()">C クリア</button>
+            </div>
           </div>
         </div>
         <div><label>カテゴリ</label><select id="category" onchange="onCategoryChange()"></select></div>
