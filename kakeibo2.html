@@ -290,7 +290,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
         <button class="toggle-btn expense" id="btn-expense" onclick="setType('expense')">－ 支出</button>
       </div>
       <div class="form-row">
-        <div><label>金額（円）</label><input type="text" id="amount" placeholder="0 または 1200+800" inputmode="text" oninput="onAmountInput()"><div id="amountCalc" style="font-size:11px;color:var(--text3);margin-top:2px;min-height:14px"></div></div>
+        <div><label>金額（円）</label><input type="text" id="amount" placeholder="0 または 1200+800" inputmode="decimal" oninput="onAmountInput()"><div id="amountCalc" style="font-size:11px;color:var(--text3);margin-top:2px;min-height:14px"></div></div>
         <div><label>カテゴリ</label><select id="category" onchange="onCategoryChange()"></select></div>
       </div>
       <div class="form-row">
@@ -1131,7 +1131,7 @@ function addTransaction(){
     updateHeader();renderHistory();renderSplit();renderReviews();updateMemoSuggestions();renderTagChips();
   showSyncStatus('✅ 記録しました '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}),'var(--green-dark)');
   showSuccessToast('記録しました');
-  document.getElementById('amount').focus();
+  document.getElementById('amount').blur();
 }
 
 let _toastTimer=null;
