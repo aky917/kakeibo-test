@@ -166,10 +166,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
 
 
 /* ===== 電卓演算子ボタン ===== */
-.calc-ops{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
-.calc-op{flex:1;min-width:32px;padding:7px 0;font-size:15px;font-weight:600;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;transition:all .1s}
+.calc-ops{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+.calc-row{display:flex;gap:4px}
+.calc-op{flex:1;padding:8px 0;font-size:15px;font-weight:600;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;transition:all .1s}
 .calc-op:active{background:var(--hdr);color:#fff;transform:scale(.95)}
-.calc-op.clear{color:var(--red-dark);background:var(--red-bg);border-color:rgba(208,88,48,.3)}
+.calc-op.clear{flex:2;color:var(--red-dark);background:var(--red-bg);border-color:rgba(208,88,48,.3);font-size:13px}
 .calc-op.clear:active{background:var(--red);color:#fff}
 
 /* ===== 記録成功トースト ===== */
