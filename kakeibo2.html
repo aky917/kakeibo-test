@@ -164,6 +164,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
 .prov-chip{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:10px;cursor:pointer;font-family:inherit;color:var(--text2)}
 .prov-chip:active{background:var(--hdr);color:#fff}
 
+
+/* ===== 電卓演算子ボタン ===== */
+.calc-ops{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.calc-op{flex:1;min-width:32px;padding:7px 0;font-size:15px;font-weight:600;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;transition:all .1s}
+.calc-op:active{background:var(--hdr);color:#fff;transform:scale(.95)}
+.calc-op.clear{color:var(--red-dark);background:var(--red-bg);border-color:rgba(208,88,48,.3)}
+.calc-op.clear:active{background:var(--red);color:#fff}
+
 /* ===== 記録成功トースト ===== */
 #successToast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.7);background:rgba(29,158,117,.96);color:#fff;border-radius:20px;padding:22px 30px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:3000;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 30px rgba(0,0,0,.25)}
 #successToast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
@@ -290,7 +298,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
         <button class="toggle-btn expense" id="btn-expense" onclick="setType('expense')">－ 支出</button>
       </div>
       <div class="form-row">
-        <div><label>金額（円）</label><input type="text" id="amount" placeholder="0 または 1200+800" inputmode="decimal" oninput="onAmountInput()"><div id="amountCalc" style="font-size:11px;color:var(--text3);margin-top:2px;min-height:14px"></div></div>
+        <div><label>金額（円）</label><input type="text" id="amount" placeholder="0 または (100+200)×3" inputmode="numeric" oninput="onAmountInput()"><div id="amountCalc" style="font-size:11px;color:var(--text3);margin-top:2px;min-height:14px"></div>
+          <div class="calc-ops">
+            <button type="button" class="calc-op" onclick="appendOp('+')">＋</button>
+            <button type="button" class="calc-op" onclick="appendOp('-')">－</button>
+            <button type="button" class="calc-op" onclick="appendOp('*')">×</button>
+            <button type="button" class="calc-op" onclick="appendOp('/')">÷</button>
+            <button type="button" class="calc-op" onclick="appendOp('(')">(</button>
+            <button type="button" class="calc-op" onclick="appendOp(')')">)</button>
+            <button type="button" class="calc-op clear" onclick="clearAmount()">C</button>
+          </div>
+        </div>
         <div><label>カテゴリ</label><select id="category" onchange="onCategoryChange()"></select></div>
       </div>
       <div class="form-row">
@@ -1580,6 +1598,29 @@ function editOnAmountShareInput(){const amt=parseFloat(document.getElementById('
 function editOnAdjChange(){const checked=document.getElementById('edit-isAdj').checked;document.getElementById('edit-adjRateSection').style.display=checked?'':'none';document.getElementById('edit-adjWrap').className='tg adj'+(checked?' on':'');document.getElementById('edit-adjSub').textContent=checked?'調整を適用する':'割り勘済み費用の自己使用分';if(checked){document.getElementById('edit-isSplit').checked=false;document.getElementById('edit-splitOptions').style.display='none';document.getElementById('edit-splitWrap').className='tg split';document.getElementById('edit-splitSub').textContent='パートナーと分担しない';}editUpdateAdjPreview();}
 function editUpdateAdjPreview(){const amt=parseFloat(document.getElementById('edit-amount').value)||0;const rate=parseInt(document.getElementById('edit-adjRate').value)||50;const prev=document.getElementById('edit-adjPreview');if(!document.getElementById('edit-isAdj').checked||!amt){prev.textContent='-';return;}prev.textContent=`自分+${fmt(Math.ceil(amt*rate/100))} / ${partnerName}-${fmt(Math.floor(amt*(100-rate)/100))}`;}
 function editOnAmountInput(){editOnRateInput();editUpdateAdjPreview();}
+
+function appendOp(op){
+  const el=document.getElementById('amount');
+  let v=el.value;
+  // 括弧はそのまま追加、演算子は連続を防止（末尾が演算子なら置き換え）
+  if(op==='('||op===')'){
+    v=v+op;
+  }else{
+    if(/[+\-*/]$/.test(v)){ v=v.slice(0,-1)+op; }  // 末尾演算子を上書き
+    else if(v===''){ /* 空の時は演算子だけ置かない（先頭は無視）*/ return; }
+    else{ v=v+op; }
+  }
+  el.value=v;
+  onAmountInput();
+  el.focus();
+}
+function clearAmount(){
+  const el=document.getElementById('amount');
+  el.value='';
+  onAmountInput();
+  el.focus();
+}
+  
 function editOnRateInput(){const v=parseInt(document.getElementById('edit-myRate').value)||0;document.getElementById('edit-herRateDisp').textContent=(100-v)+'%';const amt=parseFloat(document.getElementById('edit-amount').value)||0;if(amt&&document.getElementById('edit-isSplit').checked){const {myShare,herShare}=calcShares(amt,v,editSplitPayer);document.getElementById('edit-sharePreview').textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}else document.getElementById('edit-sharePreview').textContent='';}
 function editOnDiffInput(){const amt=parseFloat(document.getElementById('edit-amount').value)||0;if(!amt||!document.getElementById('edit-isSplit').checked){document.getElementById('edit-sharePreview').textContent='';return;}const dw=document.getElementById('edit-diffWho').value;const da=parseFloat(document.getElementById('edit-diffAmt').value)||0;const {myShare,herShare}=calcSharesByDiff(amt,da,dw,editSplitPayer);document.getElementById('edit-sharePreview').textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}
 function saveEdit(){
