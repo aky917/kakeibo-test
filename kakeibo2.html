@@ -269,7 +269,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
         <div><label>カテゴリ</label><select id="category" onchange="onCategoryChange()"></select></div>
       </div>
       <div class="form-row">
-        <div><label>日付</label><input type="date" id="txdate"></div>
+        <div>
+          <label>日付</label>
+          <input type="date" id="txdate">
+          <div style="display:flex;gap:5px;margin-top:5px">
+            <button type="button" class="prov-chip" style="flex:1;padding:5px" onclick="setDateQuick(0)">今日</button>
+            <button type="button" class="prov-chip" style="flex:1;padding:5px" onclick="setDateQuick(-1)">昨日</button>
+          </div>
+        </div>
+
         <div><label>メモ</label><input type="text" id="memo" placeholder="例：ランチ" list="memoSuggest" autocomplete="off"><datalist id="memoSuggest"></datalist></div>
       </div>
       <div class="form-row full">
@@ -1046,6 +1054,12 @@ function onAmountInput(){
   updateSharePreview();updateAdjPreview();
 }
 
+function setDateQuick(offset){
+  const d=new Date();
+  d.setDate(d.getDate()+offset);
+  document.getElementById('txdate').value=d.toISOString().slice(0,10);
+}
+  
 function onRateInput(){const v=parseInt(document.getElementById('myRate').value)||0;document.getElementById('herRateDisp').textContent=(100-v)+'%';updateSharePreview();}
 function onDiffInput(){updateSharePreview();}
 function updateAdjPreview(){const amt=getAmountValue()||0;const rate=parseInt(document.getElementById('adjRate').value)||50;const prev=document.getElementById('adjPreview');if(!document.getElementById('isAdj').checked||!amt){prev.textContent='-';return;}prev.textContent=`自分+${fmt(Math.ceil(amt*rate/100))} / ${partnerName}-${fmt(Math.floor(amt*(100-rate)/100))}`;}
