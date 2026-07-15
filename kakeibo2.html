@@ -219,20 +219,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
   .rep-actions{display:none!important}
   body>.container{display:none!important}
 }
-
-<div id="successToast">
-  <div class="st-check">
-    <svg viewBox="0 0 52 52">
-      <circle class="st-check-circle" cx="26" cy="26" r="23" fill="none" stroke="#1D9E75" stroke-width="4"/>
-      <path class="st-check-tick" fill="none" stroke="#1D9E75" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M15 27 l8 8 l15 -16"/>
-    </svg>
-  </div>
-  <div class="st-text" id="successToastText">記録しました</div>
-</div>
   
 @media print{body{background:#fff}.no-print{display:none!important}.container{max-width:100%;padding:0}.card{border:1px solid #ccc;break-inside:avoid}}
+
+
+
 </style>
 </head>
+
+
 <body>
 <div id="lockScreen" style="display:none;position:fixed;inset:0;background:var(--hdr);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px">
   <div style="font-size:44px">🔐</div>
@@ -766,6 +761,16 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
   <button class="btn primary" onclick="window.print()" style="flex:2;margin-top:0">🖨️ 印刷 / PDF保存</button>
   </div>
   <div id="reportBody"></div>
+</div>
+
+<div id="successToast">
+  <div class="st-check">
+    <svg viewBox="0 0 52 52">
+      <circle class="st-check-circle" cx="26" cy="26" r="23" fill="none" stroke="#1D9E75" stroke-width="4"/>
+      <path class="st-check-tick" fill="none" stroke="#1D9E75" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M15 27 l8 8 l15 -16"/>
+    </svg>
+  </div>
+  <div class="st-text" id="successToastText">記録しました</div>
 </div>
   
 <script>
@@ -1317,7 +1322,9 @@ function renderHistory(){
     const bg=isAdj?'#FFF8EC':(t.isProvisional?'#FFF0D0':((CAT_COLORS[t.category]||'#888')+'22'));
     const modeLine=t.isSplit?`<div class="tx-sub" style="color:var(--purple)">${shareModeLabel(t)}</div>`:'';
     return `<div class="tx-swipe-wrap" data-id="${t.id}"><button class="tx-swipe-del" onclick="event.stopPropagation();deleteById(${t.id})">削除</button><div class="tx-item${t.isProvisional?' provisional':''}" onclick="openEdit(${t.id})"><div class="tx-icon" style="background:${bg}">${icon}</div><div class="tx-info"><div class="tx-memo">${t.memo}${badge}</div><div class="tx-sub">${t.date}${t.category?' · '+t.category:''}${t.note?' · '+t.note.slice(0,20):''}</div>${modeLine}</div><div class="tx-amount" style="color:${color}">${sign}${fmt(t.amount)}</div><div style="font-size:13px;color:var(--text3)">›</div></div></div>`;
-  }
+  }).join('');
+  initSwipe();
+}
 
 // ID指定で削除
 function deleteById(id){
@@ -1906,6 +1913,9 @@ if(IS_TEST){
 }else{
   if(!getToken()){showLock();}else{cloudPull();}
 }
+
+
+  
 </script>
 </body>
 </html>
