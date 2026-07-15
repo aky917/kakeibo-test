@@ -717,6 +717,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
     </div>
     
     <button class="btn primary" onclick="saveEdit()">保存する</button>
+    <button class="btn" style="margin-top:8px;background:#EEF4FB;color:var(--blue);border-color:var(--blue)" onclick="duplicateTransaction()">🔁 これを複製して入力</button>
     <button class="btn danger" style="margin-top:8px" onclick="deleteTransaction()">この取引を削除する</button>
   </div>
 </div>
@@ -1435,6 +1436,52 @@ function saveEdit(){
 }
 function deleteTransaction(){if(!editingId) return;if(!confirm('この取引を削除しますか？')) return;transactions=transactions.filter(x=>x.id!==editingId);save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();}
 let charts={};
+
+function duplicateTransaction(){
+  if(!editingId) return;
+  const t=transactions.find(x=>x.id===editingId);
+  if(!t) return;
+  // 編集モーダルを閉じる
+  closeModalDirect();
+  // 入力タブに切り替え
+  switchTab('home');
+  // 種別を復元
+  setType(t.type==='adjustment'?'expense':t.type);
+  // 基本項目をフォームに反映
+  document.getElementById('amount').value=t.amount;
+  buildCatOptions(document.getElementById('category'),txType,t.category);
+  document.getElementById('memo').value=t.memo||'';
+  document.getElementById('note').value=t.note||'';
+  // 日付は今日
+  document.getElementById('txdate').value=new Date().toISOString().slice(0,10);
+  // 割り勘・調整の復元（支出のみ）
+  if(txType==='expense'){
+    const isAdj=t.isAdj||t.type==='adjustment';
+    const isSplit=!!t.isSplit&&!isAdj;
+    // 調整
+    document.getElementById('isAdj').checked=isAdj;
+    onAdjChange();
+    if(isAdj){document.getElementById('adjRate').value=t.myRate??50;updateAdjPreview();}
+    // 割り勘
+    document.getElementById('isSplit').checked=isSplit;
+    toggleSplitOptions();
+    if(isSplit){
+      setPayer(t.payer||'me');
+      const mode=t.shareMode||'rate';
+      setShareMode(mode);
+      document.getElementById('myRate').value=t.myRate??50;
+      document.getElementById('herRateDisp').textContent=(100-(t.myRate??50))+'%';
+      document.getElementById('diffWho').value=t.diffWho||'me';
+      document.getElementById('diffAmt').value=t.diffAmt||'';
+      document.getElementById('amountWho').value=t.amountWho||'me';
+      document.getElementById('amountShare').value=t.amountShare||'';
+      updateSharePreview();
+    }
+  }
+  showSyncStatus('🔁 複製しました。金額など確認して記録してください','var(--blue)');
+  document.getElementById('amount').focus();
+}
+  
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 function getMonthRange(n){const arr=[];for(let i=n-1;i>=0;i--){let m=viewMonth-i,y=viewYear;while(m<0){m+=12;y--;}arr.push({m,y,label:(m+1)+'月'});}return arr;}
 function renderMyCharts(){
