@@ -822,6 +822,8 @@ let editTxType='expense', editSplitPayer='me', editShareMode='rate';
 let viewYear=new Date().getFullYear(), viewMonth=new Date().getMonth();
 let annualYear=new Date().getFullYear();
 let transactions=[], editingId=null;
+const AUTO_NOTES=['(仮計上・要確定)','(自動計上)'];
+function stripAutoNote(note){return AUTO_NOTES.includes(String(note||'').trim())?'':(note||'');}
 let myName='自分', partnerName='彼女';
 let catRates={};
 EXPENSE_CATS.forEach(c=>catRates[c]=50);
@@ -1560,7 +1562,7 @@ function openEdit(id){
   document.getElementById('edit-amount').value=t.amount;
   document.getElementById('edit-date').value=t.date;
   document.getElementById('edit-memo').value=t.memo;
-  document.getElementById('edit-note').value=t.note||'';
+  document.getElementById('edit-note').value=stripAutoNote(t.note);
   const isExpense=editTxType==='expense';
   document.getElementById('edit-adjSection').style.display=isExpense?'':'none';
   document.getElementById('edit-splitSection').style.display=isExpense?'':'none';
@@ -1640,7 +1642,7 @@ function saveEdit(){
   if(isAdj){myRate=parseInt(document.getElementById('edit-adjRate').value)||50;myShare=Math.ceil(amount*myRate/100);herShare=Math.floor(amount*(100-myRate)/100);}
   const idx=transactions.findIndex(x=>x.id===editingId);
   const orig=transactions[idx];
-  transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:document.getElementById('edit-note').value,isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,amountShare:(isSplit&&editShareMode==='amount')?(parseFloat(document.getElementById('edit-amountShare').value)||0):null,amountWho:(isSplit&&editShareMode==='amount')?document.getElementById('edit-amountWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};  save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+  transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:stripAutoNote(document.getElementById('edit-note').value),isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,amountShare:(isSplit&&editShareMode==='amount')?(parseFloat(document.getElementById('edit-amountShare').value)||0):null,amountWho:(isSplit&&editShareMode==='amount')?document.getElementById('edit-amountWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};  save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
 }
 function deleteTransaction(){if(!editingId) return;if(!confirm('この取引を削除しますか？')) return;transactions=transactions.filter(x=>x.id!==editingId);save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();}
 let charts={};
