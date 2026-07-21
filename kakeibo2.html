@@ -824,6 +824,7 @@ let annualYear=new Date().getFullYear();
 let transactions=[], editingId=null;
 const AUTO_NOTES=['(仮計上・要確定)','(自動計上)'];
 function stripAutoNote(note){return AUTO_NOTES.includes(String(note||'').trim())?'':(note||'');}
+function catLabel(c){return String(c||'').replace(/^[^\s]+\s+/,'').trim();}
 let myName='自分', partnerName='彼女';
 let catRates={};
 EXPENSE_CATS.forEach(c=>catRates[c]=50);
@@ -1324,7 +1325,7 @@ function renderHistory(){
       else{dispAmt=t.amount;color='var(--red)';sign='-';}
       const icon=(t.isAdj||t.type==='adjustment')?'🔧':(t.isProvisional?'⏳':(t.category?t.category.slice(0,2):'💴'));
       const bg=(t.isAdj||t.type==='adjustment')?'#FFF8EC':(t.isProvisional?'#FFF0D0':((CAT_COLORS[t.category]||'#888')+'22'));
-      return `<div class="tx-swipe-wrap" data-id="${t.id}"><button class="tx-swipe-del" onclick="event.stopPropagation();deleteById(${t.id})">削除</button><div class="tx-item${t.isProvisional?' provisional':''}" onclick="openEdit(${t.id})"><div class="tx-icon" style="background:${bg}">${icon}</div><div class="tx-info"><div class="tx-memo">${t.memo}${t.isProvisional?'<span class="badge badge-prov">仮</span>':''}</div><div class="tx-sub">${hideDate?'':t.date}${t.category?((hideDate?'':' · ')+t.category):''}${note2}</div></div><div class="tx-amount" style="color:${color}">${sign}${fmt(dispAmt)}</div><div style="font-size:13px;color:var(--text3)">›</div></div></div>`;
+      return `<div class="tx-swipe-wrap" data-id="${t.id}"><button class="tx-swipe-del" onclick="event.stopPropagation();deleteById(${t.id})">削除</button><div class="tx-item${t.isProvisional?' provisional':''}" onclick="openEdit(${t.id})"><div class="tx-icon" style="background:${bg}">${icon}</div><div class="tx-info"><div class="tx-memo">${t.memo}${t.isProvisional?'<span class="badge badge-prov">仮</span>':''}</div><div class="tx-sub">${hideDate?'':t.date}${t.category?((hideDate?'':' · ')+catLabel(t.category)):''}${note2}</div></div><div class="tx-amount" style="color:${color}">${sign}${fmt(dispAmt)}</div><div style="font-size:13px;color:var(--text3)">›</div></div></div>`;
     }
     const isAdj=t.isAdj||t.type==='adjustment';
     let badge='';
@@ -1337,7 +1338,7 @@ function renderHistory(){
     const icon=isAdj?'🔧':(t.isProvisional?'⏳':(t.category?t.category.slice(0,2):'💴'));
     const bg=isAdj?'#FFF8EC':(t.isProvisional?'#FFF0D0':((CAT_COLORS[t.category]||'#888')+'22'));
     const modeLine=t.isSplit?`<div class="tx-sub" style="color:var(--purple)">${shareModeLabel(t)}</div>`:'';
-    return `<div class="tx-swipe-wrap" data-id="${t.id}"><button class="tx-swipe-del" onclick="event.stopPropagation();deleteById(${t.id})">削除</button><div class="tx-item${t.isProvisional?' provisional':''}" onclick="openEdit(${t.id})"><div class="tx-icon" style="background:${bg}">${icon}</div><div class="tx-info"><div class="tx-memo">${t.memo}${badge}</div><div class="tx-sub">${hideDate?'':t.date}${t.category?((hideDate?'':' · ')+t.category):''}${t.note?((hideDate&&!t.category?'':' · ')+t.note.slice(0,20)):''}</div>${modeLine}</div><div class="tx-amount" style="color:${color}">${sign}${fmt(t.amount)}</div><div style="font-size:13px;color:var(--text3)">›</div></div></div>`;
+    return `<div class="tx-swipe-wrap" data-id="${t.id}"><button class="tx-swipe-del" onclick="event.stopPropagation();deleteById(${t.id})">削除</button><div class="tx-item${t.isProvisional?' provisional':''}" onclick="openEdit(${t.id})"><div class="tx-icon" style="background:${bg}">${icon}</div><div class="tx-info"><div class="tx-memo">${t.memo}${badge}</div><div class="tx-sub">${hideDate?'':t.date}${t.category?((hideDate?'':' · ')+catLabel(t.category)):''}${t.note?((hideDate&&!t.category?'':' · ')+t.note.slice(0,20)):''}</div>${modeLine}</div><div class="tx-amount" style="color:${color}">${sign}${fmt(t.amount)}</div><div style="font-size:13px;color:var(--text3)">›</div></div></div>`;
   };
   // 「自分だけ」モードのサマリー
   if(histMode==='my'){
