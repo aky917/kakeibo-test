@@ -22,6 +22,7 @@
 :root{--hdr:#111110;--hdr-border:rgba(255,255,255,.07);--bg:#F9F8F6;--bg2:#FFFFFF;--border:#E8E6E2;--text:#1A1917;--text2:#7A786F;--text3:#BAB8B0;--green:#1D9E75;--green-bg:#E4F6EF;--green-dark:#0D6B4A;--red:#D05830;--red-bg:#FAECE7;--red-dark:#8F3018;--blue:#3A7FCC;--purple:#7F77DD;--pink:#D4537E;--orange:#D98A0A;--accent:#1A1917;--radius:14px;--radius-sm:9px;--hdr-text:rgba(255,255,255,.9);--hdr-sub:rgba(255,255,255,.35);--hdr-muted:rgba(255,255,255,.22);}
 body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:3rem}
 .container{max-width:430px;margin:0 auto}
+.sticky-top{position:sticky;top:0;z-index:50;background:var(--bg);box-shadow:0 2px 8px rgba(0,0,0,.05)}
 .app-header{background:var(--hdr);padding:20px 18px 18px;position:relative;overflow:hidden}
 .app-header::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 .header{padding:0;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;margin-bottom:18px}
@@ -247,6 +248,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
   <div id="tokenError" style="font-size:12px;color:#FF8A70;min-height:16px"></div>
 </div>
 <div class="container">
+  <div class="sticky-top no-print">
   <div class="app-header no-print">
     <div class="header">
       <h1 id="myNameHeader">kakeibo</h1>
@@ -281,6 +283,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
     <div class="tab" onclick="switchTab('annual')">&#128197; 年次</div>
     <div class="tab" onclick="switchTab('fixed')">&#128204; 固定費<span id="fixedTabBadge" class="tab-badge" style="display:none">0</span></div>
     <div class="tab" onclick="switchTab('settings')">&#9881;&#65039; 設定</div>
+  </div>
   </div>
   <div id="page-home" class="page active">
     <div class="card reminder-banner" id="fixedReminderBanner" style="display:none" onclick="openFixedReminderModal()">
