@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -22,14 +22,6 @@
 :root{--hdr:#111110;--hdr-border:rgba(255,255,255,.07);--bg:#F9F8F6;--bg2:#FFFFFF;--border:#E8E6E2;--text:#1A1917;--text2:#7A786F;--text3:#BAB8B0;--green:#1D9E75;--green-bg:#E4F6EF;--green-dark:#0D6B4A;--red:#D05830;--red-bg:#FAECE7;--red-dark:#8F3018;--blue:#3A7FCC;--purple:#7F77DD;--pink:#D4537E;--orange:#D98A0A;--accent:#1A1917;--radius:14px;--radius-sm:9px;--hdr-text:rgba(255,255,255,.9);--hdr-sub:rgba(255,255,255,.35);--hdr-muted:rgba(255,255,255,.22);}
 body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:3rem}
 .container{max-width:430px;margin:0 auto}
-.sticky-top{position:sticky;top:0;z-index:50;background:var(--bg);box-shadow:0 2px 8px rgba(0,0,0,.05);--header-pad-top:20px;--header-pad-bottom:18px;--header-gap:18px;--balance-h:82px;--balance-opacity:1;--balance-margin:16px;--chips-h:64px;--chips-opacity:1;--sync-h:18px;--sync-opacity:1;--sync-pt:5px;--sync-pb:2px;--tabs-margin:16px}
-.sticky-top .app-header{padding:var(--header-pad-top) 18px var(--header-pad-bottom)}
-.sticky-top .header{margin-bottom:var(--header-gap)}
-.sticky-top .hdr-balance{max-height:var(--balance-h);opacity:var(--balance-opacity);overflow:hidden;margin-bottom:var(--balance-margin)}
-.sticky-top .hdr-chips{max-height:var(--chips-h);opacity:var(--chips-opacity);overflow:hidden}
-.sticky-top #syncStatus{max-height:var(--sync-h);opacity:var(--sync-opacity);padding-top:var(--sync-pt);padding-bottom:var(--sync-pb);overflow:hidden}
-.sticky-top .tabs{margin-bottom:var(--tabs-margin)}
-#fixedFormCard{scroll-margin-top:110px}
 .app-header{background:var(--hdr);padding:20px 18px 18px;position:relative;overflow:hidden}
 .app-header::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 .header{padding:0;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;margin-bottom:18px}
@@ -187,10 +179,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
 #successToast .st-check{width:48px;height:48px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--green)}
 #successToast .st-check svg{width:30px;height:30px}
 #successToast .st-text{font-size:14px;font-weight:700;letter-spacing:.5px}
-#undoToast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(24px);width:calc(100% - 28px);max-width:402px;background:rgba(17,17,16,.96);color:#fff;border-radius:12px;padding:11px 12px 11px 14px;display:flex;align-items:center;gap:10px;z-index:3100;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 28px rgba(0,0,0,.25)}
-#undoToast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
-#undoToastText{font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#undoToast button{border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;border-radius:7px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
 .st-check-circle{stroke-dasharray:150;stroke-dashoffset:150;animation:stCircle .4s ease forwards}
 .st-check-tick{stroke-dasharray:30;stroke-dashoffset:30;animation:stTick .3s .3s ease forwards}
 @keyframes stCircle{to{stroke-dashoffset:0}}
@@ -245,6 +233,99 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
 
 
 
+
+/* ===== B1 FINANCIAL COCKPIT ===== */
+:root{
+  --b1-bg:#0B1320;--b1-surface:#151F2E;--b1-surface2:#1A2839;--b1-line:rgba(255,255,255,.075);
+  --b1-text:rgba(255,255,255,.92);--b1-sub:rgba(255,255,255,.42);--b1-muted:rgba(255,255,255,.26);
+  --b1-mint:#55D5B3;--b1-coral:#FF8D7A;--b1-amber:#F2B867;--b1-blue:#72A7E8;--b1-purple:#A994ED;
+  --b1-nav-h:62px;--vvh:100dvh;
+}
+html{background:var(--b1-bg);overscroll-behavior:none}
+body{background:var(--b1-bg);color:var(--b1-text);padding:0;min-height:100vh;min-height:100dvh;overscroll-behavior-y:none}
+.container{max-width:430px;min-height:100vh;min-height:100dvh;padding-bottom:calc(var(--b1-nav-h) + env(safe-area-inset-bottom));background:var(--b1-bg)}
+.app-header,.tabs,#syncStatus{display:none!important}
+.page{padding:0 14px;color:var(--b1-text)}
+.card,.metric{background:var(--b1-surface);border-color:var(--b1-line);box-shadow:none;color:var(--b1-text)}
+.section-title,label,.metric-label,.metric-sub,.tx-sub,.detail-row,.empty,p{color:var(--b1-sub)}
+input,select,textarea,.cat-rate-input{background:var(--b1-surface2);border-color:var(--b1-line);color:var(--b1-text)}
+input:focus,select:focus,textarea:focus{background:#1E2E42;border-color:rgba(85,213,179,.55)}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.22)}
+.btn{background:var(--b1-surface2);border-color:var(--b1-line);color:var(--b1-text)}
+.btn.primary{background:var(--b1-mint);border-color:var(--b1-mint);color:var(--b1-bg)}
+.toggle,.check-box-wrap,.tg{background:#0D1725;border-color:var(--b1-line)}
+.toggle-btn{color:var(--b1-sub)}
+.toggle-btn.active.sel,.toggle-btn.active.income,.toggle-btn.active.expense{background:#24354A;color:#fff}
+.tx-swipe-wrap .tx-item{background:var(--b1-surface)}
+.tx-item{border-color:var(--b1-line)}
+.tx-memo,.dr-main,.detail-row{color:var(--b1-text)}
+.modal{background:var(--b1-bg);color:var(--b1-text)}
+.modal-overlay{background:rgba(0,0,0,.68)}
+
+.b1-safe-top{padding-top:env(safe-area-inset-top)}
+.b1-header{position:sticky;top:0;z-index:60;background:rgba(11,19,32,.96);border-bottom:1px solid var(--b1-line);padding:8px 14px 10px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.b1-header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.b1-brand{display:flex;align-items:center;gap:8px;min-width:0}
+.b1-brand-icon{width:27px;height:27px;border-radius:8px;object-fit:cover;background:var(--b1-surface2)}
+.b1-brand-word{font-size:13px;font-weight:800;letter-spacing:-.2px}
+.b1-month{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.055);border:1px solid var(--b1-line);border-radius:12px;padding:3px}
+.b1-month button{width:28px;height:28px;border:0;background:none;color:var(--b1-sub);font-size:17px}
+.b1-month span{min-width:75px;text-align:center;font-size:11px;font-weight:700}
+.b1-bell{width:36px;height:36px;border:1px solid var(--b1-line);border-radius:11px;background:rgba(255,255,255,.055);color:var(--b1-sub);position:relative}
+.b1-bell.has::after{content:'';position:absolute;right:8px;top:7px;width:6px;height:6px;border-radius:50%;background:var(--b1-coral)}
+
+.b1-main{padding:12px 14px 24px;display:flex;flex-direction:column;gap:12px}
+.b1-hero{background:linear-gradient(145deg,#1A2940,#111E31);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:18px}
+.b1-kicker{font-size:9px;font-weight:700;letter-spacing:1.7px;color:var(--b1-muted);text-transform:uppercase}
+.b1-balance{font-size:40px;font-weight:800;letter-spacing:-2.5px;line-height:1;margin-top:8px}
+.b1-trend{font-size:10px;font-weight:700;color:var(--b1-mint);margin-top:9px}
+.b1-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid var(--b1-line);padding-top:13px;margin-top:15px}
+.b1-metric-label{font-size:9px;color:var(--b1-muted)}
+.b1-metric-val{font-size:12px;font-weight:700;margin-top:3px}
+.b1-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.b1-panel{background:var(--b1-surface);border:1px solid var(--b1-line);border-radius:21px;padding:14px}
+.b1-panel-title{font-size:9px;color:var(--b1-muted)}
+.b1-panel-big{font-size:23px;font-weight:800;margin-top:9px}
+.b1-progress{height:6px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:10px}
+.b1-progress i{display:block;height:100%;width:64%;background:linear-gradient(90deg,var(--b1-mint),var(--b1-amber));border-radius:4px}
+.b1-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.b1-section-head h2{font-size:14px}.b1-section-head span{font-size:9px;color:var(--b1-muted)}
+.b1-action{display:flex;align-items:center;gap:10px;padding:11px;border-radius:15px;background:rgba(255,255,255,.04);margin-top:7px;cursor:pointer}
+.b1-action-icon{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.b1-action-main{flex:1;min-width:0}.b1-action-title{font-size:12px;font-weight:700}.b1-action-sub{font-size:9px;color:var(--b1-muted);margin-top:2px}.b1-action-go{color:var(--b1-muted)}
+.b1-done{display:flex;align-items:center;gap:9px;color:var(--b1-mint);font-size:12px;font-weight:700;padding:4px 1px}
+.b1-recent-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--b1-line)}
+.b1-recent-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center}.b1-recent-info{flex:1;min-width:0}.b1-recent-name{font-size:12px;font-weight:700}.b1-recent-cat{font-size:9px;color:var(--b1-muted);margin-top:2px}.b1-recent-amt{font-size:12px;font-weight:700;color:var(--b1-coral)}
+
+.b1-bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:80;width:min(100%,430px);height:calc(var(--b1-nav-h) + env(safe-area-inset-bottom));padding:5px 8px env(safe-area-inset-bottom);display:grid;grid-template-columns:repeat(5,1fr);background:rgba(11,19,32,.97);border-top:1px solid var(--b1-line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.b1-nav-btn{border:0;background:none;color:var(--b1-muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit;font-size:9px;min-height:48px}.b1-nav-btn.active{color:var(--b1-mint)}
+.b1-nav-ico{font-size:17px;line-height:1}.b1-nav-plus{width:44px;height:44px;margin-top:-16px;border-radius:15px;background:var(--b1-mint);color:var(--b1-bg);display:flex;align-items:center;justify-content:center;font-size:25px;box-shadow:0 9px 22px rgba(85,213,179,.24)}
+
+#page-dashboard,#page-analysis-hub,#page-more-hub{padding:0!important}
+.b1-hub{padding:12px 14px 25px}.b1-hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.b1-hub-card{min-height:126px;text-align:left;background:var(--b1-surface);border:1px solid var(--b1-line);border-radius:21px;padding:14px;color:var(--b1-text)}.b1-hub-icon{width:39px;height:39px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px}.b1-hub-title{font-size:14px;font-weight:700;margin-top:15px}.b1-hub-sub{font-size:9px;color:var(--b1-muted);margin-top:4px}
+
+/* Existing input page becomes an iPhone-safe sheet */
+body.b1-sheet-open{overflow:hidden;overscroll-behavior:none}
+body.b1-sheet-open .b1-bottom-nav{display:none}
+#page-home.b1-input-sheet{display:block!important;position:fixed;inset:0;z-index:200;padding:0;background:rgba(0,0,0,.68);overflow:hidden}
+#page-home.b1-input-sheet>.card{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,430px);height:min(92dvh,var(--vvh));max-height:var(--vvh);overflow-y:auto;overscroll-behavior:contain;margin:0;border:1px solid var(--b1-line);border-radius:27px 27px 0 0;padding:70px 14px calc(92px + env(safe-area-inset-bottom));background:var(--b1-bg);box-shadow:0 -15px 50px rgba(0,0,0,.4)}
+.b1-sheet-header{position:absolute;z-index:4;left:0;right:0;top:0;height:62px;display:flex;align-items:center;justify-content:space-between;padding:10px 15px;background:rgba(11,19,32,.97);border-bottom:1px solid var(--b1-line)}
+.b1-sheet-kicker{font-size:9px;color:var(--b1-muted);letter-spacing:1.4px;text-transform:uppercase}.b1-sheet-title{font-size:17px;font-weight:800;margin-top:2px}.b1-sheet-close{width:36px;height:36px;border-radius:50%;border:1px solid var(--b1-line);background:rgba(255,255,255,.055);color:var(--b1-sub);font-size:18px}
+.b1-details{border:1px solid var(--b1-line);background:var(--b1-surface);border-radius:20px;padding:11px;margin-top:10px}.b1-details-btn{display:flex;align-items:center;width:100%;border:0;background:none;color:var(--b1-text);font-family:inherit;text-align:left}.b1-details-symbol{width:35px;height:35px;border-radius:11px;background:rgba(114,167,232,.12);color:var(--b1-blue);display:flex;align-items:center;justify-content:center;margin-right:10px}.b1-details-text{flex:1}.b1-details-kicker{font-size:9px;color:var(--b1-muted);letter-spacing:1px}.b1-details-summary{font-size:12px;font-weight:700;margin-top:2px}.b1-details-body{display:none;border-top:1px solid var(--b1-line);padding-top:10px;margin-top:10px}.b1-details.open .b1-details-body{display:block}
+.b1-calc-toggle{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;border:1px solid var(--b1-line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--b1-sub);padding:7px;font-size:11px;margin:5px 0}.calc-ops{display:none}.calc-ops.b1-open{display:flex}.calc-op{background:var(--b1-surface2);border-color:var(--b1-line);color:var(--b1-text)}
+.b1-record-footer{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:230;width:min(100%,430px);padding:10px 14px max(12px,env(safe-area-inset-bottom));background:rgba(11,19,32,.97);border-top:1px solid var(--b1-line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.b1-record-footer .btn{margin:0!important;background:var(--b1-mint);color:var(--b1-bg);border-color:var(--b1-mint);font-weight:800}
+#page-home.b1-input-sheet>.card>.btn.primary{display:none}
+
+#page-history,#page-chart,#page-split,#page-budget,#page-annual,#page-fixed,#page-settings{padding-top:12px}
+#page-history .card,#page-chart .card,#page-split .card,#page-budget .card,#page-annual .card,#page-fixed .card,#page-settings .card{background:var(--b1-surface);border-color:var(--b1-line)}
+
+/* White printable/PDF report stays intentionally separate */
+#reportOverlay{color:#1A1917}
+#reportOverlay .report{background:#fff;color:#1A1917}
+#reportOverlay .report *{--text:#1A1917;--text2:#6d6b65;--text3:#99968e;--border:#ddd;}
+@media print{.b1-header,.b1-bottom-nav,.b1-record-footer{display:none!important}}
+
 </style>
 </head>
 
@@ -259,8 +340,32 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
   <div id="tokenError" style="font-size:12px;color:#FF8A70;min-height:16px"></div>
 </div>
 <div class="container">
-  <div class="sticky-top no-print" id="stickyTop">
-    <div class="app-header no-print">
+
+  <div class="b1-safe-top no-print">
+    <header class="b1-header" id="b1Header">
+      <div class="b1-header-row">
+        <div class="b1-brand"><img class="b1-brand-icon" src="./icon-192.png" alt=""><span class="b1-brand-word">kakeibo</span></div>
+        <div class="b1-month"><button onclick="changeMonth(-1)">‹</button><span id="b1MonthLabel">2026年8月</span><button onclick="changeMonth(1)">›</button></div>
+        <button class="b1-bell has" id="b1Bell" onclick="b1Go('dashboard')">♧</button>
+      </div>
+    </header>
+  </div>
+  <div id="page-dashboard" class="page active">
+    <main class="b1-main">
+      <section class="b1-hero">
+        <div class="b1-kicker">NET BALANCE</div><div class="b1-balance"><span style="font-size:22px;color:var(--b1-sub)">¥</span><span id="b1Balance">0</span></div>
+        <div class="b1-trend" id="b1Trend"></div>
+        <div class="b1-metrics"><div><div class="b1-metric-label">収入</div><div class="b1-metric-val" style="color:var(--b1-mint)" id="b1Income">¥0</div></div><div><div class="b1-metric-label">支出</div><div class="b1-metric-val" style="color:var(--b1-coral)" id="b1Expense">¥0</div></div><div><div class="b1-metric-label">貯蓄率</div><div class="b1-metric-val" style="color:var(--b1-amber)" id="b1Savings">-</div></div></div>
+      </section>
+      <section class="b1-grid2"><button class="b1-panel" onclick="b1Go('budget')"><div class="b1-panel-title">予算進捗　◎</div><div class="b1-panel-big" id="b1BudgetPct">未設定</div><div class="b1-progress"><i id="b1BudgetBar"></i></div><div class="b1-action-sub" id="b1BudgetLeft">予算を設定</div></button><button class="b1-panel" onclick="b1Go('analysis')"><div class="b1-panel-title">月末支出予測　↘</div><div class="b1-panel-big" id="b1Forecast">-</div><div class="b1-action-sub" id="b1ForecastSub">データ集計中</div></button></section>
+      <section class="b1-panel"><div class="b1-section-head"><div><div class="b1-kicker">ACTION CENTER</div><h2>確認が必要です</h2></div><span id="b1ActionCount"></span></div><div id="b1Actions"></div></section>
+      <section class="b1-panel"><div class="b1-section-head"><div><div class="b1-kicker">LATEST ENTRIES</div><h2>今日の明細</h2></div><span onclick="b1Go('history')" style="color:var(--b1-mint);cursor:pointer">すべて見る</span></div><div id="b1Recent"></div></section>
+    </main>
+  </div>
+  <div id="page-analysis-hub" class="page"><div class="b1-hub"><div class="b1-hub-grid"><button class="b1-hub-card" onclick="b1Go('chart')"><div class="b1-hub-icon" style="background:rgba(85,213,179,.12);color:var(--b1-mint)">▥</div><div class="b1-hub-title">グラフ</div><div class="b1-hub-sub">カテゴリ・月別推移</div></button><button class="b1-hub-card" onclick="b1Go('budget')"><div class="b1-hub-icon" style="background:rgba(242,184,103,.12);color:var(--b1-amber)">◎</div><div class="b1-hub-title">予算</div><div class="b1-hub-sub">進捗と残り予算</div></button><button class="b1-hub-card" onclick="b1Go('annual')"><div class="b1-hub-icon" style="background:rgba(169,148,237,.12);color:var(--b1-purple)">▣</div><div class="b1-hub-title">年次</div><div class="b1-hub-sub">年間収支・累積</div></button></div></div></div>
+  <div id="page-more-hub" class="page"><div class="b1-hub"><div class="b1-hub-grid"><button class="b1-hub-card" onclick="b1Go('split')"><div class="b1-hub-icon" style="background:rgba(85,213,179,.12);color:var(--b1-mint)">♧</div><div class="b1-hub-title">割り勘</div><div class="b1-hub-sub">精算・PDF</div></button><button class="b1-hub-card" onclick="b1Go('fixed')"><div class="b1-hub-icon" style="background:rgba(255,141,122,.12);color:var(--b1-coral)">♢</div><div class="b1-hub-title">固定費</div><div class="b1-hub-sub" id="b1FixedHubSub">管理・確定</div></button><button class="b1-hub-card" onclick="b1Go('history');setTimeout(()=>document.getElementById('reviewList')?.scrollIntoView(),50)"><div class="b1-hub-icon" style="background:rgba(242,184,103,.12);color:var(--b1-amber)">▤</div><div class="b1-hub-title">明細見直し</div><div class="b1-hub-sub">カード会社別確認</div></button><button class="b1-hub-card" onclick="b1Go('settings')"><div class="b1-hub-icon" style="background:rgba(114,167,232,.12);color:var(--b1-blue)">⚙</div><div class="b1-hub-title">設定</div><div class="b1-hub-sub">表示・データ・同期</div></button></div></div></div>
+
+  <div class="app-header no-print">
     <div class="header">
       <h1 id="myNameHeader">kakeibo</h1>
       <div class="month-nav">
@@ -294,7 +399,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
     <div class="tab" onclick="switchTab('annual')">&#128197; 年次</div>
     <div class="tab" onclick="switchTab('fixed')">&#128204; 固定費<span id="fixedTabBadge" class="tab-badge" style="display:none">0</span></div>
     <div class="tab" onclick="switchTab('settings')">&#9881;&#65039; 設定</div>
-  </div>
   </div>
   <div id="page-home" class="page active">
     <div class="card reminder-banner" id="fixedReminderBanner" style="display:none" onclick="openFixedReminderModal()">
@@ -682,6 +786,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
       <button class="btn danger" onclick="resetAll()">&#128465;&#65039; 全データを削除する</button>
     </div>
   </div>
+
+  <nav class="b1-bottom-nav no-print" id="b1BottomNav">
+    <button class="b1-nav-btn active" data-b1="dashboard" onclick="b1Go('dashboard')"><span class="b1-nav-ico">⌂</span><span>ホーム</span></button>
+    <button class="b1-nav-btn" data-b1="history" onclick="b1Go('history')"><span class="b1-nav-ico">▤</span><span>明細</span></button>
+    <button class="b1-nav-btn" data-b1="input" onclick="b1OpenInput()"><span class="b1-nav-plus">＋</span></button>
+    <button class="b1-nav-btn" data-b1="analysis" onclick="b1Go('analysis')"><span class="b1-nav-ico">▥</span><span>分析</span></button>
+    <button class="b1-nav-btn" data-b1="more" onclick="b1Go('more')"><span class="b1-nav-ico">•••</span><span>その他</span></button>
+  </nav>
 </div>
 <div class="modal-overlay" id="fixedReminderModal" style="display:none" onclick="if(event.target.id==='fixedReminderModal')closeFixedReminderModal()">
   <div class="modal">
@@ -694,9 +806,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="editModal" style="display:none" onclick="if(event.target.id==='editModal')requestCloseEdit()">
+<div class="modal-overlay" id="editModal" style="display:none" onclick="if(event.target.id==='editModal')closeModalDirect()">
   <div class="modal">
-    <div class="modal-title"><span>取引を編集</span><button class="modal-close" onclick="requestCloseEdit()">&#10005;</button></div>
+    <div class="modal-title"><span>取引を編集</span><button class="modal-close" onclick="closeModalDirect()">&#10005;</button></div>
     <div class="toggle">
       <button class="toggle-btn active income" id="edit-btn-income" onclick="editSetType('income')">＋ 収入</button>
       <button class="toggle-btn expense" id="edit-btn-expense" onclick="editSetType('expense')">－ 支出</button>
@@ -800,7 +912,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#888;backgroun
   <div id="reportBody"></div>
 </div>
 
-<div id="undoToast"><span id="undoToastText"></span><button onclick="undoDeletedTransaction()">元に戻す</button></div>
 <div id="successToast">
   <div class="st-check">
     <svg viewBox="0 0 52 52">
@@ -919,18 +1030,9 @@ function nextId(){
   return id;
 }
   
-function localDateString(date=new Date()){
-  const y=date.getFullYear();
-  const m=String(date.getMonth()+1).padStart(2,'0');
-  const d=String(date.getDate()).padStart(2,'0');
-  return y+'-'+m+'-'+d;
-}
+function localDateString(date=new Date()){const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');return y+'-'+m+'-'+d;}
 function localMonthString(date=new Date()){return localDateString(date).slice(0,7);}
-function parseLocalDate(value){
-  const s=String(value||'');
-  const m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  return m?new Date(Number(m[1]),Number(m[2])-1,Number(m[3])):new Date(value);
-}
+function parseLocalDate(value){const s=String(value||''),m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?new Date(Number(m[1]),Number(m[2])-1,Number(m[3])):new Date(value);}
 function fmt(n){return '\u00a5'+Math.abs(Math.round(n)).toLocaleString();}
 function fmtS(n){const a=Math.abs(n);return (n<0?'-':'')+(a>=10000?'\u00a5'+(a/10000).toFixed(1)+'\u4e07':'\u00a5'+a.toLocaleString());}
 function monthTx(y,m){const vy=y??viewYear,vm=m??viewMonth;return transactions.filter(t=>{const d=parseLocalDate(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});}
@@ -1051,7 +1153,7 @@ function confirmAllFixed(){
   closeFixedReminderModal();
   updateHeader();renderHistory();renderSplit();updateFixedReminders();
   if(document.getElementById('page-budget').classList.contains('active')) renderBudget();
-  showSuccessToast(confirmed+'件を確定しました');
+  alert(confirmed+'件を確定しました');
 }
 function skipFixed(txId){
   const t=transactions.find(x=>x.id===txId);
@@ -1071,8 +1173,8 @@ function buildCatOptions(sel,type,val){const cats=type==='income'?INCOME_CATS:EX
 buildCatOptions(document.getElementById('category'),'expense');
 buildCatOptions(document.getElementById('edit-category'),'expense');
 function buildCatRateTable(){document.getElementById('catRateTable').innerHTML=EXPENSE_CATS.map(c=>{const id='cr_'+c.replace(/[^\w]/g,'_');const pid='crp_'+c.replace(/[^\w]/g,'_');return `<div class="cat-rate-row"><span class="cat-name">${c}</span><input type="number" class="cat-rate-input" id="${id}" min="0" max="100" value="${catRates[c]??50}" oninput="document.getElementById('${pid}').textContent='相手'+(100-(parseInt(this.value)||0))+'%'"><span style="font-size:12px;color:var(--text2)">%</span><span style="font-size:11px;color:var(--text3);min-width:52px;text-align:right" id="${pid}">相手${100-(catRates[c]??50)}%</span></div>`;}).join('');}
-function saveCatRates(){EXPENSE_CATS.forEach(c=>{const id='cr_'+c.replace(/[^\w]/g,'_');const el=document.getElementById(id);if(el) catRates[c]=parseInt(el.value)||50;});localStorage.setItem(SP+'kakeibo_catrates',JSON.stringify(catRates));showSuccessToast('保存しました');}
-function saveNames(){myName=document.getElementById('myNameInput').value||'自分';partnerName=document.getElementById('partnerNameInput').value||'彼女';localStorage.setItem(SP+'kakeibo_myname',myName);localStorage.setItem(SP+'kakeibo_partner',partnerName);updateLabels();showSuccessToast('保存しました');}
+function saveCatRates(){EXPENSE_CATS.forEach(c=>{const id='cr_'+c.replace(/[^\w]/g,'_');const el=document.getElementById(id);if(el) catRates[c]=parseInt(el.value)||50;});localStorage.setItem(SP+'kakeibo_catrates',JSON.stringify(catRates));alert('保存しました');}
+function saveNames(){myName=document.getElementById('myNameInput').value||'自分';partnerName=document.getElementById('partnerNameInput').value||'彼女';localStorage.setItem(SP+'kakeibo_myname',myName);localStorage.setItem(SP+'kakeibo_partner',partnerName);updateLabels();alert('保存しました');}
 function updateLabels(){const testBadge=IS_TEST?' <span class="badge badge-test">TEST</span>':'';document.getElementById('myNameHeader').innerHTML=myName+'の家計簿'+testBadge;document.getElementById('btn-her').textContent=partnerName+'が払った';document.getElementById('edit-btn-her').textContent=partnerName+'が払った';document.getElementById('herRateLabel').textContent=partnerName+'の負担率';}
 function updateHeader(){
   document.getElementById('monthLabel').textContent=viewYear+'年'+(viewMonth+1)+'月';
@@ -1094,6 +1196,7 @@ function updateHeader(){
   const trendEl=document.getElementById('balVsPrev');
   if(prevExp>0){const diff=exp-prevExp;trendEl.innerHTML='支出前月比 <span class="'+(diff<=0?'pos':'neg')+'">'+(diff>=0?'+':'')+fmtS(diff)+' '+(diff<=0?'↓':'↑')+'</span>';}
   else{trendEl.textContent='';}
+  if(typeof renderB1Dashboard==='function') renderB1Dashboard();
 }
 function changeMonth(d){viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}postProvisional(viewYear,viewMonth);updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();const sub=document.getElementById('stab-me').classList.contains('active')?'me':'couple';renderCharts(sub);}
 function setType(t){txType=t;document.getElementById('btn-income').className='toggle-btn'+(t==='income'?' active income':'');document.getElementById('btn-expense').className='toggle-btn'+(t==='expense'?' active expense':'');document.getElementById('adjSection').style.display=t==='expense'?'':'none';document.getElementById('splitSection').style.display=t==='expense'?'':'none';buildCatOptions(document.getElementById('category'),t);if(t==='expense') applyDefaultRate();}
@@ -1403,34 +1506,13 @@ function renderHistory(){
 }
 
 // ID指定で削除
-let pendingDeletedTransaction=null;
-let undoDeleteTimer=null;
-function refreshAfterTransactionChange(){save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();}
-function deleteTxWithUndo(id){
-  const index=transactions.findIndex(x=>x.id===id);
-  if(index<0)return;
-  if(pendingDeletedTransaction){pendingDeletedTransaction=null;}
-  const tx=transactions[index];
-  pendingDeletedTransaction={tx,index};
-  transactions.splice(index,1);
-  refreshAfterTransactionChange();
-  const toast=document.getElementById('undoToast');
-  document.getElementById('undoToastText').textContent='「'+(tx.memo||'取引')+'」を削除しました';
-  toast.classList.add('show');
-  if(undoDeleteTimer)clearTimeout(undoDeleteTimer);
-  undoDeleteTimer=setTimeout(()=>{toast.classList.remove('show');pendingDeletedTransaction=null;},5000);
+function deleteById(id){
+  const t=transactions.find(x=>x.id===id);
+  if(!t) return;
+  if(!confirm((t.memo||'この取引')+' を削除しますか？')) return;
+  transactions=transactions.filter(x=>x.id!==id);
+  save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
 }
-function undoDeletedTransaction(){
-  if(!pendingDeletedTransaction)return;
-  const {tx,index}=pendingDeletedTransaction;
-  transactions.splice(Math.min(index,transactions.length),0,tx);
-  pendingDeletedTransaction=null;
-  if(undoDeleteTimer)clearTimeout(undoDeleteTimer);
-  document.getElementById('undoToast').classList.remove('show');
-  refreshAfterTransactionChange();
-  showSuccessToast('削除を元に戻しました');
-}
-function deleteById(id){deleteTxWithUndo(id);}
 // スワイプ検出（タッチ）
 let _swipeStartX=0,_swipeWrap=null;
 function initSwipe(){
@@ -1602,17 +1684,6 @@ function openReport(){
 }
 function closeReport(){document.getElementById('reportOverlay').style.display='none';}
   
-let editInitialState='';
-function getEditFormState(){
-  const ids=['edit-amount','edit-category','edit-date','edit-memo','edit-note','edit-isSplit','edit-isAdj','edit-myRate','edit-diffWho','edit-diffAmt','edit-amountWho','edit-amountShare','edit-adjRate'];
-  return JSON.stringify({type:editTxType,payer:editSplitPayer,mode:editShareMode,values:ids.map(id=>{const el=document.getElementById(id);return el?(el.type==='checkbox'?el.checked:el.value):null;})});
-}
-function requestCloseEdit(){
-  if(editingId&&editInitialState&&getEditFormState()!==editInitialState){
-    if(!confirm('変更内容を破棄しますか？'))return;
-  }
-  closeModalDirect();
-}
 function openEdit(id){
   const t=transactions.find(x=>x.id===id);if(!t) return;
   editingId=id;editTxType=t.type==='adjustment'?'expense':t.type;editSplitPayer=t.payer||'me';editShareMode='rate';
@@ -1657,9 +1728,8 @@ function openEdit(id){
   document.getElementById('edit-amountShare').value=t.amountShare||'';
   if(em==='diff') editOnDiffInput(); else if(em==='amount') editOnAmountShareInput(); else editOnRateInput();
   document.getElementById('editModal').style.display='flex';
-  editInitialState=getEditFormState();
 }
-function closeModalDirect(){document.getElementById('editModal').style.display='none';editingId=null;editInitialState='';}
+function closeModalDirect(){document.getElementById('editModal').style.display='none';editingId=null;}
 function editSetType(t){editTxType=t;document.getElementById('edit-btn-income').className='toggle-btn'+(t==='income'?' active income':'');document.getElementById('edit-btn-expense').className='toggle-btn'+(t==='expense'?' active expense':'');document.getElementById('edit-adjSection').style.display=t==='expense'?'':'none';document.getElementById('edit-splitSection').style.display=t==='expense'?'':'none';buildCatOptions(document.getElementById('edit-category'),t);}
 function editSetPayer(p){editSplitPayer=p;document.getElementById('edit-btn-me').className='toggle-btn'+(p==='me'?' active me':'');document.getElementById('edit-btn-her').className='toggle-btn'+(p==='her'?' active her':'');editOnRateInput();}
 function editSetShareMode(m){editShareMode=m;document.getElementById('edit-mode-rate').className='toggle-btn'+(m==='rate'?' active sel':'');document.getElementById('edit-mode-diff').className='toggle-btn'+(m==='diff'?' active sel':'');document.getElementById('edit-mode-amount').className='toggle-btn'+(m==='amount'?' active sel':'');document.getElementById('edit-share-rate-input').style.display=m==='rate'?'':'none';document.getElementById('edit-share-diff-input').style.display=m==='diff'?'':'none';document.getElementById('edit-share-amount-input').style.display=m==='amount'?'':'none';}
@@ -1705,7 +1775,7 @@ function saveEdit(){
   const orig=transactions[idx];
   transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:stripAutoNote(document.getElementById('edit-note').value),isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,amountShare:(isSplit&&editShareMode==='amount')?(parseFloat(document.getElementById('edit-amountShare').value)||0):null,amountWho:(isSplit&&editShareMode==='amount')?document.getElementById('edit-amountWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};  save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
 }
-function deleteTransaction(){if(!editingId)return;const id=editingId;closeModalDirect();deleteTxWithUndo(id);}
+function deleteTransaction(){if(!editingId) return;if(!confirm('この取引を削除しますか？')) return;transactions=transactions.filter(x=>x.id!==editingId);save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();}
 let charts={};
 
 function duplicateTransaction(){
@@ -1827,7 +1897,7 @@ function importCSV(e){
       transactions.push(obj);added++;
     }
     save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
-    showSuccessToast(`${added}件追加・${skipped}件スキップ`);e.target.value='';
+    alert(`完了: ${added}件追加、${skipped}件スキップ`);e.target.value='';
   };
   reader.readAsText(file,'UTF-8');
 }
@@ -1835,11 +1905,11 @@ function parseCSVLine(line){const r=[];let cur='',inQ=false;for(let i=0;i<line.l
 function buildExcelData(txList){const h=['日付','種別','カテゴリ','メモ','備考','金額','割り勘','調整','仮計上','支払者','自分負担率%','自分負担',partnerName+'負担'];return [h,...txList.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(t=>[t.date,t.type==='income'?'収入':'支出',(t.category||'').replace(/[\u{1F300}-\u{1FFFF}\u2600-\u27BF]/gu,'').trim(),t.memo,t.note||'',t.amount,t.isSplit?'○':'',t.isAdj?'○':'',t.isProvisional?'○':'',t.isSplit?(t.payer==='me'?myName:partnerName):'',t.myRate??'',t.myShare!=null?Math.round(t.myShare):'',t.herShare!=null?Math.round(t.herShare):''])];}
 function exportExcel(){if(!transactions.length){alert('データがありません');return;}const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet(buildExcelData(transactions));XLSX.utils.book_append_sheet(wb,ws,'全データ');const months={};transactions.forEach(t=>{const k=t.date.slice(0,7);if(!months[k]) months[k]={income:0,expense:0};if(t.type==='income') months[k].income+=t.amount;else months[k].expense+=realExp([t]);});const ws2=XLSX.utils.aoa_to_sheet([['年月','収入','実質支出','収支'],...Object.entries(months).sort().map(([k,v])=>[k,v.income,v.expense,v.income-v.expense])]);XLSX.utils.book_append_sheet(wb,ws2,'月別サマリー');XLSX.writeFile(wb,'家計簿_全期間.xlsx');}
 function exportExcelMonth(){const tx=monthTx();if(!tx.length){alert('今月のデータがありません');return;}const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet(buildExcelData(tx));XLSX.utils.book_append_sheet(wb,ws,viewYear+'年'+(viewMonth+1)+'月');XLSX.writeFile(wb,'家計簿_'+viewYear+'年'+(viewMonth+1)+'月.xlsx');}
-function resetAll(){if(!confirm('全データを削除します。本当によろしいですか？')) return;transactions=[];save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();showSuccessToast('全データを削除しました');}
+function resetAll(){if(!confirm('全データを削除します。本当によろしいですか？')) return;transactions=[];save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();alert('削除しました');}
 function budgetKey(y,m){return SP+'kakeibo_budget_'+y+'-'+String(m+1).padStart(2,'0');}
 function loadBudget(y,m){try{const b=localStorage.getItem(budgetKey(y,m));return b?JSON.parse(b):{cats:{},note:''};}catch(e){return{cats:{},note:''};}}
 function buildBudgetInputTable(){const data=loadBudget(viewYear,viewMonth);document.getElementById('budgetFormTitle').textContent=viewYear+'年'+(viewMonth+1)+'月の予算を設定する';document.getElementById('budgetInputTable').innerHTML=EXPENSE_CATS.map((c,i)=>{const id='bgt_'+i;return `<div class="cat-rate-row"><span class="cat-name">${c}</span><input type="number" class="cat-rate-input" id="${id}" min="0" step="1000" placeholder="0" inputmode="numeric" value="${data.cats[c]||''}" style="width:90px;text-align:right"><span style="font-size:12px;color:var(--text2)">円</span></div>`;}).join('');document.getElementById('budgetNote').value=data.note||'';const prev=loadBudget(viewMonth===0?viewYear-1:viewYear,viewMonth===0?11:viewMonth-1);document.getElementById('budgetCopyBtn').style.opacity=Object.keys(prev.cats).length?'1':'0.4';}
-function saveBudgets(){const cats={};EXPENSE_CATS.forEach((c,i)=>{const id='bgt_'+i;const el=document.getElementById(id);const v=parseInt(el&&el.value)||0;if(v>0) cats[c]=v;});const note=document.getElementById('budgetNote').value.trim();localStorage.setItem(budgetKey(viewYear,viewMonth),JSON.stringify({cats,note}));renderBudget();showSuccessToast('保存しました');}
+function saveBudgets(){const cats={};EXPENSE_CATS.forEach((c,i)=>{const id='bgt_'+i;const el=document.getElementById(id);const v=parseInt(el&&el.value)||0;if(v>0) cats[c]=v;});const note=document.getElementById('budgetNote').value.trim();localStorage.setItem(budgetKey(viewYear,viewMonth),JSON.stringify({cats,note}));renderBudget();alert('保存しました');}
 function copyPrevBudget(){const py=viewMonth===0?viewYear-1:viewYear;const pm=viewMonth===0?11:viewMonth-1;const prev=loadBudget(py,pm);if(!Object.keys(prev.cats).length){alert('前月の予算データがありません');return;}EXPENSE_CATS.forEach((c,i)=>{const id='bgt_'+i;const el=document.getElementById(id);if(el) el.value=prev.cats[c]||'';});}
 function renderBudget(){
   const data=loadBudget(viewYear,viewMonth);
@@ -1860,9 +1930,7 @@ function renderBudget(){
   if(!budgetCats.length){document.getElementById('budgetList').innerHTML='<div class="empty">予算を設定してください</div>';return;}
   document.getElementById('budgetList').innerHTML=budgetCats.map(c=>{const budget=data.cats[c];const used=catExp[c]||0;const pct=Math.min(Math.round(used/budget*100),100);const over=used>budget;const barColor=over?'var(--red)':pct>=80?'var(--orange)':'var(--green)';const left=budget-used;return `<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:14px;font-weight:500">${c}</span><span style="font-size:12px;color:var(--text2)">${fmt(used)} <span style="color:var(--text3)">/ ${fmt(budget)}</span></span></div><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:5px"><div style="height:100%;width:${pct}%;background:${barColor};border-radius:3px;transition:width .3s"></div></div><div style="font-size:11px;color:${over?'var(--red)':'var(--text3)'}">${over?'超過 '+fmt(used-budget):'残り '+fmt(left)+' ('+Math.round(left/budget*100)+'%)'}</div></div>`;}).join('');
 }
-const tabScrollPositions={home:0,history:0,chart:0,split:0,budget:0,annual:0,fixed:0,settings:0};
-let activeTabName='home';
-function switchTab(name){const names=['home','history','chart','split','budget','annual','fixed','settings'];tabScrollPositions[activeTabName]=window.scrollY||document.documentElement.scrollTop||0;document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+name).classList.add('active');activeTabName=name;const targetY=name==='home'?0:(tabScrollPositions[name]||0);requestAnimationFrame(()=>{window.scrollTo(0,targetY);updateHeaderCollapse();});if(name==='chart'){const sub=document.getElementById('stab-me').classList.contains('active')?'me':'couple';renderCharts(sub);}if(name==='annual') renderAnnual();if(name==='settings') buildCatRateTable();if(name==='budget'){buildBudgetInputTable();renderBudget();renderReviews();}if(name==='fixed'){renderFixed();}}
+function switchTab(name){const names=['home','history','chart','split','budget','annual','fixed','settings'];document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+name).classList.add('active');if(name==='chart'){const sub=document.getElementById('stab-me').classList.contains('active')?'me':'couple';renderCharts(sub);}if(name==='annual') renderAnnual();if(name==='settings') buildCatRateTable();if(name==='budget'){buildBudgetInputTable();renderBudget();renderReviews();}if(name==='fixed'){renderFixed();}}
 function showLock(){const ls=document.getElementById('lockScreen');ls.style.display='flex';ls.style.flexDirection='column';document.querySelector('.container').style.display='none';setTimeout(()=>document.getElementById('tokenInput').focus(),100);}
 function hideLock(){document.getElementById('lockScreen').style.display='none';document.querySelector('.container').style.display='';}
 async function submitToken(){const token=document.getElementById('tokenInput').value.trim();if(!token){document.getElementById('tokenError').textContent='パスワードを入力してください';return;}try{const res=await fetch(CLOUD_URL+'/kakeibo',{headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}});if(res.status===401){document.getElementById('tokenError').textContent='パスワードが違います';return;}localStorage.setItem(SP+'kakeibo_token',token);hideLock();cloudPull();}catch(e){localStorage.setItem(SP+'kakeibo_token',token);hideLock();}}
@@ -1977,7 +2045,6 @@ function saveFixed(){
   renderFixed();
   postProvisional(viewYear,viewMonth);
   updateHeader();renderHistory();renderSplit();updateFixedReminders();
-  showSuccessToast('固定費を保存しました');
 }
 function editFixed(i){openFixedForm(i);}
 function deleteFixed(i){if(!confirm('削除しますか？')) return;const arr=loadFixed();arr.splice(i,1);saveFixedData(arr);renderFixed();}
@@ -2033,39 +2100,64 @@ function applyUpdate(){
   }
 }
 
-/* ===== B1 smooth: スクロール量に合わせて連続的に縮小 ===== */
-const HEADER_COLLAPSE_START=8;
-const HEADER_COLLAPSE_END=188;
-let headerScrollTick=false;
-function setHeaderCollapse(progress){
-  const el=document.getElementById('stickyTop');
-  if(!el)return;
-  const p=Math.max(0,Math.min(1,progress));
-  const remain=1-p;
-  el.style.setProperty('--header-pad-top',(20-8*p)+'px');
-  el.style.setProperty('--header-pad-bottom',(18-6*p)+'px');
-  el.style.setProperty('--header-gap',(18*remain)+'px');
-  el.style.setProperty('--balance-h',(82*remain)+'px');
-  el.style.setProperty('--balance-opacity',String(remain));
-  el.style.setProperty('--balance-margin',(16*remain)+'px');
-  el.style.setProperty('--chips-h',(64*remain)+'px');
-  el.style.setProperty('--chips-opacity',String(remain));
-  el.style.setProperty('--sync-h',(18*remain)+'px');
-  el.style.setProperty('--sync-opacity',String(remain));
-  el.style.setProperty('--sync-pt',(5*remain)+'px');
-  el.style.setProperty('--sync-pb',(2*remain)+'px');
-  el.style.setProperty('--tabs-margin',(16-6*p)+'px');
+
+/* ===== B1 CONTROLLER ===== */
+let b1Active='dashboard',b1Return={page:'dashboard',y:0};
+const b1PageMap={dashboard:'page-dashboard',history:'page-history',analysis:'page-analysis-hub',more:'page-more-hub',chart:'page-chart',budget:'page-budget',annual:'page-annual',split:'page-split',fixed:'page-fixed',settings:'page-settings'};
+function b1SetNav(name){document.querySelectorAll('.b1-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.b1===name));}
+function b1ShowPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const p=document.getElementById(id);if(p)p.classList.add('active');}
+function b1Go(name){
+  if(document.body.classList.contains('b1-sheet-open'))b1CloseInput();
+  const id=b1PageMap[name]||b1PageMap.dashboard;b1ShowPage(id);b1Active=name;
+  b1SetNav(name==='history'?'history':name==='analysis'||name==='chart'||name==='budget'||name==='annual'?'analysis':name==='more'||name==='split'||name==='fixed'||name==='settings'?'more':'dashboard');
+  window.scrollTo(0,0);
+  if(name==='chart')renderCharts(document.getElementById('stab-me').classList.contains('active')?'me':'couple');
+  if(name==='annual')renderAnnual();if(name==='budget'){buildBudgetInputTable();renderBudget();}if(name==='fixed')renderFixed();if(name==='settings')buildCatRateTable();if(name==='history')renderHistory();
+  renderB1Dashboard();
 }
-function updateHeaderCollapse(){
-  const y=window.scrollY||document.documentElement.scrollTop||0;
-  setHeaderCollapse((y-HEADER_COLLAPSE_START)/(HEADER_COLLAPSE_END-HEADER_COLLAPSE_START));
+function b1OpenInput(){
+  b1Return={page:b1Active,y:window.scrollY||0};
+  const p=document.getElementById('page-home');p.classList.add('b1-input-sheet');document.body.classList.add('b1-sheet-open');
+  if(!document.getElementById('b1SheetHeader')){
+    const card=p.querySelector(':scope > .card');
+    card.insertAdjacentHTML('afterbegin','<div class="b1-sheet-header" id="b1SheetHeader"><div><div class="b1-sheet-kicker">NEW ENTRY</div><div class="b1-sheet-title">支出を記録</div></div><button class="b1-sheet-close" onclick="b1CloseInput()">×</button></div>');
+  }
+  b1PrepareInputDetails();b1UpdateRecordFooter();
+  requestAnimationFrame(()=>document.getElementById('amount')?.focus());
 }
-window.addEventListener('scroll',()=>{
-  if(headerScrollTick)return;
-  headerScrollTick=true;
-  requestAnimationFrame(()=>{updateHeaderCollapse();headerScrollTick=false;});
-},{passive:true});
-window.addEventListener('resize',updateHeaderCollapse,{passive:true});
+function b1CloseInput(){document.getElementById('page-home').classList.remove('b1-input-sheet');document.body.classList.remove('b1-sheet-open');document.getElementById('page-home').classList.remove('active');b1Go(b1Return.page);requestAnimationFrame(()=>window.scrollTo(0,b1Return.y));}
+function b1PrepareInputDetails(){
+  const p=document.getElementById('page-home'),card=p.querySelector(':scope > .card');if(document.getElementById('b1Details'))return;
+  const amountInput=document.getElementById('amount'),ops=card.querySelector('.calc-ops');
+  if(ops){const t=document.createElement('button');t.type='button';t.className='b1-calc-toggle';t.innerHTML='⌗　計算を開く';t.onclick=()=>{document.activeElement?.blur();ops.classList.toggle('b1-open');t.innerHTML=ops.classList.contains('b1-open')?'⌗　計算を閉じる':'⌗　計算を開く'};ops.parentNode.insertBefore(t,ops);}
+  const note=document.getElementById('note')?.closest('.form-row');const split=document.getElementById('splitSection'),adj=document.getElementById('adjSection');
+  const wrap=document.createElement('div');wrap.id='b1Details';wrap.className='b1-details';wrap.innerHTML='<button type="button" class="b1-details-btn" onclick="b1ToggleDetails()"><span class="b1-details-symbol">⚙</span><span class="b1-details-text"><span class="b1-details-kicker">ADVANCED</span><span class="b1-details-summary" id="b1DetailsSummary">備考・割り勘・調整</span></span><span id="b1DetailsArrow">⌄</span></button><div class="b1-details-body" id="b1DetailsBody"></div>';
+  const record=card.querySelector(':scope > .btn.primary');record.parentNode.insertBefore(wrap,record);const body=wrap.querySelector('.b1-details-body');if(note)body.appendChild(note);if(split)body.appendChild(split);if(adj)body.appendChild(adj);
+  card.insertAdjacentHTML('afterend','<div class="b1-record-footer" id="b1RecordFooter"><button class="btn primary" onclick="addTransaction()"><span>記録する</span><span id="b1RecordAmount">¥0</span></button></div>');
+  ['amount','myRate','adjRate'].forEach(id=>document.getElementById(id)?.addEventListener('input',b1UpdateRecordFooter));
+  ['isSplit','isAdj'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>{b1UpdateDetailSummary();b1UpdateRecordFooter()}));
+}
+function b1ToggleDetails(){const w=document.getElementById('b1Details');w.classList.toggle('open');document.getElementById('b1DetailsArrow').textContent=w.classList.contains('open')?'⌃':'⌄';}
+function b1UpdateDetailSummary(){const split=document.getElementById('isSplit')?.checked,adj=document.getElementById('isAdj')?.checked;const s=document.getElementById('b1DetailsSummary');if(!s)return;s.textContent=split?'👫 割り勘　'+(splitPayer==='me'?myName:partnerName)+'払い・'+(document.getElementById('myRate').value||50)+':'+(100-(parseInt(document.getElementById('myRate').value)||50)):adj?'🔧 調整　自分負担'+(document.getElementById('adjRate').value||50)+'%':'備考・割り勘・調整';}
+function b1UpdateRecordFooter(){const v=typeof getAmountValue==='function'?getAmountValue():0;const e=document.getElementById('b1RecordAmount');if(e)e.textContent=fmt(isFinite(v)?v:0);b1UpdateDetailSummary();}
+function renderB1Dashboard(){
+  const ml=document.getElementById('monthLabel')?.textContent||'';const bml=document.getElementById('b1MonthLabel');if(bml)bml.textContent=ml;
+  const map=[['totalBalance','b1Balance'],['totalIncome','b1Income'],['totalExpense','b1Expense'],['savingsRate','b1Savings']];map.forEach(([a,b])=>{const x=document.getElementById(a),y=document.getElementById(b);if(x&&y)y.textContent=x.textContent;});
+  const tr=document.getElementById('balVsPrev'),bt=document.getElementById('b1Trend');if(bt)bt.textContent=tr?.textContent||'今月の状況を表示しています';
+  const data=loadBudget(viewYear,viewMonth),cats=Object.keys(data.cats||{}),totalBudget=cats.reduce((z,c)=>z+(Number(data.cats[c])||0),0),tx=monthTx(),used=tx.reduce((z,t)=>t.type==='income'?z:z+((t.isAdj||t.isSplit)?(t.myShare||0):t.amount),0),pct=totalBudget?Math.round(used/totalBudget*100):0;
+  document.getElementById('b1BudgetPct').textContent=totalBudget?pct+'%':'未設定';document.getElementById('b1BudgetBar').style.width=Math.min(100,pct)+'%';document.getElementById('b1BudgetLeft').textContent=totalBudget?'残り '+fmt(totalBudget-used):'タップして設定';
+  const now=new Date(),days=new Date(viewYear,viewMonth+1,0).getDate(),day=(viewYear===now.getFullYear()&&viewMonth===now.getMonth())?now.getDate():days,forecast=day?Math.round(used/day*days):0;document.getElementById('b1Forecast').textContent=used?fmt(forecast):'-';document.getElementById('b1ForecastSub').textContent=day<5?'データが少ないため参考値':'現在の支出ペースから予測';
+  const actions=[];const prov=provisionalTx();if(prov.length)actions.push({icon:'♢',title:'固定費を確定',sub:prov.length+'件・見込 '+fmt(prov.reduce((z,t)=>z+t.amount,0)),color:'var(--b1-coral)',go:"openFixedReminderModal()"});
+  const cards=loadCards(),reviews=loadReviews(viewYear,viewMonth),unchecked=cards.filter(c=>!reviews[c]?.checked);if(unchecked.length)actions.push({icon:'▤',title:'カード明細を確認',sub:unchecked.length+'社が未確認',color:'var(--b1-amber)',go:"b1Go('history');setTimeout(()=>document.getElementById('reviewList')?.scrollIntoView(),100)"});
+  const splitTx=monthTx().filter(t=>t.isSplit&&t.type==='expense');if(splitTx.length)actions.push({icon:'♧',title:'割り勘を精算',sub:'精算額を確認',color:'var(--b1-mint)',go:"b1Go('split')"});
+  if(!navigator.onLine)actions.push({icon:'!',title:'オフラインです',sub:'接続復帰時に自動同期',color:'var(--b1-blue)',go:"b1Go('settings')"});
+  const ae=document.getElementById('b1Actions');document.getElementById('b1ActionCount').textContent=actions.length?actions.length+'件':'';document.getElementById('b1Bell')?.classList.toggle('has',actions.length>0);
+  ae.innerHTML=actions.length?actions.map(a=>'<div class="b1-action" onclick="'+a.go+'"><div class="b1-action-icon" style="background:color-mix(in srgb,'+a.color+' 14%,transparent);color:'+a.color+'">'+a.icon+'</div><div class="b1-action-main"><div class="b1-action-title">'+a.title+'</div><div class="b1-action-sub">'+a.sub+'</div></div><div class="b1-action-go">›</div></div>').join(''):'<div class="b1-done">✓　確認が必要な項目はありません</div>';
+  const today=localDateString(),rows=transactions.filter(t=>t.date===today).slice().sort((a,b)=>b.id-a.id).slice(0,4),re=document.getElementById('b1Recent');re.innerHTML=rows.length?rows.map(t=>'<div class="b1-recent-row" onclick="b1Go(\'history\')"><div class="b1-recent-icon" style="background:'+((CAT_COLORS[t.category]||'#888')+'22')+'">'+(t.category?t.category.slice(0,2):'💴')+'</div><div class="b1-recent-info"><div class="b1-recent-name">'+t.memo+'</div><div class="b1-recent-cat">'+catLabel(t.category)+'</div></div><div class="b1-recent-amt">'+(t.type==='income'?'+':'-')+fmt(t.amount)+'</div></div>').join(''):'<div class="empty" style="padding:14px 0">今日の記録はまだありません</div>';
+  const hs=document.getElementById('b1FixedHubSub');if(hs)hs.textContent=prov.length?prov.length+'件未確定':'管理・確定';
+}
+function b1UpdateViewport(){const h=window.visualViewport?.height||window.innerHeight;document.documentElement.style.setProperty('--vvh',h+'px');}
+window.visualViewport?.addEventListener('resize',b1UpdateViewport);window.visualViewport?.addEventListener('scroll',b1UpdateViewport);window.addEventListener('resize',b1UpdateViewport);
 
 /* ===== 初期化 ===== */
 setType('expense');
@@ -2073,6 +2165,7 @@ buildCatRateTable();
 updateLabels();
 postProvisional(viewYear,viewMonth);
 updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+b1ShowPage('page-dashboard');b1SetNav('dashboard');b1UpdateViewport();renderB1Dashboard();
 if(!IS_TEST && localStorage.getItem(SP+'kakeibo_pending_push')==='1' && getToken()){
   setTimeout(()=>{pushRetryCount=0;cloudPush();},1500);
 }
