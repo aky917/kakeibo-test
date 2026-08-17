@@ -263,6 +263,19 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
 /* Replace legacy success popup with a restrained P2-C toast */
 #successToast{top:auto;bottom:calc(var(--p-nav-h) + env(safe-area-inset-bottom) + 14px);left:50%;transform:translate(-50%,12px)!important;flex-direction:row;gap:7px;border-radius:12px;padding:10px 14px;background:rgba(37,44,40,.96);box-shadow:0 10px 30px rgba(0,0,0,.18)}#successToast.show{transform:translate(-50%,0)!important}#successToast .st-check{width:18px;height:18px;background:transparent}#successToast .st-check svg{width:18px;height:18px}#successToast .st-check-circle{display:none}#successToast .st-check-tick{stroke:#95D7BE;stroke-width:6}#successToast .st-text{font-size:12px;font-weight:600}
 
+
+/* ===== COMPLETE DEBUG PATCH ===== */
+#fixedReminderModal{z-index:420}
+#fixedReminderModal .modal{padding-bottom:calc(18px + env(safe-area-inset-bottom));background:var(--p-card);color:var(--p-text)}
+#fixedReminderModal .p2c-fixed-actions{position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom));z-index:4;margin:14px -16px calc(-18px - env(safe-area-inset-bottom));padding:10px 16px max(12px,env(safe-area-inset-bottom));background:rgba(255,255,255,.98);border-top:1px solid var(--p-line);display:flex;gap:8px}
+#fixedReminderModal .p2c-fixed-actions .btn{margin:0}
+#fixedReminderModal .p2c-confirm-fixed{background:var(--p-black);border-color:var(--p-black);color:#fff}
+#fixedReminderModal .p2c-confirm-fixed:disabled,.p2c-footer .btn:disabled{opacity:.45;pointer-events:none}
+body.p2c-sheet-open #editModal,body.p2c-sheet-open #fixedReminderModal{display:none!important}
+.p2c-entry-source{font-size:9px;color:var(--p-muted);margin-top:2px}
+.p2c-footer .btn{display:flex;align-items:center;justify-content:space-between;min-height:46px}
+.p2c-toast-action{pointer-events:auto;border:0;background:none;color:#95D7BE;font-size:11px;font-weight:700;margin-left:12px}
+
 </style>
 </head>
 
@@ -710,9 +723,9 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
     <div class="modal-title"><span id="fixedReminderTitle">今月の固定費</span><button class="modal-close" onclick="closeFixedReminderModal()">&#10005;</button></div>
     <p style="font-size:12px;color:var(--text2);margin-bottom:.75rem">実額を入力して「まとめて確定」。今月払わないものは「スキップ」してください。</p>
     <div id="fixedReminderList"></div>
-    <div style="display:flex;gap:8px;margin-top:1rem">
-      <button class="btn" onclick="closeFixedReminderModal()" style="flex:1">閉じる</button>
-      <button class="btn primary" onclick="confirmAllFixed()" style="flex:2;margin-top:0">まとめて確定</button>
+    <div class="p2c-fixed-actions">
+      <button type="button" class="btn" onclick="closeFixedReminderModal()" style="flex:1">閉じる</button>
+      <button type="button" class="btn primary p2c-confirm-fixed" id="confirmAllFixedBtn" onclick="confirmAllFixed()" style="flex:2">入力額で確定する</button>
     </div>
   </div>
 </div>
@@ -1030,40 +1043,46 @@ function openFixedReminderModal(){
       return `<div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;background:var(--bg2)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:13px;font-weight:600">${t.memo}${splitBadge}${dispDay?`<span style="font-size:10px;color:var(--text3);margin-left:6px;font-weight:400">支払日${dispDay}</span>`:''}</div><button onclick="skipFixed(${t.id})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:10px;color:var(--text2);cursor:pointer;font-family:inherit">今月スキップ</button></div><input type="number" id="${inputId}" value="${t.amount}" inputmode="numeric"${oninput} style="width:100%;padding:8px 10px;font-size:14px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px">${splitPreview}${chips.length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">${chips.join('')}</div>`:'<div style="font-size:10px;color:var(--text3);margin-top:4px">過去データなし・登録額を使用</div>'}</div>`;
     }).join('');
   }
-  document.getElementById('fixedReminderModal').style.display='flex';
+  const modal=document.getElementById('fixedReminderModal');modal.style.display='flex';const btn=document.getElementById('confirmAllFixedBtn');if(btn){btn.disabled=!prov.length;btn.textContent=prov.length?'入力額で確定する':'未確定項目なし';}modal.querySelector('.modal').scrollTop=0;
 }
 function setProvValue(inputId,val,previewId,rate,payer,isSplit){const el=document.getElementById(inputId);if(!el) return;el.value=val;if(isSplit) onProvInput(inputId,previewId,rate,payer);}
 function onProvInput(inputId,previewId,rate,payer){const v=parseFloat(document.getElementById(inputId).value)||0;const shares=calcShares(v,rate,payer);const el=document.getElementById(previewId);if(el) el.textContent=`自分 ${fmt(shares.myShare)} / ${partnerName} ${fmt(shares.herShare)}`;}
 function closeFixedReminderModal(){document.getElementById('fixedReminderModal').style.display='none';}
 function confirmAllFixed(){
+  const btn=document.getElementById('confirmAllFixedBtn');
+  if(btn?.disabled) return;
   const prov=provisionalTx();
-  let confirmed=0;
-  prov.forEach(t=>{
+  if(!prov.length){closeFixedReminderModal();p2cToast('未確定の固定費はありません');return;}
+  const updates=[];
+  for(const t of prov){
     const inputId='prov_'+String(t.id).replace(/\./g,'_');
     const el=document.getElementById(inputId);
-    if(!el) return;
-    const v=parseFloat(el.value)||0;
-    if(v>0){
-      const idx=transactions.findIndex(x=>x.id===t.id);
-      if(idx>=0){
-        transactions[idx].amount=v;
-        transactions[idx].isProvisional=false;
-        transactions[idx].note='';
-        if(transactions[idx].isSplit){
-          const rate=transactions[idx].myRate??50;
-          const shares=calcShares(v,rate,transactions[idx].payer||'me');
-          transactions[idx].myShare=shares.myShare;
-          transactions[idx].herShare=shares.herShare;
-        }
-        confirmed++;
-      }
+    if(!el) continue;
+    const raw=String(el.value||'').replace(/,/g,'').trim();
+    const value=Number(raw);
+    if(!Number.isFinite(value)||value<=0){el.focus();el.scrollIntoView({block:'center',behavior:'smooth'});p2cShowBanner((t.memo||'固定費')+'の実額を入力してください',{warning:true});return;}
+    updates.push({id:t.id,value});
+  }
+  if(!updates.length){p2cShowBanner('確定できる固定費がありません',{warning:true});return;}
+  if(btn){btn.disabled=true;btn.textContent='確定中...';}
+  try{
+    let confirmed=0;
+    for(const u of updates){
+      const idx=transactions.findIndex(x=>x.id===u.id);
+      if(idx<0) continue;
+      const t=transactions[idx];
+      t.amount=u.value;t.isProvisional=false;t.note=stripAutoNote(t.note);
+      if(t.isSplit){const shares=calcShares(u.value,t.myRate??50,t.payer||'me');t.myShare=shares.myShare;t.herShare=shares.herShare;}
+      confirmed++;
     }
-  });
-  save();
-  closeFixedReminderModal();
-  updateHeader();renderHistory();renderSplit();updateFixedReminders();
-  if(document.getElementById('page-budget').classList.contains('active')) renderBudget();
-  alert(confirmed+'件を確定しました');
+    save();closeFixedReminderModal();
+    updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+    if(document.getElementById('page-budget').classList.contains('active'))renderBudget();
+    if(typeof renderP2C==='function')renderP2C();
+    showSuccessToast(confirmed+'件を確定しました');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='入力額で確定する';}
+  }
 }
 function skipFixed(txId){
   const t=transactions.find(x=>x.id===txId);
@@ -1078,6 +1097,7 @@ function skipFixed(txId){
   openFixedReminderModal();
   updateHeader();renderHistory();renderSplit();updateFixedReminders();
   if(document.getElementById('page-budget').classList.contains('active')) renderBudget();
+  if(typeof renderP2C==='function') renderP2C();
 }
 function buildCatOptions(sel,type,val){const cats=type==='income'?INCOME_CATS:EXPENSE_CATS;sel.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join('');if(val&&cats.includes(val)) sel.value=val; else sel.value=cats[0];}
 buildCatOptions(document.getElementById('category'),'expense');
@@ -1109,7 +1129,7 @@ function updateHeader(){
   if(typeof renderP2C==='function'&&document.getElementById('p2cMonth'))renderP2C();
 }
 function changeMonth(d){viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}postProvisional(viewYear,viewMonth);updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();if(document.getElementById('page-chart').classList.contains('active')){const sub=document.getElementById('stab-me').classList.contains('active')?'me':'couple';renderCharts(sub);}if(document.getElementById('page-budget').classList.contains('active'))renderBudget();renderP2C();}
-function setType(t){txType=t;document.getElementById('btn-income').className='toggle-btn'+(t==='income'?' active income':'');document.getElementById('btn-expense').className='toggle-btn'+(t==='expense'?' active expense':'');document.getElementById('adjSection').style.display=t==='expense'?'':'none';document.getElementById('splitSection').style.display=t==='expense'?'':'none';buildCatOptions(document.getElementById('category'),t);if(t==='expense') applyDefaultRate();}
+function setType(t){txType=t;const st=document.getElementById('p2cSheetTitle');if(st)st.textContent=t==='income'?'収入を記録':'支出を記録';document.getElementById('btn-income').className='toggle-btn'+(t==='income'?' active income':'');document.getElementById('btn-expense').className='toggle-btn'+(t==='expense'?' active expense':'');document.getElementById('adjSection').style.display=t==='expense'?'':'none';document.getElementById('splitSection').style.display=t==='expense'?'':'none';buildCatOptions(document.getElementById('category'),t);if(t==='expense') applyDefaultRate();}
 function setPayer(p){splitPayer=p;document.getElementById('btn-me').className='toggle-btn'+(p==='me'?' active me':'');document.getElementById('btn-her').className='toggle-btn'+(p==='her'?' active her':'');updateSharePreview();}
 function setShareMode(m){shareMode=m;document.getElementById('mode-rate').className='toggle-btn'+(m==='rate'?' active sel':'');document.getElementById('mode-diff').className='toggle-btn'+(m==='diff'?' active sel':'');document.getElementById('mode-amount').className='toggle-btn'+(m==='amount'?' active sel':'');document.getElementById('share-rate-input').style.display=m==='rate'?'':'none';document.getElementById('share-diff-input').style.display=m==='diff'?'':'none';document.getElementById('share-amount-input').style.display=m==='amount'?'':'none';updateSharePreview();}
 function onAmountShareInput(){updateSharePreview();}
@@ -1165,9 +1185,12 @@ function onRateInput(){const v=parseInt(document.getElementById('myRate').value)
 function onDiffInput(){updateSharePreview();}
 function updateAdjPreview(){const amt=getAmountValue()||0;const rate=parseInt(document.getElementById('adjRate').value)||50;const prev=document.getElementById('adjPreview');if(!document.getElementById('isAdj').checked||!amt){prev.textContent='-';return;}prev.textContent=`自分+${fmt(Math.ceil(amt*rate/100))} / ${partnerName}-${fmt(Math.floor(amt*(100-rate)/100))}`;}
 function updateSharePreview(){const amt=getAmountValue()||0;const el=document.getElementById('sharePreview');if(!amt||!document.getElementById('isSplit').checked){el.textContent='';return;}let myShare,herShare;if(shareMode==='rate'){const rate=parseInt(document.getElementById('myRate').value)||50;({myShare,herShare}=calcShares(amt,rate,splitPayer));}else if(shareMode==='diff'){const dw=document.getElementById('diffWho').value;const da=parseFloat(document.getElementById('diffAmt').value)||0;({myShare,herShare}=calcSharesByDiff(amt,da,dw,splitPayer));}else{const aw=document.getElementById('amountWho').value;const av=parseFloat(document.getElementById('amountShare').value)||0;({myShare,herShare}=calcSharesByAmount(amt,av,aw));}el.textContent=`自分 ${fmt(myShare)} / ${partnerName} ${fmt(herShare)}`;}
+let p2cRecording=false;
 function addTransaction(){
+  if(p2cRecording)return;
   const amount=getAmountValue();
-  if(!amount||isNaN(amount)||amount<=0){alert('金額を入力してください（例: 1200 または 1200+800）');return;}
+  if(!amount||isNaN(amount)||amount<=0){p2cEnsureEntryFooter();alert('金額を入力してください（例: 1200 または 1200+800）');return;}
+  p2cRecording=true;const rb=document.getElementById('p2cRecordBtn');if(rb)rb.disabled=true;
   const isAdj=document.getElementById('isAdj').checked&&txType==='expense';
   const isSplit=!isAdj&&document.getElementById('isSplit').checked&&txType==='expense';
   let myShare=null,herShare=null,myRate=null;
@@ -1199,6 +1222,7 @@ function addTransaction(){
   showSuccessToast('記録しました');
   document.getElementById('amount').blur();
   if(document.body.classList.contains('p2c-sheet-open'))p2cCloseInput();
+  p2cRecording=false;if(rb)rb.disabled=false;
 }
 
 let _toastTimer=null;
@@ -1422,7 +1446,7 @@ function deleteById(id){
   if(!t) return;
   if(!confirm((t.memo||'この取引')+' を削除しますか？')) return;
   transactions=transactions.filter(x=>x.id!==id);
-  save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+  save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();renderP2C();
 }
 // スワイプ検出（タッチ）
 let _swipeStartX=0,_swipeWrap=null;
@@ -1684,56 +1708,35 @@ function saveEdit(){
   if(isAdj){myRate=parseInt(document.getElementById('edit-adjRate').value)||50;myShare=Math.ceil(amount*myRate/100);herShare=Math.floor(amount*(100-myRate)/100);}
   const idx=transactions.findIndex(x=>x.id===editingId);
   const orig=transactions[idx];
-  transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:stripAutoNote(document.getElementById('edit-note').value),isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,amountShare:(isSplit&&editShareMode==='amount')?(parseFloat(document.getElementById('edit-amountShare').value)||0):null,amountWho:(isSplit&&editShareMode==='amount')?document.getElementById('edit-amountWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};  save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+  transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:stripAutoNote(document.getElementById('edit-note').value),isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,amountShare:(isSplit&&editShareMode==='amount')?(parseFloat(document.getElementById('edit-amountShare').value)||0):null,amountWho:(isSplit&&editShareMode==='amount')?document.getElementById('edit-amountWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};  save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();renderP2C();showSuccessToast('更新しました');
 }
-function deleteTransaction(){if(!editingId) return;if(!confirm('この取引を削除しますか？')) return;transactions=transactions.filter(x=>x.id!==editingId);save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();}
+function deleteTransaction(){if(!editingId)return;if(!confirm('この取引を削除しますか？'))return;transactions=transactions.filter(x=>x.id!==editingId);save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();renderP2C();showSuccessToast('削除しました');}
 let charts={};
 
 function duplicateTransaction(){
   if(!editingId) return;
-  const t=transactions.find(x=>x.id===editingId);
-  if(!t) return;
-  // 編集モーダルを閉じる
+  const t=transactions.find(x=>x.id===editingId);if(!t)return;
   closeModalDirect();
-  // 入力タブに切り替え
-  switchTab('home');
-  // 種別を復元
   setType(t.type==='adjustment'?'expense':t.type);
-  // 基本項目をフォームに反映
   document.getElementById('amount').value=t.amount;
   buildCatOptions(document.getElementById('category'),txType,t.category);
   document.getElementById('memo').value=t.memo||'';
-  document.getElementById('note').value=t.note||'';
-  // 日付は今日
+  document.getElementById('note').value=stripAutoNote(t.note);
   document.getElementById('txdate').value=localDateString();
-  // 割り勘・調整の復元（支出のみ）
+  document.getElementById('isAdj').checked=false;onAdjChange();
+  document.getElementById('isSplit').checked=false;toggleSplitOptions();
   if(txType==='expense'){
-    const isAdj=t.isAdj||t.type==='adjustment';
-    const isSplit=!!t.isSplit&&!isAdj;
-    // 調整
-    document.getElementById('isAdj').checked=isAdj;
-    onAdjChange();
+    const isAdj=!!(t.isAdj||t.type==='adjustment'),isSplit=!!t.isSplit&&!isAdj;
+    document.getElementById('isAdj').checked=isAdj;onAdjChange();
     if(isAdj){document.getElementById('adjRate').value=t.myRate??50;updateAdjPreview();}
-    // 割り勘
-    document.getElementById('isSplit').checked=isSplit;
-    toggleSplitOptions();
-    if(isSplit){
-      setPayer(t.payer||'me');
-      const mode=t.shareMode||'rate';
-      setShareMode(mode);
-      document.getElementById('myRate').value=t.myRate??50;
-      document.getElementById('herRateDisp').textContent=(100-(t.myRate??50))+'%';
-      document.getElementById('diffWho').value=t.diffWho||'me';
-      document.getElementById('diffAmt').value=t.diffAmt||'';
-      document.getElementById('amountWho').value=t.amountWho||'me';
-      document.getElementById('amountShare').value=t.amountShare||'';
-      updateSharePreview();
-    }
+    document.getElementById('isSplit').checked=isSplit;toggleSplitOptions();
+    if(isSplit){setPayer(t.payer||'me');setShareMode(t.shareMode||'rate');document.getElementById('myRate').value=t.myRate??50;document.getElementById('herRateDisp').textContent=(100-(t.myRate??50))+'%';document.getElementById('diffWho').value=t.diffWho||'me';document.getElementById('diffAmt').value=t.diffAmt||'';document.getElementById('amountWho').value=t.amountWho||'me';document.getElementById('amountShare').value=t.amountShare||'';updateSharePreview();}
   }
-  showSyncStatus('🔁 複製しました。金額など確認して記録してください','var(--blue)');
-  document.getElementById('amount').focus();
+  onAmountInput();
+  p2cOpenInput({source:'明細から複製',returnPage:'history'});
+  const details=document.getElementById('p2cDetails');if((t.isSplit||t.isAdj)&&details)details.classList.add('open');
+  p2cFooter();p2cToast('内容を確認して記録してください');
 }
-  
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 function getMonthRange(n){const arr=[];for(let i=n-1;i>=0;i--){let m=viewMonth-i,y=viewYear;while(m<0){m+=12;y--;}arr.push({m,y,label:(m+1)+'月'});}return arr;}
 function renderMyCharts(){
@@ -1955,7 +1958,7 @@ function saveFixed(){
   cancelFixedForm();
   renderFixed();
   postProvisional(viewYear,viewMonth);
-  updateHeader();renderHistory();renderSplit();updateFixedReminders();
+  updateHeader();renderHistory();renderSplit();updateFixedReminders();renderP2C();
 }
 function editFixed(i){openFixedForm(i);}
 function deleteFixed(i){if(!confirm('削除しますか？')) return;const arr=loadFixed();arr.splice(i,1);saveFixedData(arr);renderFixed();}
@@ -2016,9 +2019,20 @@ let p2cActive='dashboard',p2cReturn={page:'dashboard',y:0};const p2cPages={dashb
 function p2cShow(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active')}
 function p2cNav(n){document.querySelectorAll('.p2c-nb').forEach(x=>x.classList.toggle('active',x.dataset.p2c===n))}
 function p2cGo(n){if(document.body.classList.contains('p2c-sheet-open'))p2cCloseInput();p2cShow(p2cPages[n]||p2cPages.dashboard);p2cActive=n;p2cNav(n==='history'?'history':['analysis','chart','budget','annual'].includes(n)?'analysis':['more','split','fixed','settings'].includes(n)?'more':'dashboard');const active=document.getElementById(p2cPages[n]||p2cPages.dashboard);if(active)active.scrollTop=0;if(n==='chart')renderCharts(document.getElementById('stab-me').classList.contains('active')?'me':'couple');if(n==='annual')renderAnnual();if(n==='budget'){buildBudgetInputTable();renderBudget()}if(n==='fixed')renderFixed();if(n==='settings')buildCatRateTable();if(n==='history')renderHistory();renderP2C()}
-function p2cOpenInput(){const activePage=document.getElementById(p2cPages[p2cActive]||'page-dashboard');p2cReturn={page:p2cActive,y:activePage?.scrollTop||0};const page=document.getElementById('page-home'),card=document.getElementById('amount')?.closest('.card');if(!card)return;card.classList.add('p2c-input-card');page.classList.add('p2c-input');document.body.classList.add('p2c-sheet-open');p2cVV();if(!document.getElementById('p2cSheetHead'))card.insertAdjacentHTML('afterbegin','<div class="p2c-sheet-head" id="p2cSheetHead"><div><div class="p2c-sheet-kicker">NEW ENTRY</div><div class="p2c-sheet-title">支出を記録</div></div><button type="button" class="p2c-close" onclick="p2cCloseInput()">×</button></div>');p2cPrepare();p2cFooter();card.scrollTop=0;requestAnimationFrame(()=>card.scrollTop=0);}
+function p2cOpenInput(options={}){
+  const activePage=document.getElementById(p2cPages[p2cActive]||'page-dashboard');
+  if(!document.body.classList.contains('p2c-sheet-open'))p2cReturn={page:options.returnPage||p2cActive,y:activePage?.scrollTop||0};
+  const page=document.getElementById('page-home'),card=document.getElementById('amount')?.closest('.card');if(!card)return;
+  card.classList.add('p2c-input-card');page.classList.add('p2c-input');document.body.classList.add('p2c-sheet-open');p2cVV();
+  if(!document.getElementById('p2cSheetHead'))card.insertAdjacentHTML('afterbegin','<div class="p2c-sheet-head" id="p2cSheetHead"><div><div class="p2c-sheet-kicker">NEW ENTRY</div><div class="p2c-sheet-title" id="p2cSheetTitle">支出を記録</div><div class="p2c-entry-source" id="p2cEntrySource"></div></div><button type="button" class="p2c-close" aria-label="入力を閉じる" onclick="p2cCloseInput()">×</button></div>');
+  p2cPrepare();p2cEnsureEntryFooter();
+  document.getElementById('p2cSheetTitle').textContent=txType==='income'?'収入を記録':'支出を記録';
+  document.getElementById('p2cEntrySource').textContent=options.source||'';
+  p2cFooter();card.scrollTop=0;requestAnimationFrame(()=>card.scrollTop=0);
+}
 function p2cCloseInput(){document.activeElement?.blur?.();document.getElementById('page-home').classList.remove('p2c-input');document.body.classList.remove('p2c-sheet-open','p2c-keyboard-open');document.documentElement.style.setProperty('--keyboard-inset','0px');p2cGo(p2cReturn.page);const page=document.getElementById(p2cPages[p2cReturn.page]||'page-dashboard');requestAnimationFrame(()=>{if(page)page.scrollTop=p2cReturn.y});}
-function p2cPrepare(){const page=document.getElementById('page-home'),card=document.getElementById('amount')?.closest('.card');if(!card||document.getElementById('p2cDetails'))return;const ops=card.querySelector('.calc-ops');if(ops){const b=document.createElement('button');b.type='button';b.className='p2c-calc';b.textContent='計算を開く';b.onclick=()=>{document.activeElement?.blur();ops.classList.toggle('p2c-open');b.textContent=ops.classList.contains('p2c-open')?'計算を閉じる':'計算を開く'};ops.parentNode.insertBefore(b,ops)}const note=document.getElementById('note')?.closest('.form-row'),split=document.getElementById('splitSection'),adj=document.getElementById('adjSection'),w=document.createElement('div');w.id='p2cDetails';w.className='p2c-details';w.innerHTML='<button type="button" onclick="this.parentNode.classList.toggle(\'open\')"><span style="width:35px;height:35px;border-radius:9px;background:var(--p-soft);display:flex;align-items:center;justify-content:center;margin-right:10px">⚙</span><span style="flex:1"><small style="display:block;color:var(--p-muted);letter-spacing:1px">ADVANCED</small><b style="font-size:12px">備考・割り勘・調整</b></span><span>⌄</span></button><div class="p2c-details-body"></div>';const rec=Array.from(card.querySelectorAll('.btn.primary')).find(x=>/記録/.test(x.textContent));if(rec)rec.parentNode.insertBefore(w,rec);else card.appendChild(w);const body=w.querySelector('.p2c-details-body');if(note)body.appendChild(note);if(split)body.appendChild(split);if(adj)body.appendChild(adj);page.insertAdjacentHTML('beforeend','<div class="p2c-footer"><button class="btn primary" onclick="addTransaction()"><span>記録する</span><span id="p2cAmount">¥0</span><i class="p2c-line"></i></button></div>');document.getElementById('amount')?.addEventListener('input',p2cFooter)}
+function p2cPrepare(){const page=document.getElementById('page-home'),card=document.getElementById('amount')?.closest('.card');if(!card)return;if(document.getElementById('p2cDetails')){p2cEnsureEntryFooter();return;}const ops=card.querySelector('.calc-ops');if(ops){const b=document.createElement('button');b.type='button';b.className='p2c-calc';b.textContent='計算を開く';b.onclick=()=>{document.activeElement?.blur();ops.classList.toggle('p2c-open');b.textContent=ops.classList.contains('p2c-open')?'計算を閉じる':'計算を開く'};ops.parentNode.insertBefore(b,ops)}const note=document.getElementById('note')?.closest('.form-row'),split=document.getElementById('splitSection'),adj=document.getElementById('adjSection'),w=document.createElement('div');w.id='p2cDetails';w.className='p2c-details';w.innerHTML='<button type="button" onclick="this.parentNode.classList.toggle(\'open\')"><span style="width:35px;height:35px;border-radius:9px;background:var(--p-soft);display:flex;align-items:center;justify-content:center;margin-right:10px">⚙</span><span style="flex:1"><small style="display:block;color:var(--p-muted);letter-spacing:1px">ADVANCED</small><b style="font-size:12px">備考・割り勘・調整</b></span><span>⌄</span></button><div class="p2c-details-body"></div>';const rec=Array.from(card.querySelectorAll('.btn.primary')).find(x=>/記録/.test(x.textContent));if(rec)rec.parentNode.insertBefore(w,rec);else card.appendChild(w);const body=w.querySelector('.p2c-details-body');if(note)body.appendChild(note);if(split)body.appendChild(split);if(adj)body.appendChild(adj);p2cEnsureEntryFooter();document.getElementById('amount')?.addEventListener('input',p2cFooter)}
+function p2cEnsureEntryFooter(){const page=document.getElementById('page-home');let footer=page.querySelector(':scope > .p2c-footer');if(!footer){page.insertAdjacentHTML('beforeend','<div class="p2c-footer"><button type="button" class="btn primary" id="p2cRecordBtn" onclick="addTransaction()"><span>記録する</span><span id="p2cAmount">¥0</span><i class="p2c-line"></i></button></div>');footer=page.querySelector(':scope > .p2c-footer');}footer.style.display='';}
 function p2cFooter(){const e=document.getElementById('p2cAmount');if(e)e.textContent=fmt(typeof getAmountValue==='function'?getAmountValue():0)}
 function renderP2C(){const q=id=>document.getElementById(id);q('p2cMonth').textContent=q('monthLabel')?.textContent||'';[['totalBalance','p2cBalance'],['totalIncome','p2cIncome'],['totalExpense','p2cExpense'],['savingsRate','p2cSavings']].forEach(([a,b])=>{if(q(a)&&q(b))q(b).textContent=q(a).textContent});q('p2cTrend').textContent=q('balVsPrev')?.textContent||'';const bd=loadBudget(viewYear,viewMonth),tb=Object.values(bd.cats||{}).reduce((a,b)=>a+(+b||0),0),tx=monthTx(),used=tx.reduce((z,t)=>t.type==='income'?z:z+((t.isAdj||t.isSplit)?(t.myShare||0):t.amount),0),pct=tb?Math.round(used/tb*100):0;q('p2cBudget').textContent=tb?pct+'%':'未設定';q('p2cBudgetBar').style.width=Math.min(100,pct)+'%';q('p2cBudgetLeft').textContent=tb?'残り '+fmt(tb-used):'タップして設定';const now=new Date(),days=new Date(viewYear,viewMonth+1,0).getDate(),day=viewYear===now.getFullYear()&&viewMonth===now.getMonth()?now.getDate():days,fc=day?Math.round(used/day*days):0;q('p2cForecast').textContent=used?fmt(fc):'-';q('p2cForecastSub').textContent=day<5?'データが少ないため参考値':'現在の支出ペースから予測';const a=[],prov=provisionalTx();if(prov.length)a.push(['♢','固定費を確定',prov.length+'件・見込 '+fmt(prov.reduce((z,t)=>z+t.amount,0)),"openFixedReminderModal()"]);const cards=loadCards(),rev=loadReviews(viewYear,viewMonth),uc=cards.filter(c=>!rev[c]?.checked);if(uc.length)a.push(['▤','カード明細を確認',uc.length+'社が未確認',"p2cGo('history')"]);if(monthTx().some(t=>t.isSplit&&t.type==='expense'))a.push(['♧','割り勘を精算','精算額を確認',"p2cGo('split')"]);q('p2cActionCount').textContent=a.length?a.length+'件':'';q('p2cBell').classList.toggle('has',a.length>0);q('p2cActions').innerHTML=a.length?a.map(x=>'<div class="p2c-action" onclick="'+x[3]+'"><div class="p2c-ai">'+x[0]+'</div><div class="p2c-am"><div class="p2c-at">'+x[1]+'</div><div class="p2c-as">'+x[2]+'</div></div><span>›</span></div>').join(''):'<div class="p2c-done">✓　確認が必要な項目はありません</div>';const today=localDateString(),rows=transactions.filter(t=>t.date===today).slice().sort((a,b)=>b.id-a.id).slice(0,4);q('p2cRecent').innerHTML=rows.length?rows.map(t=>'<div class="p2c-recent" onclick="p2cGo(\'history\')"><div class="p2c-ri">'+(t.category?t.category.slice(0,2):'💴')+'</div><div class="p2c-rm"><div class="p2c-rn">'+t.memo+'</div><div class="p2c-rc">'+catLabel(t.category)+'</div></div><div class="p2c-ra">'+(t.type==='income'?'+':'-')+fmt(t.amount)+'</div></div>').join(''):'<div class="empty">今日の記録はまだありません</div>'}
 let p2cBaseHeight=window.innerHeight;function p2cVV(){const vv=window.visualViewport;if(!vv)return;const inset=document.body.classList.contains('p2c-sheet-open')?Math.max(0,p2cBaseHeight-(vv.height+vv.offsetTop)):0;document.documentElement.style.setProperty('--app-height',p2cBaseHeight+'px');document.documentElement.style.setProperty('--keyboard-inset',inset+'px');document.body.classList.toggle('p2c-keyboard-open',inset>80)}
