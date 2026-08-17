@@ -264,21 +264,12 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
 #successToast{top:auto;bottom:calc(var(--p-nav-h) + env(safe-area-inset-bottom) + 14px);left:50%;transform:translate(-50%,12px)!important;flex-direction:row;gap:7px;border-radius:12px;padding:10px 14px;background:rgba(37,44,40,.96);box-shadow:0 10px 30px rgba(0,0,0,.18)}#successToast.show{transform:translate(-50%,0)!important}#successToast .st-check{width:18px;height:18px;background:transparent}#successToast .st-check svg{width:18px;height:18px}#successToast .st-check-circle{display:none}#successToast .st-check-tick{stroke:#95D7BE;stroke-width:6}#successToast .st-text{font-size:12px;font-weight:600}
 
 
-/* ===== SINGLE PROVISIONAL CONFIRMATION ===== */
-.p2c-prov-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:7px;margin-top:9px}
-.p2c-prov-actions button{min-height:38px;border-radius:9px;font-family:inherit;font-size:11px;font-weight:650;cursor:pointer}
-.p2c-prov-skip{background:var(--p-soft);color:var(--p-sub);border:1px solid var(--p-line)}
-.p2c-prov-confirm{background:var(--p-black);color:#fff;border:1px solid var(--p-black)}
-.p2c-prov-confirm:disabled{opacity:.45;pointer-events:none}
-#singleProvisionalModal{z-index:460}
-#singleProvisionalModal .modal{background:var(--p-card);padding-bottom:calc(18px + env(safe-area-inset-bottom))}
-.p2c-prov-hero{border:1px solid var(--p-line);border-radius:14px;background:var(--p-soft);padding:13px;margin-bottom:12px}
-.p2c-prov-name{font-size:14px;font-weight:700;color:var(--p-text)}
-.p2c-prov-meta{font-size:10px;color:var(--p-muted);margin-top:3px}
-.p2c-prov-current{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--p-line);font-size:11px;color:var(--p-sub)}
-.p2c-prov-current b{font-size:17px;color:var(--p-text)}
-.p2c-prov-modal-actions{position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom));margin:14px -16px calc(-18px - env(safe-area-inset-bottom));padding:10px 16px max(12px,env(safe-area-inset-bottom));background:rgba(255,255,255,.98);border-top:1px solid var(--p-line);display:grid;grid-template-columns:1fr 1.35fr;gap:8px}
-.tx-item.provisional .tx-sub:last-of-type{color:var(--p-bronze)}
+/* ===== FEATURES 1-5 PATCH ===== */
+.p2c-settle-btn{width:100%;margin-top:10px;background:var(--p-black);color:#fff;border:1px solid var(--p-black);border-radius:12px;padding:11px;font-size:13px;font-weight:700}
+.p2c-settle-btn.done{background:var(--p-soft);color:var(--p-green);border-color:var(--p-line)}
+.p2c-save-error{border-left:2px solid var(--p-red)!important}
+.p2c-prov-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:7px;margin-top:9px}.p2c-prov-actions button{min-height:38px;border-radius:9px;font-family:inherit;font-size:11px;font-weight:650}.p2c-prov-skip{background:var(--p-soft);color:var(--p-sub);border:1px solid var(--p-line)}.p2c-prov-confirm{background:var(--p-black);color:#fff;border:1px solid var(--p-black)}
+#singleProvisionalModal{z-index:460}#singleProvisionalModal .modal{background:var(--p-card);padding-bottom:calc(18px + env(safe-area-inset-bottom))}.p2c-prov-hero{border:1px solid var(--p-line);border-radius:14px;background:var(--p-soft);padding:13px;margin-bottom:12px}.p2c-prov-modal-actions{position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom));margin:14px -16px calc(-18px - env(safe-area-inset-bottom));padding:10px 16px max(12px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--p-line);display:grid;grid-template-columns:1fr 1.35fr;gap:8px}
 
 </style>
 </head>
@@ -733,24 +724,7 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="singleProvisionalModal" style="display:none" onclick="if(event.target.id==='singleProvisionalModal')closeSingleProvisionalModal()">
-  <div class="modal">
-    <div class="modal-title"><span>仮計上を確定</span><button type="button" class="modal-close" onclick="closeSingleProvisionalModal()">&#10005;</button></div>
-    <div class="p2c-prov-hero">
-      <div class="p2c-prov-name" id="singleProvName"></div>
-      <div class="p2c-prov-meta" id="singleProvMeta"></div>
-      <div class="p2c-prov-current"><span>見込額</span><b id="singleProvEstimate">¥0</b></div>
-    </div>
-    <label>実際の金額</label>
-    <input type="number" id="singleProvAmount" min="1" inputmode="numeric" oninput="updateSingleProvPreview()">
-    <div id="singleProvPreview" style="font-size:11px;color:var(--p-green);min-height:18px;margin-top:6px"></div>
-    <div id="singleProvChips" style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px"></div>
-    <div class="p2c-prov-modal-actions">
-      <button type="button" class="btn" onclick="skipSingleProvisional()">今月スキップ</button>
-      <button type="button" class="btn primary" id="singleProvConfirmBtn" onclick="confirmSingleProvisional()" style="margin:0">この項目を確定</button>
-    </div>
-  </div>
-</div>
+<div class="modal-overlay" id="singleProvisionalModal" style="display:none" onclick="if(event.target.id==='singleProvisionalModal')closeSingleProvisionalModal()"><div class="modal"><div class="modal-title"><span>仮計上を確定</span><button type="button" class="modal-close" onclick="closeSingleProvisionalModal()">&#10005;</button></div><div class="p2c-prov-hero"><div id="singleProvName" style="font-size:14px;font-weight:700"></div><div id="singleProvMeta" style="font-size:10px;color:var(--p-muted);margin-top:3px"></div><div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--p-line)"><span>見込額</span><b id="singleProvEstimate">¥0</b></div></div><label>実際の金額</label><input type="number" id="singleProvAmount" min="1" inputmode="numeric" oninput="updateSingleProvPreview()"><div id="singleProvPreview" style="font-size:11px;color:var(--p-green);min-height:18px;margin-top:6px"></div><div id="singleProvChips" style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px"></div><div class="p2c-prov-modal-actions"><button type="button" class="btn" onclick="skipSingleProvisional()">今月スキップ</button><button type="button" class="btn primary" id="singleProvConfirmBtn" onclick="confirmSingleProvisional()" style="margin:0">この項目を確定</button></div></div></div>
 <div class="modal-overlay" id="editModal" style="display:none" onclick="if(event.target.id==='editModal')closeModalDirect()">
   <div class="modal">
     <div class="modal-title"><span>取引を編集</span><button class="modal-close" onclick="closeModalDirect()">&#10005;</button></div>
@@ -965,7 +939,8 @@ async function cloudPull(){
 function getAllBudgets(){const budgets={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(SP+'kakeibo_budget_')) budgets[k]=localStorage.getItem(k);}return budgets;}
 function restoreAllBudgets(budgets){Object.entries(budgets).forEach(([k,v])=>localStorage.setItem(k,v));}
 function schedulePush(){localStorage.setItem(SP+'kakeibo_updatedAt',String(Date.now()));if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(cloudPush,1500);}
-function save(){try{localStorage.setItem(SP+'kakeibo_v7',JSON.stringify(transactions));}catch(e){}schedulePush();}
+function showSaveFailure(error){console.error('local save failed',error);if(typeof p2cShowBanner==='function')p2cShowBanner('端末への保存に失敗しました。入力内容は保持されています',{warning:true,sticky:true});else alert('端末への保存に失敗しました');}
+function save(){try{localStorage.setItem(SP+'kakeibo_v7',JSON.stringify(transactions));schedulePush();return true;}catch(e){showSaveFailure(e);return false;}}
 
 let _lastId=0;
 function nextId(){
@@ -984,7 +959,13 @@ function monthTx(y,m){const vy=y??viewYear,vm=m??viewMonth;return transactions.f
 function realExp(txList){return txList.reduce((s,t)=>{if(t.type==='income') return s;if(t.isAdj||t.type==='adjustment') return s+(t.myShare||0);if(t.isSplit) return s+(t.myShare||0);return s+t.amount;},0);}
 function calcShares(amount, myRatePct, payer){const r=Math.max(0,Math.min(100,myRatePct??50))/100;if(payer==='me'){const herShare=Math.floor(amount*(1-r));return {myShare:amount-herShare,herShare};}else{const myShare=Math.ceil(amount*r);return {myShare,herShare:amount-myShare};}}
 function calcSharesByDiff(amount, diffAmt, diffWho, payer){const half=amount/2;let myShare,herShare;if(diffWho==='me'){myShare=Math.round(half+diffAmt/2);herShare=amount-myShare;}else{herShare=Math.round(half+diffAmt/2);myShare=amount-herShare;}if(payer==='me'){herShare=Math.floor(herShare);myShare=amount-herShare;}else{myShare=Math.ceil(myShare);herShare=amount-myShare;}return {myShare,herShare,myRate:Math.round(myShare/amount*100)};}
-function fixedRefKey(f){return f.name+'__'+f.cat;}
+function settlementKey(y=viewYear,m=viewMonth){return SP+'kakeibo_settled_'+y+'-'+String(m+1).padStart(2,'0');}
+function isMonthSettled(y=viewYear,m=viewMonth){return localStorage.getItem(settlementKey(y,m))==='1';}
+function setMonthSettled(value,y=viewYear,m=viewMonth){if(value)localStorage.setItem(settlementKey(y,m),'1');else localStorage.removeItem(settlementKey(y,m));if(typeof renderP2C==='function')renderP2C();}
+function markMonthUnsettledForTx(t){if(!t||!(t.isSplit||t.isAdj||t.type==='adjustment'))return;const d=parseLocalDate(t.date);setMonthSettled(false,d.getFullYear(),d.getMonth());}
+function toggleMonthSettled(){const next=!isMonthSettled();setMonthSettled(next);renderSplit();if(next)showSuccessToast('精算済みにしました');else p2cToast('未精算に戻しました');}
+function newFixedId(){return 'fx_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);}
+function fixedRefKey(f){return f.id||f.name+'__'+f.cat;}
 function medianOfLast3(ref, y, m){const vals=[];for(let i=1;i<=3;i++){let ty=y,tm=m-i;while(tm<0){tm+=12;ty--;}const tx=transactions.filter(t=>t.fixedRef===ref&&!t.isProvisional&&parseLocalDate(t.date).getFullYear()===ty&&parseLocalDate(t.date).getMonth()===tm);if(tx.length) vals.push(tx.reduce((s,t)=>s+t.amount,0));}if(!vals.length) return null;vals.sort((a,b)=>a-b);return vals[Math.floor(vals.length/2)];}
 function lastYearSameMonth(ref, y, m){const tx=transactions.filter(t=>t.fixedRef===ref&&!t.isProvisional&&parseLocalDate(t.date).getFullYear()===y-1&&parseLocalDate(t.date).getMonth()===m);return tx.length?tx.reduce((s,t)=>s+t.amount,0):null;}
 function isAlreadyPosted(ref, y, m){return transactions.some(t=>t.fixedRef===ref&&parseLocalDate(t.date).getFullYear()===y&&parseLocalDate(t.date).getMonth()===m);}
@@ -1062,7 +1043,7 @@ function openFixedReminderModal(){
         splitPreview=`<div id="${previewId}" style="font-size:11px;color:var(--purple);margin-top:4px">自分 ${fmt(shares.myShare)} / ${partnerName} ${fmt(shares.herShare)}</div>`;
       }
       const oninput=t.isSplit?` oninput="onProvInput('${inputId}','${previewId}',${t.myRate??50},'${t.payer||'me'}')"`:'';
-      return `<div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;background:var(--bg2)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:13px;font-weight:600">${t.memo}${splitBadge}${dispDay?`<span style="font-size:10px;color:var(--text3);margin-left:6px;font-weight:400">支払日${dispDay}</span>`:''}</div><span style="font-size:10px;color:var(--text3)">実額を入力して確定</span></div><input type="number" id="${inputId}" value="${t.amount}" inputmode="numeric"${oninput} style="width:100%;padding:8px 10px;font-size:14px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px">${splitPreview}${chips.length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">${chips.join('')}</div>`:'<div style="font-size:10px;color:var(--text3);margin-top:4px">過去データなし・登録額を使用</div>'}<div class="p2c-prov-actions"><button type="button" class="p2c-prov-skip" onclick="skipFixed(${t.id})">今月スキップ</button><button type="button" class="p2c-prov-confirm" onclick="confirmFixedById(${t.id},'${inputId}',this)">この項目を確定</button></div></div>`;
+      return `<div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;background:var(--bg2)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:13px;font-weight:600">${t.memo}${splitBadge}${dispDay?`<span style="font-size:10px;color:var(--text3);margin-left:6px;font-weight:400">支払日${dispDay}</span>`:''}</div><button onclick="skipFixed(${t.id})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:10px;color:var(--text2);cursor:pointer;font-family:inherit">今月スキップ</button></div><input type="number" id="${inputId}" value="${t.amount}" inputmode="numeric"${oninput} style="width:100%;padding:8px 10px;font-size:14px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px">${splitPreview}${chips.length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">${chips.join('')}</div>`:'<div style="font-size:10px;color:var(--text3);margin-top:4px">過去データなし・登録額を使用</div>'}</div>`;
     }).join('');
   }
   document.getElementById('fixedReminderModal').style.display='flex';
@@ -1071,57 +1052,13 @@ function setProvValue(inputId,val,previewId,rate,payer,isSplit){const el=documen
 function onProvInput(inputId,previewId,rate,payer){const v=parseFloat(document.getElementById(inputId).value)||0;const shares=calcShares(v,rate,payer);const el=document.getElementById(previewId);if(el) el.textContent=`自分 ${fmt(shares.myShare)} / ${partnerName} ${fmt(shares.herShare)}`;}
 function closeFixedReminderModal(){document.getElementById('fixedReminderModal').style.display='none';}
 let singleProvisionalId=null;
-function refreshAfterProvisionalChange(){
-  updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
-  if(document.getElementById('page-budget').classList.contains('active'))renderBudget();
-  if(typeof renderP2C==='function')renderP2C();
-}
-function applyProvisionalConfirmation(txId,value){
-  const idx=transactions.findIndex(x=>x.id===txId&&x.isProvisional);if(idx<0)return false;
-  const t=transactions[idx];t.amount=value;t.isProvisional=false;t.note=stripAutoNote(t.note);
-  if(t.isSplit){const shares=calcShares(value,t.myRate??50,t.payer||'me');t.myShare=shares.myShare;t.herShare=shares.herShare;}
-  save();refreshAfterProvisionalChange();return true;
-}
-function confirmFixedById(txId,inputId,button){
-  if(button?.disabled)return;
-  const input=document.getElementById(inputId),value=Number(String(input?.value||'').replace(/,/g,''));
-  if(!Number.isFinite(value)||value<=0){input?.focus();p2cShowBanner('実額を入力してください',{warning:true});return;}
-  if(button){button.disabled=true;button.textContent='確定中...';}
-  if(applyProvisionalConfirmation(txId,value)){
-    showSuccessToast('1件を確定しました');
-    const remaining=provisionalTx();
-    if(remaining.length)openFixedReminderModal();else closeFixedReminderModal();
-  }else p2cShowBanner('この仮計上はすでに処理されています',{warning:true});
-}
-function openSingleProvisionalModal(txId){
-  const t=transactions.find(x=>x.id===txId&&x.isProvisional);if(!t){p2cToast('この仮計上はすでに処理されています');renderHistory();return;}
-  singleProvisionalId=txId;
-  document.getElementById('singleProvName').textContent=t.memo||'固定費';
-  document.getElementById('singleProvMeta').textContent=t.date+' · '+catLabel(t.category)+(t.isSplit?' · 割り勘':'');
-  document.getElementById('singleProvEstimate').textContent=fmt(t.amount);
-  document.getElementById('singleProvAmount').value=t.amount;
-  const ref=t.fixedRef,median=medianOfLast3(ref,viewYear,viewMonth),lastYear=lastYearSameMonth(ref,viewYear,viewMonth),fixed=loadFixed().find(f=>fixedRefKey(f)===ref),registered=fixed?Number(fixed.amount):null;
-  const candidates=[['中央値',median],['去年',lastYear],['登録額',registered]].filter(x=>Number.isFinite(x[1])&&x[1]>0);
-  document.getElementById('singleProvChips').innerHTML=candidates.map(([label,v])=>`<button type="button" class="prov-chip" onclick="document.getElementById('singleProvAmount').value=${v};updateSingleProvPreview()">${label} ${fmt(v)}</button>`).join('');
-  updateSingleProvPreview();document.getElementById('singleProvisionalModal').style.display='flex';document.getElementById('singleProvisionalModal').querySelector('.modal').scrollTop=0;
-}
+function refreshAfterProvisionalChange(){updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();if(document.getElementById('page-budget').classList.contains('active'))renderBudget();renderP2C();}
+function applyProvisionalConfirmation(id,value){const idx=transactions.findIndex(x=>x.id===id&&x.isProvisional);if(idx<0)return false;const before={...transactions[idx]},t=transactions[idx];t.amount=value;t.isProvisional=false;t.note=stripAutoNote(t.note);if(t.isSplit){const x=calcShares(value,t.myRate??50,t.payer||'me');t.myShare=x.myShare;t.herShare=x.herShare;}if(!save()){transactions[idx]=before;return false;}markMonthUnsettledForTx(t);refreshAfterProvisionalChange();return true;}
+function openSingleProvisionalModal(id){const t=transactions.find(x=>x.id===id&&x.isProvisional);if(!t){p2cToast('すでに処理されています');renderHistory();return;}singleProvisionalId=id;document.getElementById('singleProvName').textContent=t.memo;document.getElementById('singleProvMeta').textContent=t.date+' · '+catLabel(t.category)+(t.isSplit?' · 割り勘':'');document.getElementById('singleProvEstimate').textContent=fmt(t.amount);document.getElementById('singleProvAmount').value=t.amount;const fixed=loadFixed().find(f=>fixedRefKey(f)===t.fixedRef),vals=[['中央値',medianOfLast3(t.fixedRef,viewYear,viewMonth)],['去年',lastYearSameMonth(t.fixedRef,viewYear,viewMonth)],['登録額',fixed?Number(fixed.amount):null]].filter(x=>Number.isFinite(x[1])&&x[1]>0);document.getElementById('singleProvChips').innerHTML=vals.map(([l,v])=>`<button type="button" class="prov-chip" onclick="document.getElementById('singleProvAmount').value=${v};updateSingleProvPreview()">${l} ${fmt(v)}</button>`).join('');updateSingleProvPreview();document.getElementById('singleProvisionalModal').style.display='flex';}
 function closeSingleProvisionalModal(){document.getElementById('singleProvisionalModal').style.display='none';singleProvisionalId=null;}
-function updateSingleProvPreview(){
-  const t=transactions.find(x=>x.id===singleProvisionalId),value=Number(document.getElementById('singleProvAmount').value)||0,el=document.getElementById('singleProvPreview');
-  if(!t||!value){el.textContent='';return;}el.textContent=t.isSplit?(()=>{const x=calcShares(value,t.myRate??50,t.payer||'me');return `自分 ${fmt(x.myShare)} / ${partnerName} ${fmt(x.herShare)}`;})():'確定後 '+fmt(value);
-}
-function confirmSingleProvisional(){
-  const btn=document.getElementById('singleProvConfirmBtn');if(btn.disabled)return;
-  const value=Number(String(document.getElementById('singleProvAmount').value||'').replace(/,/g,''));
-  if(!Number.isFinite(value)||value<=0){document.getElementById('singleProvAmount').focus();p2cShowBanner('実額を入力してください',{warning:true});return;}
-  btn.disabled=true;btn.textContent='確定中...';const ok=applyProvisionalConfirmation(singleProvisionalId,value);btn.disabled=false;btn.textContent='この項目を確定';
-  if(ok){closeSingleProvisionalModal();showSuccessToast('1件を確定しました');}else p2cShowBanner('この仮計上はすでに処理されています',{warning:true});
-}
-function skipSingleProvisional(){
-  const id=singleProvisionalId,t=transactions.find(x=>x.id===id);if(!t)return;
-  if(!confirm((t.memo||'この固定費')+' を今月スキップしますか？'))return;
-  closeSingleProvisionalModal();skipFixed(id);p2cGo('history');
-}
+function updateSingleProvPreview(){const t=transactions.find(x=>x.id===singleProvisionalId),v=Number(document.getElementById('singleProvAmount').value)||0,e=document.getElementById('singleProvPreview');if(!t||!v){e.textContent='';return;}e.textContent=t.isSplit?(()=>{const x=calcShares(v,t.myRate??50,t.payer||'me');return `自分 ${fmt(x.myShare)} / ${partnerName} ${fmt(x.herShare)}`;})():'確定後 '+fmt(v);}
+function confirmSingleProvisional(){const b=document.getElementById('singleProvConfirmBtn'),v=Number(document.getElementById('singleProvAmount').value);if(!v||v<=0){p2cShowBanner('実額を入力してください',{warning:true});return;}b.disabled=true;if(applyProvisionalConfirmation(singleProvisionalId,v)){closeSingleProvisionalModal();showSuccessToast('1件を確定しました');}b.disabled=false;}
+function skipSingleProvisional(){const id=singleProvisionalId,t=transactions.find(x=>x.id===id);if(!t||!confirm(t.memo+' を今月スキップしますか？'))return;closeSingleProvisionalModal();skipFixed(id);p2cGo('history');}
 function confirmAllFixed(){
   const prov=provisionalTx();
   let confirmed=0;
@@ -1260,7 +1197,7 @@ function addTransaction(){
   let myShare=null,herShare=null,myRate=null;
   if(isSplit){if(shareMode==='rate'){myRate=parseInt(document.getElementById('myRate').value)||50;({myShare,herShare}=calcShares(amount,myRate,splitPayer));}else if(shareMode==='diff'){const dw=document.getElementById('diffWho').value;const da=parseFloat(document.getElementById('diffAmt').value)||0;({myShare,herShare,myRate}=calcSharesByDiff(amount,da,dw,splitPayer));}else{const aw=document.getElementById('amountWho').value;const av=parseFloat(document.getElementById('amountShare').value)||0;({myShare,herShare,myRate}=calcSharesByAmount(amount,av,aw));}}
   if(isAdj){myRate=parseInt(document.getElementById('adjRate').value)||50;myShare=Math.ceil(amount*myRate/100);herShare=Math.floor(amount*(100-myRate)/100);}
-  transactions.push({id:nextId(),type:txType,amount,category:document.getElementById('category').value,date:document.getElementById('txdate').value,memo:document.getElementById('memo').value||document.getElementById('category').value,note:document.getElementById('note').value,isSplit,isAdj,payer:isSplit?splitPayer:null,myShare,herShare,myRate,shareMode:isSplit?shareMode:null,diffAmt:(isSplit&&shareMode==='diff')?(parseFloat(document.getElementById('diffAmt').value)||0):null,diffWho:(isSplit&&shareMode==='diff')?document.getElementById('diffWho').value:null,amountShare:(isSplit&&shareMode==='amount')?(parseFloat(document.getElementById('amountShare').value)||0):null,amountWho:(isSplit&&shareMode==='amount')?document.getElementById('amountWho').value:null});  save();
+  const newTx={id:nextId(),type:txType,amount,category:document.getElementById('category').value,date:document.getElementById('txdate').value,memo:document.getElementById('memo').value||document.getElementById('category').value,note:document.getElementById('note').value,isSplit,isAdj,payer:isSplit?splitPayer:null,myShare,herShare,myRate,shareMode:isSplit?shareMode:null,diffAmt:(isSplit&&shareMode==='diff')?(parseFloat(document.getElementById('diffAmt').value)||0):null,diffWho:(isSplit&&shareMode==='diff')?document.getElementById('diffWho').value:null,amountShare:(isSplit&&shareMode==='amount')?(parseFloat(document.getElementById('amountShare').value)||0):null,amountWho:(isSplit&&shareMode==='amount')?document.getElementById('amountWho').value:null};transactions.push(newTx);if(!save()){transactions.pop();return;}markMonthUnsettledForTx(newTx);
   document.getElementById('amount').value='';
   const ac=document.getElementById('amountCalc');if(ac) ac.textContent='';
   document.getElementById('memo').value='';
@@ -1508,11 +1445,11 @@ function deleteById(id){
   const t=transactions.find(x=>x.id===id);
   if(!t) return;
   if(!confirm((t.memo||'この取引')+' を削除しますか？')) return;
-  transactions=transactions.filter(x=>x.id!==id);
-  save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+  const before=transactions.slice();transactions=transactions.filter(x=>x.id!==id);
+  if(!save()){transactions=before;return;}markMonthUnsettledForTx(t);updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
 }
 // スワイプ検出（タッチ）
-let _swipeStartX=0,_swipeWrap=null;
+let _swipeStartX=0,_swipeStartY=0,_swipeWrap=null;
 function initSwipe(){
   const list=document.getElementById('txList');
   if(!list||list.dataset.swipeInit) return;
@@ -1520,17 +1457,16 @@ function initSwipe(){
   list.addEventListener('touchstart',e=>{
     const wrap=e.target.closest('.tx-swipe-wrap');
     _swipeWrap=wrap;
-    _swipeStartX=e.touches[0].clientX;
+    _swipeStartX=e.touches[0].clientX;_swipeStartY=e.touches[0].clientY;
   },{passive:true});
   list.addEventListener('touchmove',e=>{
     if(!_swipeWrap) return;
-    const dx=e.touches[0].clientX-_swipeStartX;
-    // 左スワイプ（dx<0）で開く、右で閉じる
-    if(dx<-30){
+    const dx=e.touches[0].clientX-_swipeStartX,dy=e.touches[0].clientY-_swipeStartY;if(Math.abs(dx)<40||Math.abs(dx)<=Math.abs(dy)*1.3)return;
+    if(dx<0){
       // 他の開いてるものを閉じる
       list.querySelectorAll('.tx-swipe-wrap.swiped').forEach(w=>{if(w!==_swipeWrap)w.classList.remove('swiped');});
       _swipeWrap.classList.add('swiped');
-    }else if(dx>30){
+    }else{
       _swipeWrap.classList.remove('swiped');
     }
   },{passive:true});
@@ -1604,6 +1540,7 @@ function renderSplit(){
   else if(net<0) rh=`<div class="result-box pay"><div style="font-size:13px;color:var(--red-dark);margin-bottom:4px">${myName}が払う</div><div style="font-size:28px;font-weight:700;color:var(--red-dark)">${fmt(-net)}</div></div>`;
   else rh=`<div class="result-box even"><div style="font-size:13px;color:var(--text2);margin-bottom:4px">精算なし</div><div style="font-size:28px;font-weight:700">¥0</div></div>`;
   rh+=`<div class="card" style="margin-bottom:.75rem"><div class="detail-row"><span>${myName}立て替え → ${partnerName}負担</span><div class="dr-right"><div class="dr-main">${fmt(herOwesMe)}</div></div></div>${adjHerSub>0?`<div class="detail-row"><span>調整差し引き</span><div class="dr-right"><div class="dr-main" style="color:var(--orange)">▲${fmt(adjHerSub)}</div></div></div>`:''}<div class="detail-row"><span>${partnerName}立て替え → ${myName}負担</span><div class="dr-right"><div class="dr-main">${fmt(iOweHer)}</div></div></div></div>`;
+  rh+=`<button type="button" class="p2c-settle-btn${isMonthSettled()?' done':''}" onclick="toggleMonthSettled()">${isMonthSettled()?'✓ 精算済み（未精算に戻す）':'精算済みにする'}</button>`;
   resEl.innerHTML=rh;
   let rows='';
   splitTx.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>{
@@ -1770,10 +1707,10 @@ function saveEdit(){
     if(isSplit){if(editShareMode==='rate'){myRate=parseInt(document.getElementById('edit-myRate').value)||50;({myShare,herShare}=calcShares(amount,myRate,editSplitPayer));}else if(editShareMode==='diff'){const dw=document.getElementById('edit-diffWho').value;const da=parseFloat(document.getElementById('edit-diffAmt').value)||0;({myShare,herShare,myRate}=calcSharesByDiff(amount,da,dw,editSplitPayer));}else{const aw=document.getElementById('edit-amountWho').value;const av=parseFloat(document.getElementById('edit-amountShare').value)||0;({myShare,herShare,myRate}=calcSharesByAmount(amount,av,aw));}}
   if(isAdj){myRate=parseInt(document.getElementById('edit-adjRate').value)||50;myShare=Math.ceil(amount*myRate/100);herShare=Math.floor(amount*(100-myRate)/100);}
   const idx=transactions.findIndex(x=>x.id===editingId);
-  const orig=transactions[idx];
-  transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:stripAutoNote(document.getElementById('edit-note').value),isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,amountShare:(isSplit&&editShareMode==='amount')?(parseFloat(document.getElementById('edit-amountShare').value)||0):null,amountWho:(isSplit&&editShareMode==='amount')?document.getElementById('edit-amountWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};  save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
+  const orig=transactions[idx],origSnapshot={...orig};
+  transactions[idx]={id:editingId,type:editTxType,amount,category:document.getElementById('edit-category').value,date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||document.getElementById('edit-category').value,note:stripAutoNote(document.getElementById('edit-note').value),isSplit,isAdj,payer:isSplit?editSplitPayer:null,myShare,herShare,myRate,shareMode:isSplit?editShareMode:null,diffAmt:(isSplit&&editShareMode==='diff')?(parseFloat(document.getElementById('edit-diffAmt').value)||0):null,diffWho:(isSplit&&editShareMode==='diff')?document.getElementById('edit-diffWho').value:null,amountShare:(isSplit&&editShareMode==='amount')?(parseFloat(document.getElementById('edit-amountShare').value)||0):null,amountWho:(isSplit&&editShareMode==='amount')?document.getElementById('edit-amountWho').value:null,fixedRef:orig.fixedRef,isProvisional:false};if(!save()){transactions[idx]=origSnapshot;return;}markMonthUnsettledForTx(orig);markMonthUnsettledForTx(transactions[idx]);closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();
 }
-function deleteTransaction(){if(!editingId) return;if(!confirm('この取引を削除しますか？')) return;transactions=transactions.filter(x=>x.id!==editingId);save();closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();}
+function deleteTransaction(){if(!editingId)return;if(!confirm('この取引を削除しますか？'))return;const removed=transactions.find(x=>x.id===editingId),before=transactions.slice();transactions=transactions.filter(x=>x.id!==editingId);if(!save()){transactions=before;return;}markMonthUnsettledForTx(removed);closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();}
 let charts={};
 
 function duplicateTransaction(){
@@ -1949,7 +1886,7 @@ function addCard(){const input=document.getElementById('cardMgrInput');const nam
 function deleteCard(i){const cards=loadCards();if(!confirm(cards[i]+'を削除しますか？')) return;cards.splice(i,1);saveCards(cards);renderCardMgr();renderReviews();}
 function moveCard(i,dir){const cards=loadCards();const j=i+dir;if(j<0||j>=cards.length) return;[cards[i],cards[j]]=[cards[j],cards[i]];saveCards(cards);renderCardMgr();}
 const FIXED_KEY=SP+'kakeibo_fixed_v1';
-function loadFixed(){try{const r=localStorage.getItem(FIXED_KEY);return r?JSON.parse(r):[]}catch(e){return [];}}
+function loadFixed(){try{const r=localStorage.getItem(FIXED_KEY),arr=r?JSON.parse(r):[];let changed=false;arr.forEach(f=>{if(!f.id){f.id=newFixedId();changed=true;}});if(changed)localStorage.setItem(FIXED_KEY,JSON.stringify(arr));return arr}catch(e){return [];}}
 function saveFixedData(arr){localStorage.setItem(FIXED_KEY,JSON.stringify(arr));}
 let editingFixedIdx=null;
 let fixedSplitPayer='me';
@@ -2031,18 +1968,21 @@ function saveFixed(){
   if(!name){alert('名前を入力してください');return;}
   if(!amount){alert('金額を入力してください');return;}
   const arr=loadFixed();
-  const existingSkipped=editingFixedIdx!=null?(arr[editingFixedIdx].skippedYM||[]):[];
+  const oldItem=editingFixedIdx!=null?arr[editingFixedIdx]:null;
+  const existingSkipped=oldItem?(oldItem.skippedYM||[]):[];
   const isSplit=document.getElementById('fixedIsSplit').checked;
   const cycle=document.getElementById('fixedCycle').value||'monthly';
-  const item={name,amount,cat:document.getElementById('fixedCat').value,billingDay:document.getElementById('fixedBillingDay').value.trim(),startYm:document.getElementById('fixedStartYm').value||'',mode:document.getElementById('fixedMode').value||'remind',cycle,payMonth:cycle==='yearly'?(parseInt(document.getElementById('fixedPayMonth').value)||1):null,note:document.getElementById('fixedNote').value.trim(),skippedYM:existingSkipped,isSplit,payer:isSplit?fixedSplitPayer:null,myRate:isSplit?(parseInt(document.getElementById('fixedMyRate').value)||50):null};
+  const item={id:oldItem?.id||newFixedId(),name,amount,cat:document.getElementById('fixedCat').value,billingDay:document.getElementById('fixedBillingDay').value.trim(),startYm:document.getElementById('fixedStartYm').value||'',mode:document.getElementById('fixedMode').value||'remind',cycle,payMonth:cycle==='yearly'?(parseInt(document.getElementById('fixedPayMonth').value)||1):null,note:document.getElementById('fixedNote').value.trim(),skippedYM:existingSkipped,isSplit,payer:isSplit?fixedSplitPayer:null,myRate:isSplit?(parseInt(document.getElementById('fixedMyRate').value)||50):null};
 
-  if(editingFixedIdx!=null) arr[editingFixedIdx]=item;
-  else arr.push(item);
-  saveFixedData(arr);
-  cancelFixedForm();
-  renderFixed();
-  postProvisional(viewYear,viewMonth);
-  updateHeader();renderHistory();renderSplit();updateFixedReminders();
+  let reflectCurrent=false;
+  if(oldItem){
+    const changed=oldItem.name!==item.name||oldItem.cat!==item.cat||oldItem.amount!==item.amount||oldItem.isSplit!==item.isSplit||oldItem.payer!==item.payer||oldItem.myRate!==item.myRate;
+    if(changed&&transactions.some(t=>t.isProvisional&&t.fixedRef===fixedRefKey(oldItem)))reflectCurrent=confirm('今月の未確定仮計上にも変更を反映しますか？\n\nOK：今月にも反映\nキャンセル：来月から反映');
+    arr[editingFixedIdx]=item;
+    if(reflectCurrent){transactions.filter(t=>t.isProvisional&&t.fixedRef===fixedRefKey(oldItem)).forEach(t=>{t.fixedRef=fixedRefKey(item);t.memo=item.name;t.category=FIXED_CAT_MAP[item.cat]||'🎁 その他';t.amount=item.amount;t.isSplit=!!item.isSplit;t.payer=item.isSplit?item.payer:null;t.myRate=item.isSplit?item.myRate:null;if(item.isSplit){const x=calcShares(t.amount,item.myRate??50,item.payer||'me');t.myShare=x.myShare;t.herShare=x.herShare;}else{t.myShare=null;t.herShare=null;}});if(!save())return;}
+    else if(changed){item.skippedYM=item.skippedYM||[];const ym=viewYear+'-'+String(viewMonth+1).padStart(2,'0');if(!item.skippedYM.includes(ym))item.skippedYM.push(ym);saveFixedData(arr);}
+  }else arr.push(item);
+  saveFixedData(arr);cancelFixedForm();renderFixed();postProvisional(viewYear,viewMonth);updateHeader();renderHistory();renderSplit();updateFixedReminders();renderP2C();
 }
 function editFixed(i){openFixedForm(i);}
 function deleteFixed(i){if(!confirm('削除しますか？')) return;const arr=loadFixed();arr.splice(i,1);saveFixedData(arr);renderFixed();}
@@ -2107,7 +2047,7 @@ function p2cOpenInput(){const activePage=document.getElementById(p2cPages[p2cAct
 function p2cCloseInput(){document.activeElement?.blur?.();document.getElementById('page-home').classList.remove('p2c-input');document.body.classList.remove('p2c-sheet-open','p2c-keyboard-open');document.documentElement.style.setProperty('--keyboard-inset','0px');p2cGo(p2cReturn.page);const page=document.getElementById(p2cPages[p2cReturn.page]||'page-dashboard');requestAnimationFrame(()=>{if(page)page.scrollTop=p2cReturn.y});}
 function p2cPrepare(){const page=document.getElementById('page-home'),card=document.getElementById('amount')?.closest('.card');if(!card||document.getElementById('p2cDetails'))return;const ops=card.querySelector('.calc-ops');if(ops){const b=document.createElement('button');b.type='button';b.className='p2c-calc';b.textContent='計算を開く';b.onclick=()=>{document.activeElement?.blur();ops.classList.toggle('p2c-open');b.textContent=ops.classList.contains('p2c-open')?'計算を閉じる':'計算を開く'};ops.parentNode.insertBefore(b,ops)}const note=document.getElementById('note')?.closest('.form-row'),split=document.getElementById('splitSection'),adj=document.getElementById('adjSection'),w=document.createElement('div');w.id='p2cDetails';w.className='p2c-details';w.innerHTML='<button type="button" onclick="this.parentNode.classList.toggle(\'open\')"><span style="width:35px;height:35px;border-radius:9px;background:var(--p-soft);display:flex;align-items:center;justify-content:center;margin-right:10px">⚙</span><span style="flex:1"><small style="display:block;color:var(--p-muted);letter-spacing:1px">ADVANCED</small><b style="font-size:12px">備考・割り勘・調整</b></span><span>⌄</span></button><div class="p2c-details-body"></div>';const rec=Array.from(card.querySelectorAll('.btn.primary')).find(x=>/記録/.test(x.textContent));if(rec)rec.parentNode.insertBefore(w,rec);else card.appendChild(w);const body=w.querySelector('.p2c-details-body');if(note)body.appendChild(note);if(split)body.appendChild(split);if(adj)body.appendChild(adj);page.insertAdjacentHTML('beforeend','<div class="p2c-footer"><button class="btn primary" onclick="addTransaction()"><span>記録する</span><span id="p2cAmount">¥0</span><i class="p2c-line"></i></button></div>');document.getElementById('amount')?.addEventListener('input',p2cFooter)}
 function p2cFooter(){const e=document.getElementById('p2cAmount');if(e)e.textContent=fmt(typeof getAmountValue==='function'?getAmountValue():0)}
-function renderP2C(){const q=id=>document.getElementById(id);q('p2cMonth').textContent=q('monthLabel')?.textContent||'';[['totalBalance','p2cBalance'],['totalIncome','p2cIncome'],['totalExpense','p2cExpense'],['savingsRate','p2cSavings']].forEach(([a,b])=>{if(q(a)&&q(b))q(b).textContent=q(a).textContent});q('p2cTrend').textContent=q('balVsPrev')?.textContent||'';const bd=loadBudget(viewYear,viewMonth),tb=Object.values(bd.cats||{}).reduce((a,b)=>a+(+b||0),0),tx=monthTx(),used=tx.reduce((z,t)=>t.type==='income'?z:z+((t.isAdj||t.isSplit)?(t.myShare||0):t.amount),0),pct=tb?Math.round(used/tb*100):0;q('p2cBudget').textContent=tb?pct+'%':'未設定';q('p2cBudgetBar').style.width=Math.min(100,pct)+'%';q('p2cBudgetLeft').textContent=tb?'残り '+fmt(tb-used):'タップして設定';const now=new Date(),days=new Date(viewYear,viewMonth+1,0).getDate(),day=viewYear===now.getFullYear()&&viewMonth===now.getMonth()?now.getDate():days,fc=day?Math.round(used/day*days):0;q('p2cForecast').textContent=used?fmt(fc):'-';q('p2cForecastSub').textContent=day<5?'データが少ないため参考値':'現在の支出ペースから予測';const a=[],prov=provisionalTx();if(prov.length)a.push(['♢','固定費を確定',prov.length+'件・見込 '+fmt(prov.reduce((z,t)=>z+t.amount,0)),"openFixedReminderModal()"]);const cards=loadCards(),rev=loadReviews(viewYear,viewMonth),uc=cards.filter(c=>!rev[c]?.checked);if(uc.length)a.push(['▤','カード明細を確認',uc.length+'社が未確認',"p2cGo('history')"]);if(monthTx().some(t=>t.isSplit&&t.type==='expense'))a.push(['♧','割り勘を精算','精算額を確認',"p2cGo('split')"]);q('p2cActionCount').textContent=a.length?a.length+'件':'';q('p2cBell').classList.toggle('has',a.length>0);q('p2cActions').innerHTML=a.length?a.map(x=>'<div class="p2c-action" onclick="'+x[3]+'"><div class="p2c-ai">'+x[0]+'</div><div class="p2c-am"><div class="p2c-at">'+x[1]+'</div><div class="p2c-as">'+x[2]+'</div></div><span>›</span></div>').join(''):'<div class="p2c-done">✓　確認が必要な項目はありません</div>';const today=localDateString(),rows=transactions.filter(t=>t.date===today).slice().sort((a,b)=>b.id-a.id).slice(0,4);q('p2cRecent').innerHTML=rows.length?rows.map(t=>'<div class="p2c-recent" onclick="p2cGo(\'history\')"><div class="p2c-ri">'+(t.category?t.category.slice(0,2):'💴')+'</div><div class="p2c-rm"><div class="p2c-rn">'+t.memo+'</div><div class="p2c-rc">'+catLabel(t.category)+'</div></div><div class="p2c-ra">'+(t.type==='income'?'+':'-')+fmt(t.amount)+'</div></div>').join(''):'<div class="empty">今日の記録はまだありません</div>'}
+function renderP2C(){const q=id=>document.getElementById(id);q('p2cMonth').textContent=q('monthLabel')?.textContent||'';[['totalBalance','p2cBalance'],['totalIncome','p2cIncome'],['totalExpense','p2cExpense'],['savingsRate','p2cSavings']].forEach(([a,b])=>{if(q(a)&&q(b))q(b).textContent=q(a).textContent});q('p2cTrend').textContent=q('balVsPrev')?.textContent||'';const bd=loadBudget(viewYear,viewMonth),tb=Object.values(bd.cats||{}).reduce((a,b)=>a+(+b||0),0),tx=monthTx(),used=tx.reduce((z,t)=>t.type==='income'?z:z+((t.isAdj||t.isSplit)?(t.myShare||0):t.amount),0),pct=tb?Math.round(used/tb*100):0;q('p2cBudget').textContent=tb?pct+'%':'未設定';q('p2cBudgetBar').style.width=Math.min(100,pct)+'%';q('p2cBudgetLeft').textContent=tb?'残り '+fmt(tb-used):'タップして設定';const now=new Date(),days=new Date(viewYear,viewMonth+1,0).getDate(),day=viewYear===now.getFullYear()&&viewMonth===now.getMonth()?now.getDate():days,fc=day?Math.round(used/day*days):0;q('p2cForecast').textContent=used?fmt(fc):'-';q('p2cForecastSub').textContent=day<5?'データが少ないため参考値':'現在の支出ペースから予測';const a=[],prov=provisionalTx();if(prov.length)a.push(['♢','固定費を確定',prov.length+'件・見込 '+fmt(prov.reduce((z,t)=>z+t.amount,0)),"openFixedReminderModal()"]);const cards=loadCards(),rev=loadReviews(viewYear,viewMonth),uc=cards.filter(c=>!rev[c]?.checked);if(uc.length)a.push(['▤','カード明細を確認',uc.length+'社が未確認',"p2cGo('history')"]);if(monthTx().some(t=>(t.isSplit||t.isAdj)&&t.type==='expense')&&!isMonthSettled())a.push(['♧','割り勘を精算','精算額を確認',"p2cGo('split')"]);q('p2cActionCount').textContent=a.length?a.length+'件':'';q('p2cBell').classList.toggle('has',a.length>0);q('p2cActions').innerHTML=a.length?a.map(x=>'<div class="p2c-action" onclick="'+x[3]+'"><div class="p2c-ai">'+x[0]+'</div><div class="p2c-am"><div class="p2c-at">'+x[1]+'</div><div class="p2c-as">'+x[2]+'</div></div><span>›</span></div>').join(''):'<div class="p2c-done">✓　確認が必要な項目はありません</div>';const today=localDateString(),isCurrent=viewYear===new Date().getFullYear()&&viewMonth===new Date().getMonth(),recentTitle=document.querySelector('#page-dashboard .p2c-panel:last-child h2');if(recentTitle)recentTitle.textContent=isCurrent?'今日の明細':'この月の最新明細';const rows=(isCurrent?transactions.filter(t=>t.date===today):monthTx()).slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).slice(0,4);q('p2cRecent').innerHTML=rows.length?rows.map(t=>'<div class="p2c-recent" onclick="p2cGo(\'history\')"><div class="p2c-ri">'+(t.category?t.category.slice(0,2):'💴')+'</div><div class="p2c-rm"><div class="p2c-rn">'+t.memo+'</div><div class="p2c-rc">'+catLabel(t.category)+'</div></div><div class="p2c-ra">'+(t.type==='income'?'+':'-')+fmt(t.amount)+'</div></div>').join(''):'<div class="empty">今日の記録はまだありません</div>'}
 let p2cBaseHeight=window.innerHeight;function p2cVV(){const vv=window.visualViewport;if(!vv)return;const inset=document.body.classList.contains('p2c-sheet-open')?Math.max(0,p2cBaseHeight-(vv.height+vv.offsetTop)):0;document.documentElement.style.setProperty('--app-height',p2cBaseHeight+'px');document.documentElement.style.setProperty('--keyboard-inset',inset+'px');document.body.classList.toggle('p2c-keyboard-open',inset>80)}
 function p2cKeepFieldVisible(e){if(!document.body.classList.contains('p2c-sheet-open')||!e.target.matches('input,textarea,select'))return;setTimeout(()=>{const vv=window.visualViewport,r=e.target.getBoundingClientRect(),limit=(vv?vv.height:window.innerHeight)-92;if(r.bottom>limit||r.top<64)e.target.scrollIntoView({block:'center',behavior:'smooth'})},180)}
 function p2cToast(msg){const e=document.getElementById('p2cNoticeToast');if(!e)return;e.textContent=msg;e.classList.add('show');clearTimeout(p2cToast.t);p2cToast.t=setTimeout(()=>e.classList.remove('show'),1700)}
