@@ -1023,14 +1023,24 @@ function reconcileFixedMonth(y,m,{create=true}={}){
   if(changed)save();
   return changed;
 }
+function isFixedGeneratedTx(t){return !!(t&&(t.fixedId||t.fixedRef||t.source==='fixed'||t.isProvisional&&AUTO_NOTES.includes(String(t.note||'').trim())));}
+function cleanupOrphanFixedTransactions(){
+  const arr=loadFixed();
+  const orphanIds=new Set(transactions.filter(t=>t.isProvisional&&isFixedGeneratedTx(t)&&!arr.some(f=>txMatchesFixed(t,f))).map(t=>t.id));
+  if(!orphanIds.size)return 0;
+  transactions=transactions.filter(t=>!orphanIds.has(t.id));
+  return orphanIds.size;
+}
 function migrateFixedData(){
   const arr=loadFixed(),byLegacy=new Map(arr.flatMap(f=>legacyFixedRefs(f).map(k=>[k,f])));let changed=false;
   transactions.forEach(t=>{
     if(!t.fixedId&&t.fixedRef){const f=arr.find(x=>x.id===t.fixedRef)||byLegacy.get(t.fixedRef);if(f){linkTxToFixed(t,f);changed=true;}}
     else if(t.fixedId&&t.fixedRef!==t.fixedId){t.fixedRef=t.fixedId;changed=true;}
   });
+  const removed=cleanupOrphanFixedTransactions();
+  if(removed)changed=true;
   if(changed)save();
-  return changed;
+  return {changed,removed};
 }
 function postProvisional(y,m){migrateFixedData();reconcileFixedMonth(y,m,{create:true});}
 function provisionalTx(y, m){const vy=y??viewYear,vm=m??viewMonth;return transactions.filter(t=>{if(!t.isProvisional) return false;const d=parseLocalDate(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});}
