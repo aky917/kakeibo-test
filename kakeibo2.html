@@ -1,20 +1,35 @@
 <!--
 ============================================================
+Kakeibo delivery requirements (must be retained)
+- The user supplies only this standalone HTML file for future updates.
+- Deliver as a versioned ZIP named kakeibo-vX.X.X.zip.
+- The ZIP must contain exactly one app file named kakeibo.html.
+- Manage releases by Version / Updated / Change Log in this header.
+- Do not require separate source files from the user.
+
 Kakeibo
-Version  : v3.0.0
-Codename : Insight Update
-Updated  : 2026-09-16
+Version  : v3.1.0
+Codename : Advanced Split Update
+Updated  : 2026-10-13
 Author   : 秋山伊織 + Microsoft Copilot
 
 Change Log
-- カテゴリ管理を追加（追加・編集・アーカイブ・削除・並び替え・色・アイコン）
-- 割り勘比率設定のID衝突を修正
-- タグ分析・臨時支出タグ・通常支出表示を追加
-- カテゴリ前月比較・月次レビュー・年間ハイライトを追加
-- 予算警告をホーム画面へ追加
-- 入力テンプレート管理と呼び出しを追加
-- 固定費に複数年周期・次回発生日・将来支出予測を追加
-- Noto Sans JPを標準フォントに設定
+- v3.1.0: Added fixed amount plus remaining ratio split.
+- v3.1.0: Added multiple category-based split segments with optional memo.
+- v3.1.0: Added segment-aware editing, budgets, analysis, export, backup-compatible JSON storage, and settlement PDF details.
+- Corrected the jsPDF CDN URL from unavailable cdnjs 2.5.2 to verified 2.5.1.
+- Added automatic jsDelivr fallback when the primary jsPDF CDN fails.
+- Added automatic html2canvas fallback for iPhone Safari.
+- Replaced the non-working print button with iPhone PDF file sharing.
+- PDF is prepared while the report preview is open, then shared from a direct user tap.
+- Every button action now shows preparing, ready, sharing, cancelled, or error status.
+- Service Worker registration, manifest, update banner, and PWA cache dependencies removed.
+- Existing Service Workers and Cache Storage are removed without deleting localStorage data.
+- Added previous-month budget, actual, variance, and three-month average.
+- Added per-category actual adoption and bulk copy from previous budget or actual.
+- Actual copy rounds up to the nearest 1,000 yen.
+- Actuals use effective personal split share and exclude special-tag expenses by default.
+- Retained category default-rate isolation and stable category IDs.
 ============================================================
 -->
 <!DOCTYPE html>
@@ -25,17 +40,11 @@ Change Log
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>kakeibo v3.0.0</title>
+<title>kakeibo v3.1.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="manifest" href="./manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="kakeibo">
 <meta name="theme-color" content="#111110">
-<link rel="apple-touch-icon" href="./icon-180.png">
-<link rel="icon" type="image/png" href="./icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
 /* ===== Kakeibo v3.0.0 Insight Update ===== */
 const APP_INFO={name:'Kakeibo',version:'3.0.0',codename:'Insight Update',updated:'2026-09-16',storageVersion:8};
@@ -92,7 +101,7 @@ const _v3openFixedForm=openFixedForm;openFixedForm=function(idx=null){_v3openFix
 // Cloud payload extensions
 const _v3cloudPush=cloudPush;cloudPush=async function(){localStorage.setItem(SP+'kakeibo_v3_meta',JSON.stringify({categories:v3Categories,templates:v3LoadTemplates(),specialTags:v3GetSpecialTags()}));return _v3cloudPush()};
 // UI installation
-function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v${APP_INFO.version} ${APP_INFO.codename}・${APP_INFO.updated}</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon">◈</div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
+function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v3.0.9 jsPDF Load Fix・2026-10-08</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon">◈</div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
 // dashboard budget warnings + normal expense
 const _v3renderP2C=renderP2C;renderP2C=function(){_v3renderP2C();const tx=monthTx(),normal=v3RealExp(tx,true),special=v3RealExp(tx)-normal;const trend=document.getElementById('p2cTrend');if(trend)trend.textContent=`通常支出 ${fmt(normal)}${special?`・臨時 ${fmt(special)}`:''}`;const bd=loadBudget(viewYear,viewMonth),warns=Object.entries(bd.cats||{}).map(([cat,budget])=>{const used=tx.filter(t=>t.category===cat&&!v3IsSpecial(t)).reduce((s,t)=>s+v3ExpenseValue(t),0);return{cat,used,budget:Number(budget),pct:budget?Math.round(used/budget*100):0}}).filter(x=>x.pct>=80).sort((a,b)=>b.pct-a.pct);const actions=document.getElementById('p2cActions');if(actions&&warns.length&&!actions.querySelector('.v3-budget-warning')){actions.insertAdjacentHTML('afterbegin',warns.slice(0,3).map(x=>`<div class="p2c-action v3-budget-warning" onclick="p2cGo('budget')"><div class="p2c-ai">!</div><div class="p2c-am"><div class="p2c-at">${v3Esc(catLabel(x.cat))} ${x.pct>=100?'予算超過':x.pct+'%'}</div><div class="p2c-as">${fmt(x.used)} / ${fmt(x.budget)}</div></div><span>›</span></div>`).join(''))}}
 const _v3p2cGo=p2cGo;p2cGo=function(n){_v3p2cGo(n);if(n==='insights')v3RenderInsights()};
@@ -104,6 +113,8 @@ setTimeout(()=>{v3InstallUI();v3RefreshCategoryUI();renderHistory();renderP2C()}
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'"></script>
   
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -134,7 +145,6 @@ body{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;backgroun
 .hdr-chip-val.sav{color:rgba(255,255,255,.65)}
 .hdr-chip-sub{font-size:8px;color:var(--hdr-muted);margin-top:2px;letter-spacing:.3px;font-weight:400;line-height:1.2}
 #syncStatus{text-align:right;font-size:10px;color:var(--text3);padding:5px 18px 2px;min-height:18px}
-#swUpdateBanner{background:#3A7FCC;color:#fff;padding:10px 18px;font-size:13px;align-items:center;justify-content:space-between;gap:10px}
 .tabs{display:flex;padding:0 14px;gap:3px;margin-bottom:1rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex-shrink:0;padding:6px 10px;font-size:11px;text-align:center;cursor:pointer;color:var(--text3);border-radius:8px;border:1px solid transparent;white-space:nowrap;transition:all .15s;position:relative}
@@ -365,6 +375,10 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
 .v3-color{width:28px;height:28px;border-radius:9px;border:1px solid rgba(0,0,0,.1);flex:0 0 auto}.v3-icon-input{width:54px!important;text-align:center;font-size:18px!important}.v3-actions{display:flex;gap:5px;flex-wrap:wrap}.v3-mini{width:auto!important;padding:6px 9px!important;font-size:10px!important;margin:0!important;border-radius:8px!important}.v3-danger{color:var(--red-dark)!important;background:var(--red-bg)!important}.v3-archived{opacity:.52}.v3-divider{height:1px;background:var(--p-line);margin:10px 0}.v3-form{display:grid;grid-template-columns:64px 1fr;gap:8px}.v3-swatch{width:100%;height:40px;padding:3px!important}.v3-template-strip{display:flex;gap:7px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.v3-template-strip::-webkit-scrollbar{display:none}.v3-template{flex:0 0 auto;min-width:104px;text-align:left;border:1px solid var(--p-line);background:#fff;border-radius:13px;padding:10px;color:var(--p-text)}.v3-template b{display:block;font-size:12px}.v3-template small{display:block;font-size:9px;color:var(--p-muted);margin-top:3px}.v3-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.v3-stat{border:1px solid var(--p-line);background:var(--p-soft);border-radius:13px;padding:11px}.v3-stat small{font-size:9px;color:var(--p-muted)}.v3-stat b{display:block;font-size:16px;margin-top:5px}.v3-bar{height:5px;background:var(--p-soft2);border-radius:5px;overflow:hidden;margin-top:7px}.v3-bar i{display:block;height:100%;border-radius:5px}.v3-up{color:var(--p-red)}.v3-down{color:var(--p-green)}.v3-neutral{color:var(--p-muted)}.v3-special{border-left:3px solid var(--p-bronze)!important}.v3-toggleline{display:flex;align-items:center;justify-content:space-between;gap:10px}.v3-future-item{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--p-line)}.v3-future-item:last-child{border:0}.v3-version{font-size:10px;color:var(--p-muted);text-align:center;padding:8px 0 2px}
 
 </style>
+
+<style id="advancedSplitCss">
+.adv-split-panel{border:1px solid var(--p-line,var(--border));border-radius:14px;background:var(--p-soft,#f7f7f4);padding:11px;margin:8px 0}.adv-split-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:9px}.adv-seg{border:1px solid var(--p-line,var(--border));background:#fff;border-radius:12px;padding:10px;margin:8px 0}.adv-seg-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}.adv-seg-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:7px}.adv-seg-result{display:flex;justify-content:space-between;font-size:11px;color:var(--p-sub,var(--text2));margin-top:7px;background:var(--p-soft,#f7f7f4);border-radius:8px;padding:6px 8px}.adv-mini{width:auto!important;padding:6px 9px!important;font-size:11px!important;margin:0!important}.adv-valid{font-size:11px;border-radius:9px;padding:8px;margin-top:8px}.adv-valid.ok{background:var(--green-bg);color:var(--green-dark)}.adv-valid.ng{background:var(--red-bg);color:var(--red-dark)}.adv-detail{margin-top:6px;padding:7px 9px;border-left:2px solid var(--purple,#7F77DD);background:var(--p-soft,#f7f7f4);border-radius:0 8px 8px 0}.adv-detail-row{display:flex;justify-content:space-between;gap:8px;font-size:10px;padding:3px 0}.rep-segment{font-size:10px;color:#555;padding:3px 0 3px 10px;border-left:2px solid #ddd}.rep-segment b{color:#222}.adv-cat-summary{display:grid;grid-template-columns:1fr auto auto;gap:7px;font-size:11px;padding:6px 0;border-bottom:1px solid #e8e6e2}.adv-hidden{display:none!important}
+</style>
 </head>
 
 
@@ -404,11 +418,7 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
       <div class="hdr-chip"><div class="hdr-chip-label">貯蓄率</div><div class="hdr-chip-val sav" id="savingsRate">-</div></div>
     </div>
   </div>
-  <div id="swUpdateBanner" style="display:none">
-    <span>🔄 新しいバージョンがあります</span>
-    <button onclick="applyUpdate()" style="background:#fff;color:#3A7FCC;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">更新</button>
-  </div>
-  <div id="syncStatus"></div>
+<div id="syncStatus"></div>
   <div class="tabs no-print">
     <div class="tab active" onclick="switchTab('home')">&#9999;&#65039; 入力</div>
     <div class="tab" onclick="switchTab('history')">&#128203; 一覧</div>
@@ -656,7 +666,7 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
   <div id="page-split" class="page">
     <div id="splitResult"></div>
     <div class="card"><div class="section-title">今月の割り勘明細</div><div id="splitList"><div class="empty">割り勘の記録がありません</div></div></div>
-       <button class="btn no-print" style="background:#F0F4FB;color:var(--blue);border-color:var(--blue)" onclick="openReport()">&#128424;&#65039; 精算書を作成（PDF）</button>
+       <button class="btn no-print" style="background:#F0F4FB;color:var(--blue);border-color:var(--blue)" onclick="openReport()">&#128424;&#65039; 精算書を作成・PDF保存</button>
   </div>
   <div id="page-budget" class="page">
     <div class="metric-grid" id="budgetSummary" style="padding:0 0 .75rem"></div>
@@ -664,9 +674,9 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
         <div class="section-title" style="margin:0" id="budgetFormTitle">予算を設定する</div>
-        <button class="btn" id="budgetCopyBtn" onclick="copyPrevBudget()" style="font-size:12px;padding:4px 10px">前月からコピー</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn" id="budgetCopyBtn" onclick="copyPrevBudget()" style="width:auto;font-size:11px;padding:6px 9px">先月予算をコピー</button><button class="btn" id="budgetActualCopyBtn" onclick="copyPrevActuals()" style="width:auto;font-size:11px;padding:6px 9px">先月実績をコピー</button></div>
       </div>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:.75rem">0のカテゴリは予算未設定として扱われます</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:.55rem">0のカテゴリは予算未設定として扱われます。実績は割り勘後の自分負担額です。</p><label style="display:flex;align-items:center;gap:7px;margin-bottom:.75rem"><input type="checkbox" id="budgetIncludeSpecial" onchange="buildBudgetInputTable()" style="width:16px;height:16px"><span>臨時支出タグを実績に含める</span></label>
       <div id="budgetInputTable"></div>
       <div style="margin-top:.75rem">
         <label style="font-size:13px;color:var(--text2);display:block;margin-bottom:4px">備考</label>
@@ -917,9 +927,10 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
 </div>
 
 <div id="reportOverlay">
-  <div class="rep-actions no-print">
+  <div class="rep-actions no-print" style="flex-wrap:wrap">
   <button class="btn" onclick="closeReport()" style="flex:1">閉じる</button>
-  <button class="btn primary" onclick="window.print()" style="flex:2;margin-top:0">🖨️ 印刷 / PDF保存</button>
+  <button class="btn primary" id="splitPdfSaveBtn" onclick="saveSplitPdfToFiles()" style="flex:2;margin-top:0" disabled>PDF準備中...</button>
+  <div id="splitPdfStatus" style="flex-basis:100%;font-size:12px;color:#555;background:#fff;border-radius:8px;padding:8px 10px;text-align:center">精算書PDFを準備しています</div>
   </div>
   <div id="reportBody"></div>
 </div>
@@ -1698,6 +1709,7 @@ function renderSplit(){
 }
 
 function openReport(){
+  clearSplitPdf();
   const tx=monthTx();
   const splitTx=tx.filter(t=>t.isSplit&&t.type==='expense');
   const adjTx=tx.filter(t=>t.isAdj||t.type==='adjustment');
@@ -1756,8 +1768,38 @@ function openReport(){
     </div>`;
   document.getElementById('reportOverlay').style.display='block';
   window.scrollTo(0,0);
+  requestAnimationFrame(()=>setTimeout(prepareSplitPdf,100));
 }
-function closeReport(){document.getElementById('reportOverlay').style.display='none';}
+let splitPdfBlob=null,splitPdfUrl='',splitPdfBusy=false;
+function splitPdfFilename(){return 'kakeibo_精算書_'+viewYear+'-'+String(viewMonth+1).padStart(2,'0')+'.pdf'}
+function splitPdfUi(message,ready=false){const b=document.getElementById('splitPdfSaveBtn'),st=document.getElementById('splitPdfStatus');if(b){b.disabled=!ready;b.textContent=ready?'PDFをファイルに保存':'PDF準備中...';b.style.opacity=ready?'1':'.55'}if(st)st.textContent=message}
+function clearSplitPdf(){if(splitPdfUrl)URL.revokeObjectURL(splitPdfUrl);splitPdfUrl='';splitPdfBlob=null}
+async function prepareSplitPdf(){
+ if(splitPdfBusy)return;splitPdfBusy=true;clearSplitPdf();splitPdfUi('精算書PDFを準備しています',false);
+ try{
+  if(typeof html2canvas!=='function')throw new Error('html2canvasの読み込みに失敗');
+  if(!window.jspdf||!window.jspdf.jsPDF)throw new Error('jsPDFを読み込めません。Safariのコンテンツブロッカーまたは通信設定を確認してください');
+  if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+  const report=document.querySelector('#reportBody .report');if(!report)throw new Error('精算書本体がありません');
+  const canvas=await html2canvas(report,{scale:1.7,useCORS:true,backgroundColor:'#fff',logging:false});
+  const jsPDF=window.jspdf.jsPDF,pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+  const margin=8,drawW=194,usableH=281,pxPerMm=canvas.width/drawW,pagePx=Math.floor(usableH*pxPerMm);let sy=0,page=0;
+  while(sy<canvas.height){const h=Math.min(pagePx,canvas.height-sy),part=document.createElement('canvas');part.width=canvas.width;part.height=h;part.getContext('2d').drawImage(canvas,0,sy,canvas.width,h,0,0,canvas.width,h);if(page++)pdf.addPage();pdf.addImage(part.toDataURL('image/jpeg',.9),'JPEG',margin,margin,drawW,h/pxPerMm,undefined,'FAST');sy+=h}
+  splitPdfBlob=pdf.output('blob');splitPdfUrl=URL.createObjectURL(splitPdfBlob);splitPdfUi('準備完了。下のボタンを押して「ファイルに保存」を選んでください',true);
+ }catch(e){console.error('split PDF error',e);const b=document.getElementById('splitPdfSaveBtn');if(b){b.disabled=false;b.textContent='PDF準備を再試行';b.style.opacity='1'}const st=document.getElementById('splitPdfStatus');if(st)st.textContent='PDF準備失敗: '+(e.message||e);}
+ finally{splitPdfBusy=false}
+}
+async function saveSplitPdfToFiles(){
+ const st=document.getElementById('splitPdfStatus');
+ if(!splitPdfBlob){if(st)st.textContent='PDFを再準備します';await prepareSplitPdf();return}
+ const filename=splitPdfFilename(),file=new File([splitPdfBlob],filename,{type:'application/pdf'});
+ try{
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){if(st)st.textContent='共有画面を開いています';await navigator.share({files:[file],title:filename});if(st)st.textContent='共有画面を閉じました';return}
+  if(st)st.textContent='PDFをSafariで開きます。共有ボタンから「ファイルに保存」を選んでください';
+  const a=document.createElement('a');a.href=splitPdfUrl;a.target='_blank';a.rel='noopener';a.download=filename;document.body.appendChild(a);a.click();a.remove();
+ }catch(e){if(e&&e.name==='AbortError'){if(st)st.textContent='保存をキャンセルしました';return}console.error('share PDF error',e);if(st)st.textContent='保存失敗: '+(e.message||e)}
+}
+function closeReport(){document.getElementById('reportOverlay').style.display='none';clearSplitPdf()}
   
 function openEdit(id){
   const t=transactions.find(x=>x.id===id);if(!t) return;
@@ -1983,9 +2025,22 @@ function exportExcelMonth(){const tx=monthTx();if(!tx.length){alert('今月の�
 function resetAll(){if(!confirm('全データを削除します。本当によろしいですか？')) return;transactions=[];save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();alert('削除しました');}
 function budgetKey(y,m){return SP+'kakeibo_budget_'+y+'-'+String(m+1).padStart(2,'0');}
 function loadBudget(y,m){try{const b=localStorage.getItem(budgetKey(y,m));return b?JSON.parse(b):{cats:{},note:''};}catch(e){return{cats:{},note:''};}}
-function buildBudgetInputTable(){const data=loadBudget(viewYear,viewMonth);document.getElementById('budgetFormTitle').textContent=viewYear+'年'+(viewMonth+1)+'月の予算を設定する';document.getElementById('budgetInputTable').innerHTML=EXPENSE_CATS.map((c,i)=>{const id='bgt_'+i;return `<div class="cat-rate-row"><span class="cat-name">${c}</span><input type="number" class="cat-rate-input" id="${id}" min="0" step="1000" placeholder="0" inputmode="numeric" value="${data.cats[c]||''}" style="width:90px;text-align:right"><span style="font-size:12px;color:var(--text2)">円</span></div>`;}).join('');document.getElementById('budgetNote').value=data.note||'';const prev=loadBudget(viewMonth===0?viewYear-1:viewYear,viewMonth===0?11:viewMonth-1);document.getElementById('budgetCopyBtn').style.opacity=Object.keys(prev.cats).length?'1':'0.4';}
-function saveBudgets(){const cats={};EXPENSE_CATS.forEach((c,i)=>{const id='bgt_'+i;const el=document.getElementById(id);const v=parseInt(el&&el.value)||0;if(v>0) cats[c]=v;});const note=document.getElementById('budgetNote').value.trim();localStorage.setItem(budgetKey(viewYear,viewMonth),JSON.stringify({cats,note}));renderBudget();alert('保存しました');}
-function copyPrevBudget(){const py=viewMonth===0?viewYear-1:viewYear;const pm=viewMonth===0?11:viewMonth-1;const prev=loadBudget(py,pm);if(!Object.keys(prev.cats).length){alert('前月の予算データがありません');return;}EXPENSE_CATS.forEach((c,i)=>{const id='bgt_'+i;const el=document.getElementById(id);if(el) el.value=prev.cats[c]||'';});}
+function budgetPrevYm(){return viewMonth===0?{y:viewYear-1,m:11}:{y:viewYear,m:viewMonth-1};}
+function budgetTxValue(t){if(t.type==='income')return 0;if(t.isAdj||t.type==='adjustment'||t.isSplit)return Number(t.myShare||0);return Number(t.amount||0);}
+function budgetCategoryKey(t){const c=typeof v3FindCat==='function'?v3FindCat(t.category):null;return c?((c.icon||'●')+' '+c.name):t.category;}
+function budgetCategoryActual(y,m,cat,includeSpecial=false){return transactions.filter(t=>{const d=parseLocalDate(t.date);if(d.getFullYear()!==y||d.getMonth()!==m||t.type==='income')return false;if(!includeSpecial&&typeof v3IsSpecial==='function'&&v3IsSpecial(t))return false;return budgetCategoryKey(t)===cat;}).reduce((sum,t)=>sum+budgetTxValue(t),0);}
+function budgetThreeMonthAverage(cat,includeSpecial=false){let total=0,count=0;for(let n=1;n<=3;n++){let y=viewYear,m=viewMonth-n;while(m<0){m+=12;y--}const has=transactions.some(t=>{const d=parseLocalDate(t.date);return d.getFullYear()===y&&d.getMonth()===m&&t.type!=='income'&&budgetCategoryKey(t)===cat&&(!(!includeSpecial&&typeof v3IsSpecial==='function'&&v3IsSpecial(t)))});if(has){total+=budgetCategoryActual(y,m,cat,includeSpecial);count++}}return count?Math.round(total/count):0;}
+function budgetRoundUp(value){return value>0?Math.ceil(value/1000)*1000:0;}
+function setBudgetInput(index,value){const el=document.getElementById('bgt_'+index);if(el){el.value=value||'';el.focus();}}
+function buildBudgetInputTable(){
+  const data=loadBudget(viewYear,viewMonth),prevYm=budgetPrevYm(),prev=loadBudget(prevYm.y,prevYm.m),includeSpecial=!!document.getElementById('budgetIncludeSpecial')?.checked;
+  document.getElementById('budgetFormTitle').textContent=viewYear+'年'+(viewMonth+1)+'月の予算を設定する';
+  document.getElementById('budgetInputTable').innerHTML=EXPENSE_CATS.map((c,i)=>{const id='bgt_'+i,prevBudget=Number(prev.cats[c]||0),actual=budgetCategoryActual(prevYm.y,prevYm.m,c,includeSpecial),avg=budgetThreeMonthAverage(c,includeSpecial),diff=actual-prevBudget;let status='var(--text3)',label='予算なし';if(prevBudget>0){if(actual>prevBudget){status='var(--red)';label='+'+fmt(actual-prevBudget)+' 超過'}else if(actual/prevBudget>=.8){status='var(--orange)';label=fmt(prevBudget-actual)+' 残り'}else{status='var(--green)';label=fmt(prevBudget-actual)+' 残り'}}return `<div style="border:1px solid var(--border);border-radius:12px;padding:11px;margin-bottom:8px;background:var(--bg2)"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b style="font-size:13px">${c}</b><button type="button" class="prov-chip" ${actual>0?'':'disabled'} onclick="setBudgetInput(${i},${budgetRoundUp(actual)})">実績を採用</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;font-size:10px;color:var(--text2)"><div>先月予算<br><b style="font-size:12px;color:var(--text)">${prevBudget?fmt(prevBudget):'-'}</b></div><div>先月実績<br><b style="font-size:12px;color:var(--text)">${actual?fmt(actual):'-'}</b> <span style="color:${status}">${label}</span></div><div>3か月平均<br><b style="font-size:12px;color:var(--text)">${avg?fmt(avg):'-'}</b></div><div><label style="font-size:10px;margin:0 0 2px">今月予算</label><div style="display:flex;align-items:center;gap:4px"><input type="number" id="${id}" min="0" step="1000" placeholder="0" inputmode="numeric" value="${data.cats[c]||''}" style="padding:7px 8px;text-align:right"><span>円</span></div></div></div></div>`}).join('');
+  document.getElementById('budgetNote').value=data.note||'';document.getElementById('budgetCopyBtn').style.opacity=Object.keys(prev.cats).length?'1':'0.4';const anyActual=EXPENSE_CATS.some(c=>budgetCategoryActual(prevYm.y,prevYm.m,c,includeSpecial)>0);const ab=document.getElementById('budgetActualCopyBtn');if(ab)ab.style.opacity=anyActual?'1':'0.4';
+}
+function saveBudgets(){const cats={};EXPENSE_CATS.forEach((c,i)=>{const el=document.getElementById('bgt_'+i),v=parseInt(el?.value)||0;if(v>0)cats[c]=v});const note=document.getElementById('budgetNote').value.trim();localStorage.setItem(budgetKey(viewYear,viewMonth),JSON.stringify({cats,note}));schedulePush();renderBudget();buildBudgetInputTable();showSuccessToast('予算を保存しました');}
+function copyPrevBudget(){const p=budgetPrevYm(),prev=loadBudget(p.y,p.m);if(!Object.keys(prev.cats).length){alert('先月の予算データがありません');return}EXPENSE_CATS.forEach((c,i)=>{const el=document.getElementById('bgt_'+i);if(el)el.value=prev.cats[c]||''});showSuccessToast('先月予算を入力欄へコピーしました');}
+function copyPrevActuals(){const p=budgetPrevYm(),includeSpecial=!!document.getElementById('budgetIncludeSpecial')?.checked;let copied=0;EXPENSE_CATS.forEach((c,i)=>{const actual=budgetCategoryActual(p.y,p.m,c,includeSpecial),el=document.getElementById('bgt_'+i);if(el&&actual>0){el.value=budgetRoundUp(actual);copied++}});if(!copied){alert('先月の実績がありません');return}showSuccessToast('先月実績を千円単位で切り上げてコピーしました');}
 function renderBudget(){
   const data=loadBudget(viewYear,viewMonth);
   const budgetCats=EXPENSE_CATS.filter(c=>data.cats[c]>0);
@@ -2143,36 +2198,8 @@ window.addEventListener('offline',()=>{
   if(!IS_TEST) showSyncStatus('📴 オフライン中（復帰時に自動同期）','var(--text2)');
 });
 
-/* ===== Service Worker 登録 & 更新検知 ===== */
-let swRegistration=null;
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js').then(reg=>{
-      swRegistration=reg;
-      reg.addEventListener('updatefound',()=>{
-        const newWorker=reg.installing;
-        newWorker.addEventListener('statechange',()=>{
-          if(newWorker.state==='installed' && navigator.serviceWorker.controller){
-            document.getElementById('swUpdateBanner').style.display='flex';
-          }
-        });
-      });
-    }).catch(e=>console.log('SW登録スキップ',e));
-    let refreshing=false;
-    navigator.serviceWorker.addEventListener('controllerchange',()=>{
-      if(refreshing) return;
-      refreshing=true;
-      window.location.reload();
-    });
-  });
-}
-function applyUpdate(){
-  if(swRegistration && swRegistration.waiting){
-    swRegistration.waiting.postMessage({type:'SKIP_WAITING'});
-  }
-}
-
-
+/* ===== Service Worker完全撤去 v3.0.8 ===== */
+(async()=>{try{if('serviceWorker' in navigator){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}if('caches' in window){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch(e){console.warn('legacy cache cleanup failed',e)}})();
 let p2cActive='dashboard',p2cReturn={page:'dashboard',y:0};const p2cPages={dashboard:'page-dashboard',history:'page-history',analysis:'page-analysis-hub',more:'page-more-hub',chart:'page-chart',budget:'page-budget',annual:'page-annual',split:'page-split',fixed:'page-fixed',settings:'page-settings'};
 function p2cShow(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active')}
 function p2cNav(n){document.querySelectorAll('.p2c-nb').forEach(x=>x.classList.toggle('active',x.dataset.p2c===n))}
@@ -2208,6 +2235,64 @@ if(IS_TEST){
 
 
   
+</script>
+
+<script id="advancedSplitJs">
+/* ===== v3.1.0 Advanced Split Update ===== */
+let advancedMode='legacy',advancedSegments=[],advancedFixedOwner='me',advancedFixedAmount=0,advancedRestRate=50;
+let editAdvancedMode='legacy',editAdvancedSegments=[],editAdvancedFixedOwner='me',editAdvancedFixedAmount=0,editAdvancedRestRate=50;
+function advUid(){return 'seg_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
+function advRate(v){const n=Number(v);return Number.isFinite(n)?Math.max(0,Math.min(100,n)):50}
+function advCat(value){if(typeof v3FindCat==='function'){const c=v3FindCat(value);if(c)return{id:c.id,label:(c.icon||'●')+' '+c.name,name:c.name,icon:c.icon||'●',color:c.color||'#888780'}}const label=value||EXPENSE_CATS[0];return{id:'label:'+label,label,name:catLabel(label),icon:String(label).split(/\s+/)[0]||'●',color:CAT_COLORS[label]||'#888780'}}
+function advShares(amount,rate,payer){return calcShares(Number(amount)||0,advRate(rate),payer||'me')}
+function advNormalizeSegment(x,payer){const c=x.categorySnapshot||advCat(x.category||x.categoryId);const amount=Math.max(0,Number(x.amount)||0),rate=advRate(x.myRate);const q=advShares(amount,rate,payer);return{id:x.id||advUid(),categoryId:x.categoryId||c.id,category:c.label||x.category,categorySnapshot:{name:c.name||catLabel(c.label),icon:c.icon||'●',color:c.color||'#888780',label:c.label||x.category},memo:String(x.memo||''),amount,myRate:rate,myShare:q.myShare,herShare:q.herShare}}
+function advTotals(segments,payer){const rows=(segments||[]).map(x=>advNormalizeSegment(x,payer));return{segments:rows,myShare:rows.reduce((s,x)=>s+x.myShare,0),herShare:rows.reduce((s,x)=>s+x.herShare,0),amount:rows.reduce((s,x)=>s+x.amount,0)}}
+function advTxSegments(t){return Array.isArray(t?.splitSegments)?t.splitSegments.map(x=>advNormalizeSegment(x,t.payer)):[]}
+function advIs(t){return t?.splitMethod==='segments'&&Array.isArray(t.splitSegments)&&t.splitSegments.length>0}
+function advCategoryRows(t){if(advIs(t))return advTxSegments(t).map(x=>({category:x.category||x.categorySnapshot?.label||'🎁 その他',amount:x.amount,myShare:x.myShare,herShare:x.herShare,memo:x.memo,rate:x.myRate}));return[{category:t.category,amount:t.amount,myShare:t.isSplit?(t.myShare||0):t.amount,herShare:t.isSplit?(t.herShare||0):0,memo:'',rate:t.myRate??50}]}
+function advOptions(selected){return EXPENSE_CATS.map(c=>`<option value="${v3EscSafe(c)}" ${c===selected?'selected':''}>${v3EscSafe(c)}</option>`).join('')}
+function v3EscSafe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function advDefaultRate(cat){if(typeof v3FindCat==='function'){const c=v3FindCat(cat);if(c)return advRate(c.rate)}return advRate(catRates[cat]??50)}
+function advNewSegment(amount=0,cat){const category=cat||document.getElementById('category')?.value||EXPENSE_CATS[0];return advNormalizeSegment({id:advUid(),category,amount,myRate:advDefaultRate(category),memo:''},splitPayer)}
+function advInstall(containerPrefix=''){
+ const edit=containerPrefix==='edit-',options=document.getElementById(containerPrefix+'splitOptions');if(!options||document.getElementById(containerPrefix+'advancedSplitPanel'))return;
+ const legacyToggle=options.querySelector('.toggle[style*="grid-template-columns"]');if(!legacyToggle)return;
+ legacyToggle.insertAdjacentHTML('afterend',`<div class="adv-split-tabs"><button type="button" class="toggle-btn" id="${containerPrefix}adv-amount-rate" onclick="advSetMode('${edit?'edit':''}','amountRate')">金額＋残額比率</button><button type="button" class="toggle-btn" id="${containerPrefix}adv-segments" onclick="advSetMode('${edit?'edit':''}','segments')">内訳ごと</button></div><div class="adv-split-panel" id="${containerPrefix}advancedSplitPanel" style="display:none"></div>`);
+}
+function advSetMode(scope,mode){const edit=scope==='edit';if(edit){editAdvancedMode=mode;if(mode==='segments'&&!editAdvancedSegments.length){const amount=Number(document.getElementById('edit-amount').value)||0,cat=document.getElementById('edit-category').value,rate=advDefaultRate(cat);editAdvancedSegments=[advNormalizeSegment({category:cat,amount,myRate:rate},editSplitPayer)]}}else{advancedMode=mode;if(mode==='segments'&&!advancedSegments.length)advancedSegments=[advNewSegment(getAmountValue()||0)]}
+ const prefix=edit?'edit-':'';['rate','diff','amount'].forEach(m=>document.getElementById(prefix+'mode-'+m)?.classList.remove('active','sel'));document.getElementById(prefix+'adv-amount-rate')?.classList.toggle('active',mode==='amountRate');document.getElementById(prefix+'adv-amount-rate')?.classList.toggle('sel',mode==='amountRate');document.getElementById(prefix+'adv-segments')?.classList.toggle('active',mode==='segments');document.getElementById(prefix+'adv-segments')?.classList.toggle('sel',mode==='segments');['share-rate-input','share-diff-input','share-amount-input'].forEach(id=>{const e=document.getElementById(prefix+id);if(e)e.style.display='none'});const panel=document.getElementById(prefix+'advancedSplitPanel');if(panel)panel.style.display='';advRender(edit)}
+function advUseLegacy(edit,mode){if(edit){if(editAdvancedMode!=='legacy'&&editAdvancedSegments.length&&!confirm('内訳情報を破棄して通常の配分方法へ戻しますか？'))return false;editAdvancedMode='legacy';editAdvancedSegments=[]}else{advancedMode='legacy';advancedSegments=[]}const prefix=edit?'edit-':'';document.getElementById(prefix+'advancedSplitPanel').style.display='none';document.getElementById(prefix+'adv-amount-rate')?.classList.remove('active','sel');document.getElementById(prefix+'adv-segments')?.classList.remove('active','sel');return true}
+const _advSetShareMode=setShareMode;setShareMode=function(m){if(!advUseLegacy(false,m))return;_advSetShareMode(m)};
+const _advEditSetShareMode=editSetShareMode;editSetShareMode=function(m){if(!advUseLegacy(true,m))return;_advEditSetShareMode(m)};
+function advRender(edit=false){const mode=edit?editAdvancedMode:advancedMode,prefix=edit?'edit-':'',panel=document.getElementById(prefix+'advancedSplitPanel');if(!panel)return;const payer=edit?editSplitPayer:splitPayer,total=Number(edit?document.getElementById('edit-amount').value:getAmountValue())||0;
+ if(mode==='amountRate'){const owner=edit?editAdvancedFixedOwner:advancedFixedOwner,fixed=edit?editAdvancedFixedAmount:advancedFixedAmount,rate=edit?editAdvancedRestRate:advancedRestRate,rest=Math.max(0,total-fixed),rq=advShares(rest,rate,payer),my=(owner==='me'?fixed:0)+rq.myShare,her=(owner==='her'?fixed:0)+rq.herShare;panel.innerHTML=`<div class="section-title">先に固定する金額</div><div class="form-row"><select onchange="advAmountRateChange(${edit},'owner',this.value)"><option value="me" ${owner==='me'?'selected':''}>自分分</option><option value="her" ${owner==='her'?'selected':''}>相手分</option></select><input type="number" min="0" value="${fixed}" oninput="advAmountRateChange(${edit},'amount',this.value)" placeholder="0"></div><div class="section-title">残額 ${fmt(rest)} の比率</div><div class="form-row"><input type="number" min="0" max="100" value="${rate}" oninput="advAmountRateChange(${edit},'rate',this.value)"><div style="padding:9px">相手 ${100-rate}%</div></div><div class="adv-valid ${fixed<=total?'ok':'ng'}">自分 ${fmt(my)} / ${partnerName} ${fmt(her)}${fixed>total?'・固定額が会計金額を超えています':''}</div>`;return}
+ const segs=edit?editAdvancedSegments:advancedSegments,sum=segs.reduce((a,x)=>a+(Number(x.amount)||0),0),diff=total-sum;panel.innerHTML=`<div class="section-title">会計内訳</div>${segs.map((x,i)=>{const q=advShares(x.amount,x.myRate,payer);return `<div class="adv-seg"><div class="adv-seg-head"><b>内訳 ${i+1}</b><button type="button" class="btn adv-mini danger" onclick="advDeleteSegment(${edit},${i})">削除</button></div><select onchange="advSegmentChange(${edit},${i},'category',this.value)">${advOptions(x.category)}</select><div class="adv-seg-grid" style="margin-top:7px"><input type="number" min="0" value="${x.amount}" placeholder="金額" oninput="advSegmentChange(${edit},${i},'amount',this.value)"><input type="number" min="0" max="100" value="${x.myRate}" placeholder="自分%" oninput="advSegmentChange(${edit},${i},'rate',this.value)"></div><input style="margin-top:7px" value="${v3EscSafe(x.memo)}" placeholder="内訳メモ（任意）" oninput="advSegmentChange(${edit},${i},'memo',this.value)"><div class="adv-seg-result"><span>自分 ${fmt(q.myShare)}</span><span>${partnerName} ${fmt(q.herShare)}</span></div></div>`}).join('')}<button type="button" class="btn" onclick="advAddSegment(${edit})">＋ 内訳を追加${diff>0?'（残額 '+fmt(diff)+'）':''}</button><div class="adv-valid ${diff===0?'ok':'ng'}">内訳合計 ${fmt(sum)} / 会計金額 ${fmt(total)}${diff!==0?'・差額 '+fmt(Math.abs(diff)):''}</div>`}
+function advAmountRateChange(edit,key,value){if(edit){if(key==='owner')editAdvancedFixedOwner=value;if(key==='amount')editAdvancedFixedAmount=Math.max(0,Number(value)||0);if(key==='rate')editAdvancedRestRate=advRate(value)}else{if(key==='owner')advancedFixedOwner=value;if(key==='amount')advancedFixedAmount=Math.max(0,Number(value)||0);if(key==='rate')advancedRestRate=advRate(value)}advRender(edit)}
+function advSegmentChange(edit,i,key,value){const a=edit?editAdvancedSegments:advancedSegments,x=a[i];if(!x)return;if(key==='category'){x.category=value;x.categoryId=advCat(value).id;x.categorySnapshot=advCat(value);x.myRate=advDefaultRate(value)}if(key==='amount')x.amount=Math.max(0,Number(value)||0);if(key==='rate')x.myRate=advRate(value);if(key==='memo')x.memo=value;advRender(edit)}
+function advAddSegment(edit){const a=edit?editAdvancedSegments:advancedSegments,total=Number(edit?document.getElementById('edit-amount').value:getAmountValue())||0,sum=a.reduce((s,x)=>s+(Number(x.amount)||0),0),cat=edit?document.getElementById('edit-category').value:document.getElementById('category').value;a.push(advNormalizeSegment({category:cat,amount:Math.max(0,total-sum),myRate:advDefaultRate(cat)},edit?editSplitPayer:splitPayer));advRender(edit)}
+function advDeleteSegment(edit,i){const a=edit?editAdvancedSegments:advancedSegments;a.splice(i,1);advRender(edit)}
+function advBuildData(edit,amount,payer){const mode=edit?editAdvancedMode:advancedMode;if(mode==='legacy')return null;if(mode==='amountRate'){const fixed=edit?editAdvancedFixedAmount:advancedFixedAmount,owner=edit?editAdvancedFixedOwner:advancedFixedOwner,rate=edit?editAdvancedRestRate:advancedRestRate;if(fixed>amount)return{error:'固定額が会計金額を超えています'};const cat=edit?document.getElementById('edit-category').value:document.getElementById('category').value,rest=amount-fixed,segs=[];if(fixed>0)segs.push({id:advUid(),category,amount:fixed,myRate:owner==='me'?100:0,memo:owner==='me'?'自分の固定分':'相手の固定分'});if(rest>0)segs.push({id:advUid(),category,amount:rest,myRate:rate,memo:'残額比率分'});const r=advTotals(segs,payer);return{...r,splitMethod:'segments',advancedSource:'amountRate',fixedOwner:owner,fixedAmount:fixed,restRate:rate}}
+ const segs=edit?editAdvancedSegments:advancedSegments,r=advTotals(segs,payer);if(!segs.length)return{error:'内訳を1件以上追加してください'};if(r.amount!==amount)return{error:'内訳合計と会計金額を一致させてください'};return{...r,splitMethod:'segments',advancedSource:'segments'}}
+function advResetNew(){advancedMode='legacy';advancedSegments=[];advancedFixedOwner='me';advancedFixedAmount=0;advancedRestRate=50;document.getElementById('advancedSplitPanel')&&(document.getElementById('advancedSplitPanel').style.display='none');document.getElementById('adv-amount-rate')?.classList.remove('active','sel');document.getElementById('adv-segments')?.classList.remove('active','sel')}
+const _advAddTransaction=addTransaction;addTransaction=function(){if(!(document.getElementById('isSplit').checked&&txType==='expense')||advancedMode==='legacy')return _advAddTransaction();const amount=getAmountValue();if(!amount||amount<=0)return alert('金額を入力してください');const data=advBuildData(false,amount,splitPayer);if(data.error)return alert(data.error);const newTx={id:nextId(),type:'expense',amount,category:'複数ジャンル',date:document.getElementById('txdate').value,memo:document.getElementById('memo').value||'複数ジャンル',note:document.getElementById('note').value,isSplit:true,isAdj:false,payer:splitPayer,myShare:data.myShare,herShare:data.herShare,myRate:Math.round(data.myShare/amount*100),shareMode:'segments',splitMethod:'segments',splitSegments:data.segments,advancedSource:data.advancedSource,fixedOwner:data.fixedOwner,fixedAmount:data.fixedAmount,restRate:data.restRate};transactions.push(newTx);if(!save()){transactions.pop();return}markMonthUnsettledForTx(newTx);['amount','memo','note'].forEach(id=>document.getElementById(id).value='');document.getElementById('isSplit').checked=false;toggleSplitOptions();advResetNew();updateHeader();renderHistory();renderSplit();renderReviews();updateMemoSuggestions();renderTagChips();showSuccessToast('記録しました');if(document.body.classList.contains('p2c-sheet-open'))p2cCloseInput()}
+const _advOpenEdit=openEdit;openEdit=function(id){_advOpenEdit(id);const t=transactions.find(x=>x.id===id);advInstall('edit-');if(advIs(t)){editAdvancedMode=t.advancedSource==='amountRate'?'amountRate':'segments';editAdvancedSegments=advTxSegments(t);editAdvancedFixedOwner=t.fixedOwner||'me';editAdvancedFixedAmount=Number(t.fixedAmount)||0;editAdvancedRestRate=advRate(t.restRate??50);advSetMode('edit',editAdvancedMode)}else{editAdvancedMode='legacy';editAdvancedSegments=[]}}
+const _advSaveEdit=saveEdit;saveEdit=function(){const t=transactions.find(x=>x.id===editingId);if(!t||editAdvancedMode==='legacy')return _advSaveEdit();const amount=Number(document.getElementById('edit-amount').value)||0,data=advBuildData(true,amount,editSplitPayer);if(data.error)return alert(data.error);const idx=transactions.findIndex(x=>x.id===editingId),orig=transactions[idx];transactions[idx]={...orig,type:'expense',amount,category:'複数ジャンル',date:document.getElementById('edit-date').value,memo:document.getElementById('edit-memo').value||'複数ジャンル',note:stripAutoNote(document.getElementById('edit-note').value),isSplit:true,isAdj:false,payer:editSplitPayer,myShare:data.myShare,herShare:data.herShare,myRate:Math.round(data.myShare/amount*100),shareMode:'segments',splitMethod:'segments',splitSegments:data.segments,advancedSource:data.advancedSource,fixedOwner:data.fixedOwner,fixedAmount:data.fixedAmount,restRate:data.restRate,isProvisional:false};if(!save()){transactions[idx]=orig;return}markMonthUnsettledForTx(orig);markMonthUnsettledForTx(transactions[idx]);closeModalDirect();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();renderBudget?.();showSuccessToast('変更を保存しました')}
+const _advUpdateShare=updateSharePreview;updateSharePreview=function(){if(advancedMode!=='legacy'){advRender(false);return}_advUpdateShare()};const _advEditAmount=editOnAmountInput;editOnAmountInput=function(){_advEditAmount();if(editAdvancedMode!=='legacy')advRender(true)};const _advSetPayer=setPayer;setPayer=function(p){_advSetPayer(p);if(advancedMode!=='legacy')advRender(false)};const _advEditPayer=editSetPayer;editSetPayer=function(p){_advEditPayer(p);if(editAdvancedMode!=='legacy')advRender(true)};
+const _advShareModeLabel=shareModeLabel;shareModeLabel=function(t){if(advIs(t))return t.advancedSource==='amountRate'?`金額＋残額比率・内訳${t.splitSegments.length}件`:`内訳ごと・${t.splitSegments.length}件`;return _advShareModeLabel(t)}
+const _advBudgetActual=budgetCategoryActual;budgetCategoryActual=function(y,m,cat,includeSpecial=false){return transactions.filter(t=>{const d=parseLocalDate(t.date);return d.getFullYear()===y&&d.getMonth()===m&&t.type!=='income'&&(includeSpecial||typeof v3IsSpecial!=='function'||!v3IsSpecial(t))}).reduce((sum,t)=>sum+advCategoryRows(t).filter(r=>r.category===cat).reduce((a,r)=>a+Number(r.myShare||0),0),0)}
+const _advBuildExcel=buildExcelData;buildExcelData=function(list){const base=_advBuildExcel(list),head=base[0];head.push('高度配分','内訳JSON');return[head,...base.slice(1).map((row,i)=>{const t=list.slice().sort((a,b)=>a.date.localeCompare(b.date))[i];return[...row,advIs(t)?'○':'',advIs(t)?JSON.stringify(t.splitSegments):'']})]}
+const _advExportExcel=exportExcel;exportExcel=function(){if(!transactions.length)return alert('データがありません');const wb=XLSX.utils.book_new(),sorted=transactions.slice().sort((a,b)=>a.date.localeCompare(b.date));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(buildExcelData(sorted)),'全データ');const segRows=[['取引ID','日付','会計名','ジャンル','内訳メモ','内訳金額','自分比率%','自分負担',partnerName+'負担']];sorted.filter(advIs).forEach(t=>advTxSegments(t).forEach(x=>segRows.push([t.id,t.date,t.memo,x.category,x.memo,x.amount,x.myRate,x.myShare,x.herShare])));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(segRows),'内訳明細');XLSX.writeFile(wb,'家計簿_全期間.xlsx')}
+const _advHistFilter=applyHistFilters;applyHistFilters=function(list){const out=_advHistFilter(list),kw=(document.getElementById('histSearch')?.value||'').trim().toLowerCase();if(!kw)return out;return list.filter(t=>{const base=((t.memo||'')+' '+(t.category||'')+' '+(t.note||'')).toLowerCase(),seg=advTxSegments(t).some(x=>((x.category||'')+' '+(x.memo||'')).toLowerCase().includes(kw));if(!(base.includes(kw)||seg))return false;return _advHistFilter([t]).length>0})}
+const _advOpenReport=openReport;openReport=function(){_advOpenReport();const report=document.querySelector('#reportBody .report'),table=document.querySelector('#reportBody .rep-tbl tbody');if(!report||!table)return;const tmap=new Map(monthTx().filter(advIs).map(t=>[t.memo+'|'+t.amount,t]));[...table.querySelectorAll('tr')].forEach(tr=>{const cells=tr.querySelectorAll('td');if(cells.length<3)return;const memo=cells[1].querySelector('.rep-item-name')?.childNodes[0]?.textContent?.trim(),amt=Number(cells[2].textContent.replace(/[^0-9]/g,'')),t=tmap.get(memo+'|'+amt);if(t){const box=document.createElement('div');box.className='adv-detail';box.innerHTML=advTxSegments(t).map(x=>`<div class="rep-segment"><b>${v3EscSafe(x.category)}</b>${x.memo?' / '+v3EscSafe(x.memo):''}<br>${fmt(x.amount)}・${x.myRate}:${100-x.myRate}・自分 ${fmt(x.myShare)} / ${partnerName} ${fmt(x.herShare)}</div>`).join('');cells[1].appendChild(box)}});const cat={};monthTx().filter(t=>t.isSplit&&t.type==='expense').forEach(t=>advCategoryRows(t).forEach(x=>{const k=x.category;cat[k]??={my:0,her:0};cat[k].my+=x.myShare;cat[k].her+=x.herShare}));if(Object.keys(cat).length){const sec=document.createElement('div');sec.innerHTML=`<div class="rep-sec">ジャンル別まとめ</div><div>${Object.entries(cat).map(([k,v])=>`<div class="adv-cat-summary"><b>${v3EscSafe(k)}</b><span>自分 ${fmt(v.my)}</span><span>${partnerName} ${fmt(v.her)}</span></div>`).join('')}</div>`;report.querySelector('.rep-foot').before(sec)}clearSplitPdf();requestAnimationFrame(()=>setTimeout(prepareSplitPdf,100))}
+function advInstallAll(){advInstall('');advInstall('edit-');transactions.forEach(t=>{if(advIs(t)){const r=advTotals(t.splitSegments,t.payer);t.splitSegments=r.segments;t.myShare=r.myShare;t.herShare=r.herShare;t.shareMode='segments'}});localStorage.setItem(SP+'kakeibo_v7',JSON.stringify(transactions));}
+function advExpanded(list){const out=[];(list||transactions).forEach(t=>{if(!advIs(t)){out.push(t);return}advTxSegments(t).forEach((x,i)=>out.push({...t,id:String(t.id)+'_seg_'+i,amount:x.amount,category:x.category,memo:t.memo+(x.memo?' / '+x.memo:''),myRate:x.myRate,myShare:x.myShare,herShare:x.herShare,splitMethod:null,splitSegments:null}))});return out}
+function advWithExpanded(fn,args){const original=transactions;transactions=advExpanded(original);try{return fn.apply(this,args||[])}finally{transactions=original}}
+const _advRenderMyCharts=renderMyCharts;renderMyCharts=function(){return advWithExpanded(_advRenderMyCharts,arguments)};
+const _advRenderCoupleCharts=renderCoupleCharts;renderCoupleCharts=function(){return advWithExpanded(_advRenderCoupleCharts,arguments)};
+const _advRenderBudget=renderBudget;renderBudget=function(){return advWithExpanded(_advRenderBudget,arguments)};
+const _advExportCSV=exportCSV;exportCSV=function(){if(!transactions.length)return alert('データがありません');const headers=['id','type','amount','category','date','memo','note','isSplit','isAdj','payer','myShare','herShare','myRate','fixedRef','isProvisional','shareMode','splitMethod','advancedSource','fixedOwner','fixedAmount','restRate','splitSegments'];const rows=transactions.map(t=>headers.map(k=>{let v=t[k];if(k==='splitSegments'&&Array.isArray(v))v=JSON.stringify(v);if(v==null)return'';const q=String(v);return(q.includes(',')||q.includes('"')||q.includes('\n'))?'"'+q.replace(/"/g,'""')+'"':q}).join(','));const blob=new Blob(['\uFEFF'+headers.join(',')+'\n'+rows.join('\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='kakeibo_'+localDateString()+'.csv';a.click();URL.revokeObjectURL(url)}
+const _advParseCSV=parseCSVLine;importCSV=function(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{const lines=ev.target.result.replace(/\r/g,'').split('\n').filter(l=>l.trim());if(lines.length<2)return alert('データが見つかりません');const headers=lines[0].replace(/^\uFEFF/,'').split(','),existing=new Set(transactions.map(t=>String(t.id)));let added=0,skipped=0;for(let i=1;i<lines.length;i++){const cols=_advParseCSV(lines[i]);if(cols.length<2)continue;const obj={};headers.forEach((h,j)=>{const v=cols[j];if(v===''||v==null){obj[h]=null;return}if(['amount','myShare','herShare','myRate','fixedAmount','restRate'].includes(h))obj[h]=Number(v);else if(['isSplit','isAdj','isProvisional'].includes(h))obj[h]=v==='true';else if(h==='id')obj[h]=/^\d+$/.test(v)?Number(v):v;else if(h==='splitSegments'){try{obj[h]=JSON.parse(v)}catch(_){obj[h]=null}}else obj[h]=v});if(existing.has(String(obj.id))){skipped++;continue}if(Array.isArray(obj.splitSegments)){const r=advTotals(obj.splitSegments,obj.payer);obj.splitSegments=r.segments;obj.myShare=r.myShare;obj.herShare=r.herShare;obj.splitMethod='segments';obj.shareMode='segments'}transactions.push(obj);added++}save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();alert(`完了: ${added}件追加、${skipped}件スキップ`);e.target.value=''};reader.readAsText(file,'UTF-8')}
+advInstallAll();
 </script>
 </body>
 </html>
