@@ -8,12 +8,13 @@ Kakeibo delivery requirements (must be retained)
 - Do not require separate source files from the user.
 
 Kakeibo
-Version  : v5.0.2
-Codename : Aurora Glass
+Version  : v5.1.0
+Codename : Minimal
 Updated  : 2026-11-19
 Author   : 秋山伊織 + Microsoft Copilot
 
 Change Log
+- v5.1.0: Minimal direction (user's choice): flattened the hero, panels, nav and buttons to solid surfaces with one neutral accent, removed the aurora glows and gradient balance text, unified corner radii, and dropped the glass chips around the hero metrics. Semantic income/expense colors stay. CSS only.
 - v5.0.2: Removed the grid pattern from the home hero (NET BALANCE) at the user's request; the aurora glow stays. CSS only.
 - v5.0.1: Fixed the settings-screen version line (was still showing "Kakeibo v3.1.3 Unified Split Tabs - 2026-10-13") and the browser tab title to v5.0.1 Aurora Glass. Display-only strings; data, sync, and app logic are unchanged.
 - v5.0.0: Definitive polish pass ("Aurora Glass"): unified the navigation, hub, and header icons into one thin-line SVG icon set (replacing the mixed text glyphs); themed Chart.js axes, gridlines, and fonts for the dark UI and switched the doughnut slice separators from white to dark; added a faint grid and a slow aurora drift to the hero, a gentle page-in motion, press feedback on cards and buttons, tabular numerals for amounts, hidden scrollbars, and focus rings. The lock screen's light orbs now drift slowly too. Motion respects prefers-reduced-motion.
@@ -60,7 +61,7 @@ Change Log
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>kakeibo v5.0.2</title>
+<title>kakeibo v5.1.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -121,7 +122,7 @@ const _v3openFixedForm=openFixedForm;openFixedForm=function(idx=null){_v3openFix
 // Cloud payload extensions
 const _v3cloudPush=cloudPush;cloudPush=async function(){localStorage.setItem(SP+'kakeibo_v3_meta',JSON.stringify({categories:v3Categories,templates:v3LoadTemplates(),specialTags:v3GetSpecialTags()}));return _v3cloudPush()};
 // UI installation
-function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v5.0.2 Aurora Glass・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
+function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v5.1.0 Minimal・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
 // dashboard budget warnings + normal expense
 const _v3renderP2C=renderP2C;renderP2C=function(){_v3renderP2C();const tx=monthTx(),normal=v3RealExp(tx,true),special=v3RealExp(tx)-normal;const trend=document.getElementById('p2cTrend');if(trend)trend.textContent=`通常支出 ${fmt(normal)}${special?`・臨時 ${fmt(special)}`:''}`;const bd=loadBudget(viewYear,viewMonth),warns=Object.entries(bd.cats||{}).map(([cat,budget])=>{const used=tx.filter(t=>t.category===cat&&!v3IsSpecial(t)).reduce((s,t)=>s+v3ExpenseValue(t),0);return{cat,used,budget:Number(budget),pct:budget?Math.round(used/budget*100):0}}).filter(x=>x.pct>=80).sort((a,b)=>b.pct-a.pct);const actions=document.getElementById('p2cActions');if(actions&&warns.length&&!actions.querySelector('.v3-budget-warning')){actions.insertAdjacentHTML('afterbegin',warns.slice(0,3).map(x=>`<div class="p2c-action v3-budget-warning" onclick="p2cGo('budget')"><div class="p2c-ai">!</div><div class="p2c-am"><div class="p2c-at">${v3Esc(catLabel(x.cat))} ${x.pct>=100?'予算超過':x.pct+'%'}</div><div class="p2c-as">${fmt(x.used)} / ${fmt(x.budget)}</div></div><span>›</span></div>`).join(''))}}
 const _v3p2cGo=p2cGo;p2cGo=function(n){_v3p2cGo(n);if(n==='insights')v3RenderInsights()};
@@ -507,6 +508,32 @@ input:focus,select:focus,textarea:focus{background:#2E2E2B;border-color:rgba(140
 @keyframes lkDriftA{from{transform:translate(0,0)}to{transform:translate(-26px,20px)}}
 @keyframes lkDriftB{from{transform:translate(0,0)}to{transform:translate(22px,-16px)}}
 @media (prefers-reduced-motion:reduce){.page.active,.p2c-hero::before,#lockScreen .lk-orb-a,#lockScreen .lk-orb-b{animation:none}}
+</style>
+<style id="popoMinimalCss">
+/* v5.1.0 Minimal: flatten surfaces, one neutral accent, unified radii.
+   Semantic colors (income green / expense red) stay. CSS only. */
+body{background:#0C0C0B}
+.p2c-safe,.p2c-header{background:rgba(12,12,11,.92);box-shadow:none}
+.p2c-logo{background:#F2F1EC;color:#141412;box-shadow:none;border-radius:10px}
+.p2c-hero{background:#151514;border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:none;padding:22px 20px 18px}
+.p2c-hero::before{display:none}
+#p2cBalance{background:none;-webkit-background-clip:initial;background-clip:initial;color:#F5F4EF}
+.p2c-metrics{border-top:1px solid rgba(255,255,255,.08);padding-top:14px;margin-top:16px;gap:12px}
+.p2c-metrics>div{background:transparent;border:0;border-radius:0;padding:0;backdrop-filter:none;-webkit-backdrop-filter:none}
+.p2c-panel,.p2c-hub-card{background:#151514;border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:none}
+.card,.metric{border-radius:18px;box-shadow:none}
+.p2c-hub-icon,.p2c-ai,.p2c-ri{background:var(--p-soft);border-color:rgba(255,255,255,.07)}
+.p2c-action{background:transparent;border-color:rgba(255,255,255,.07);border-radius:12px}
+.p2c-prog i{background:#E8E6DF}
+.p2c-nav{background:#161615;border-color:rgba(255,255,255,.08);border-radius:24px;box-shadow:0 10px 28px rgba(0,0,0,.42);backdrop-filter:none;-webkit-backdrop-filter:none}
+.p2c-plus{background:#F2F1EC;color:#141412;box-shadow:0 6px 16px rgba(0,0,0,.35);border-radius:15px}
+.btn.primary,.p2c-settle-btn,.p2c-prov-confirm,.p2c-footer .btn{background:#F2F1EC;color:#141412;border-color:transparent}
+.modal{background:#1B1B1A;border-color:rgba(255,255,255,.08);border-radius:20px;box-shadow:none}
+.p2c-banner{box-shadow:0 8px 22px rgba(0,0,0,.4)}
+#page-home.p2c-input>.p2c-input-card{background:#171716}
+button:focus-visible,a:focus-visible{outline-color:rgba(255,255,255,.55)}
+input,textarea{caret-color:#F2F1EC}
+input:focus,select:focus,textarea:focus{background:#1E1E1C;border-color:rgba(255,255,255,.32)}
 </style>
 </head>
 
