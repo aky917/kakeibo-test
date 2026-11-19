@@ -8,12 +8,13 @@ Kakeibo delivery requirements (must be retained)
 - Do not require separate source files from the user.
 
 Kakeibo
-Version  : v6.0.1
-Codename : Avant
+Version  : v7.0.0
+Codename : Maison
 Updated  : 2026-11-19
 Author   : 秋山伊織 + Microsoft Copilot
 
 Change Log
+- v7.0.0: Maison (user gave free rein for a complete change): the whole app moves from the dark glass world to a warm ivory light theme — paper-white surfaces, ink text, quiet gold, and serif display numerals, like a private bank or a watch maison. The lock screen joins the same world (its faint grid stays, recoloured), charts are rethemed for light, and the doughnut separators return to white. CSS plus display-only chart colour strings; data, sync and logic are untouched.
 - v6.0.1: Changed the signature accent from signal mint to a quiet, muted gold at the user's request. CSS only.
 - v6.0.0: Avant (user asked for a more cutting-edge product feel): kept the minimal flat base and added one signature accent (signal mint), a frosted-glass nav with a specular edge and an accent dot on the active tab, an accent + button and primary buttons, a faint accent glow and a live pulse dot in the hero, larger tighter balance numerals, hairline panel highlights, and spring-like page motion. CSS only.
 - v5.1.0: Minimal direction (user's choice): flattened the hero, panels, nav and buttons to solid surfaces with one neutral accent, removed the aurora glows and gradient balance text, unified corner radii, and dropped the glass chips around the hero metrics. Semantic income/expense colors stay. CSS only.
@@ -63,7 +64,7 @@ Change Log
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>kakeibo v6.0.1</title>
+<title>kakeibo v7.0.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -124,7 +125,7 @@ const _v3openFixedForm=openFixedForm;openFixedForm=function(idx=null){_v3openFix
 // Cloud payload extensions
 const _v3cloudPush=cloudPush;cloudPush=async function(){localStorage.setItem(SP+'kakeibo_v3_meta',JSON.stringify({categories:v3Categories,templates:v3LoadTemplates(),specialTags:v3GetSpecialTags()}));return _v3cloudPush()};
 // UI installation
-function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v6.0.1 Avant・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
+function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v7.0.0 Maison・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
 // dashboard budget warnings + normal expense
 const _v3renderP2C=renderP2C;renderP2C=function(){_v3renderP2C();const tx=monthTx(),normal=v3RealExp(tx,true),special=v3RealExp(tx)-normal;const trend=document.getElementById('p2cTrend');if(trend)trend.textContent=`通常支出 ${fmt(normal)}${special?`・臨時 ${fmt(special)}`:''}`;const bd=loadBudget(viewYear,viewMonth),warns=Object.entries(bd.cats||{}).map(([cat,budget])=>{const used=tx.filter(t=>t.category===cat&&!v3IsSpecial(t)).reduce((s,t)=>s+v3ExpenseValue(t),0);return{cat,used,budget:Number(budget),pct:budget?Math.round(used/budget*100):0}}).filter(x=>x.pct>=80).sort((a,b)=>b.pct-a.pct);const actions=document.getElementById('p2cActions');if(actions&&warns.length&&!actions.querySelector('.v3-budget-warning')){actions.insertAdjacentHTML('afterbegin',warns.slice(0,3).map(x=>`<div class="p2c-action v3-budget-warning" onclick="p2cGo('budget')"><div class="p2c-ai">!</div><div class="p2c-am"><div class="p2c-at">${v3Esc(catLabel(x.cat))} ${x.pct>=100?'予算超過':x.pct+'%'}</div><div class="p2c-as">${fmt(x.used)} / ${fmt(x.budget)}</div></div><span>›</span></div>`).join(''))}}
 const _v3p2cGo=p2cGo;p2cGo=function(n){_v3p2cGo(n);if(n==='insights')v3RenderInsights()};
@@ -565,6 +566,83 @@ button:focus-visible,a:focus-visible{outline-color:rgba(200,169,110,.6)}
 .page.active{animation:popoPageIn2 .38s cubic-bezier(.22,1,.36,1) both}
 @keyframes popoPageIn2{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @media (prefers-reduced-motion:reduce){.p2c-kicker::before{animation:none}}
+</style>
+<style id="popoMaisonCss">
+/* v7.0.0 "Maison" — a complete change of world: warm ivory light theme,
+   ink text, quiet gold, serif display numerals. A private-bank / watch-maison
+   feel. All previous dark blocks are overridden below; data, sync and app
+   logic are untouched. The settlement report stays white, as before. */
+:root{
+  color-scheme:light;
+  --popo-accent:#A98B54;
+  --p-bg:#F3EFE6;--p-card:#FFFFFF;--p-soft:#F7F3EA;--p-soft2:#EAE3D3;
+  --p-text:#1D1A15;--p-sub:#5E584C;--p-muted:#9A927F;--p-line:#E3DBC9;
+  --p-green:#2E7D5B;--p-red:#B4453C;--p-bronze:#A98B54;--p-metal:#8E887A;
+  --bg:#F3EFE6;--bg2:#FFFFFF;--border:#E3DBC9;
+  --text:#1D1A15;--text2:#5E584C;--text3:#9A927F;--accent:#1D1A15;
+  --hdr:#F7F3EA;--hdr-border:#E3DBC9;--hdr-text:#1D1A15;
+  --hdr-sub:rgba(29,26,21,.55);--hdr-muted:rgba(29,26,21,.35);
+}
+html{background:#EFE9DC}
+body{background:radial-gradient(700px 360px at 50% -140px,rgba(255,255,255,.75),transparent 65%),#F3EFE6}
+::selection{background:rgba(169,139,84,.28);color:#1D1A15}
+.p2c-safe{background:rgba(247,243,234,.92)}
+.p2c-header{background:rgba(247,243,234,.88);box-shadow:none;border-bottom:1px solid rgba(29,26,21,.06);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%)}
+.p2c-logo{background:#1D1A15;color:#C8A96E;border:0;box-shadow:none}
+.p2c-bell{background:#FFFFFF;border:1px solid var(--p-line);color:var(--p-text)}
+.p2c-hero{background:#FFFFFF;border:1px solid #E7DFC9;border-radius:22px;box-shadow:0 18px 40px rgba(93,77,43,.09);color:var(--p-text)}
+.p2c-kicker{color:#A98B54}
+.p2c-kicker::before{background:var(--popo-accent)}
+#p2cBalance{color:#1D1A15;font-family:'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',Georgia,serif;font-weight:600;letter-spacing:-1px}
+.p2c-trend{color:#2E7D5B}
+.p2c-metrics{border-top:1px solid rgba(29,26,21,.09)}
+.p2c-ml{color:#9A927F}
+#p2cIncome{color:#2E7D5B!important}
+#p2cExpense{color:#B4453C!important}
+#p2cSavings{color:#A98B54!important}
+.p2c-panel,.p2c-hub-card{background:#FFFFFF;border:1px solid #E7DFC9;box-shadow:0 14px 34px rgba(93,77,43,.07)}
+.p2c-big{font-family:'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',Georgia,serif;font-weight:600}
+.card,.metric{box-shadow:0 14px 34px rgba(93,77,43,.07)}
+.p2c-hub-icon,.p2c-ai,.p2c-ri{background:#F7F3EA;border:1px solid #E7DFC9;color:#A98B54}
+.p2c-action{background:#FBF9F3;border-color:#EDE5D2}
+.p2c-prog{background:rgba(29,26,21,.08)}
+.p2c-prog i{background:var(--popo-accent)}
+.p2c-nav{background:rgba(255,255,255,.85);border-color:rgba(29,26,21,.08);box-shadow:0 18px 40px rgba(93,77,43,.16),inset 0 1px 0 rgba(255,255,255,.8);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%)}
+.p2c-nb{color:#8A8378}
+.p2c-nb.active{color:#1D1A15;background:rgba(29,26,21,.05)}
+.p2c-nb.active::after{background:var(--popo-accent)}
+.p2c-plus{background:var(--popo-accent);color:#FFFFFF;box-shadow:0 10px 24px rgba(169,139,84,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn.primary,.p2c-settle-btn,.p2c-prov-confirm,.p2c-footer .btn{background:#1D1A15;color:#F5F1E8;border-color:transparent}
+.p2c-footer{background:rgba(247,243,234,.94)}
+.toggle-btn.active.sel,.toggle-btn.active.income,.toggle-btn.active.expense{background:#1D1A15;color:#F5F1E8}
+.modal{background:#FFFFFF;border:1px solid #E7DFC9;border-radius:20px;box-shadow:0 24px 60px rgba(60,50,25,.18);color:var(--p-text)}
+.modal-overlay{background:rgba(43,36,22,.35)}
+.p2c-banner{background:#FFFFFF;box-shadow:0 14px 34px rgba(93,77,43,.12);color:var(--p-text)}
+.p2c-sheet-head{background:rgba(250,248,243,.96);color:var(--p-text)}
+.p2c-details{background:#FFFFFF}
+#page-home.p2c-input>.p2c-input-card{background:#FFFFFF}
+.v3-chip{background:rgba(29,26,21,.05)}
+.v3-color{border-color:rgba(29,26,21,.16)}
+.adv-seg{background:#FFFFFF}
+input,textarea{caret-color:#A98B54}
+input:focus,select:focus,textarea:focus{background:#FFFFFF;border-color:rgba(169,139,84,.55);color:#1D1A15}
+button:focus-visible,a:focus-visible{outline-color:rgba(169,139,84,.55)}
+/* Lock screen joins the same world (its faint grid stays, recoloured). */
+#lockScreen{background:#F3EFE6!important}
+#lockScreen .lk-orb-a{background:radial-gradient(circle,rgba(200,169,110,.30),transparent 65%)}
+#lockScreen .lk-orb-b{background:radial-gradient(circle,rgba(214,196,150,.28),transparent 65%)}
+#lockScreen .lk-grid{background-image:linear-gradient(rgba(29,26,21,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(29,26,21,.05) 1px,transparent 1px)}
+#lockScreen .lk-card{background:linear-gradient(165deg,#FFFFFF,#FBF8F1);border:1px solid #E7DFC9;box-shadow:0 30px 70px rgba(93,77,43,.16),inset 0 1px 0 rgba(255,255,255,.9);color:#1D1A15}
+#lockScreen .lk-lock{background:#1D1A15;border:1px solid #1D1A15;color:#C8A96E;box-shadow:0 0 0 8px rgba(169,139,84,.08),0 12px 28px rgba(93,77,43,.22)}
+#lockScreen .lk-sub{color:#9A927F}
+#lockScreen .lk-hint{color:#5E584C}
+#lockScreen .lk-field{background:#FFFFFF;border-color:#E0D6BE}
+#lockScreen .lk-field input{color:#1D1A15}
+#lockScreen .lk-field button{background:#1D1A15;color:#F5F1E8}
+#lockScreen .lk-error{color:#B4453C}
+#lockScreen .lk-title span{background:none;-webkit-background-clip:initial;background-clip:initial;color:#1D1A15}
+#lockScreen .lk-field:focus-within{border-color:rgba(169,139,84,.65);box-shadow:0 0 0 4px rgba(169,139,84,.14)}
+#lockScreen .lk-field input::placeholder{color:#B4AB97}
 </style>
 </head>
 
@@ -2154,7 +2232,7 @@ function renderMyCharts(){
   const total=vals.reduce((a,b)=>a+b,1);
   document.getElementById('myPieLegend').innerHTML=cats.length?cats.map((c,i)=>`<span class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${c.slice(2)||c} ${Math.round(vals[i]/total*100)}%</span>`).join(''):'<span style="font-size:12px;color:var(--text3)">データなし</span>';
   destroyChart('myPie');
-  if(cats.length) charts['myPie']=new Chart(document.getElementById('myPieChart'),{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#151513'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  if(cats.length) charts['myPie']=new Chart(document.getElementById('myPieChart'),{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#FFFFFF'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
   const months=getMonthRange(6);
   const incomes=[],exps=[];
   months.forEach(({m,y})=>{const mtx=transactions.filter(t=>{const d=parseLocalDate(t.date);return d.getFullYear()===y&&d.getMonth()===m;});incomes.push(mtx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0));exps.push(realExp(mtx));});
@@ -2177,7 +2255,7 @@ function renderCoupleCharts(){
   const total=vals.reduce((a,b)=>a+b,1);
   document.getElementById('couplePieLegend').innerHTML=cats.length?cats.map((c,i)=>`<span class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${c.slice(2)} ${Math.round(vals[i]/total*100)}%</span>`).join(''):'<span style="font-size:12px;color:var(--text3)">データなし</span>';
   destroyChart('couplePie');
-  if(cats.length) charts['couplePie']=new Chart(document.getElementById('couplePieChart'),{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#151513'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  if(cats.length) charts['couplePie']=new Chart(document.getElementById('couplePieChart'),{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#FFFFFF'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
   const months=getMonthRange(6);
   const totals=[];
   months.forEach(({m,y})=>{const mtx=transactions.filter(t=>t.isSplit&&t.type==='expense'&&parseLocalDate(t.date).getFullYear()===y&&parseLocalDate(t.date).getMonth()===m);totals.push(mtx.reduce((s,t)=>s+t.amount,0));});
@@ -2497,5 +2575,5 @@ const _advExportCSV=exportCSV;exportCSV=function(){if(!transactions.length)retur
 const _advParseCSV=parseCSVLine;importCSV=function(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{const lines=ev.target.result.replace(/\r/g,'').split('\n').filter(l=>l.trim());if(lines.length<2)return alert('データが見つかりません');const headers=lines[0].replace(/^\uFEFF/,'').split(','),existing=new Set(transactions.map(t=>String(t.id)));let added=0,skipped=0;for(let i=1;i<lines.length;i++){const cols=_advParseCSV(lines[i]);if(cols.length<2)continue;const obj={};headers.forEach((h,j)=>{const v=cols[j];if(v===''||v==null){obj[h]=null;return}if(['amount','myShare','herShare','myRate','fixedAmount','restRate'].includes(h))obj[h]=Number(v);else if(['isSplit','isAdj','isProvisional'].includes(h))obj[h]=v==='true';else if(h==='id')obj[h]=/^\d+$/.test(v)?Number(v):v;else if(h==='splitSegments'){try{obj[h]=JSON.parse(v)}catch(_){obj[h]=null}}else obj[h]=v});if(existing.has(String(obj.id))){skipped++;continue}if(Array.isArray(obj.splitSegments)){const r=advTotals(obj.splitSegments,obj.payer);obj.splitSegments=r.segments;obj.myShare=r.myShare;obj.herShare=r.herShare;obj.splitMethod='segments';obj.shareMode='segments'}transactions.push(obj);added++}save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();alert(`完了: ${added}件追加、${skipped}件スキップ`);e.target.value=''};reader.readAsText(file,'UTF-8')}
 advInstallAll();
 </script>
-<script>if(window.Chart){Chart.defaults.color='#A9ABA2';Chart.defaults.borderColor='rgba(255,255,255,.07)';Chart.defaults.font.family="'Noto Sans JP','Hiragino Sans',sans-serif";}</script></body>
+<script>if(window.Chart){Chart.defaults.color='#8A8378';Chart.defaults.borderColor='rgba(29,26,21,.08)';Chart.defaults.font.family="'Noto Sans JP','Hiragino Sans',sans-serif";}</script></body>
 </html>
