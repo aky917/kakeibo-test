@@ -8,12 +8,22 @@ Kakeibo delivery requirements (must be retained)
 - Do not require separate source files from the user.
 
 Kakeibo
-Version  : v3.1.3
-Codename : Unified Split Tabs
-Updated  : 2026-10-13
+Version  : v5.0.1
+Codename : Aurora Glass
+Updated  : 2026-11-19
 Author   : 秋山伊織 + Microsoft Copilot
 
 Change Log
+- v5.0.1: Fixed the settings-screen version line (was still showing "Kakeibo v3.1.3 Unified Split Tabs - 2026-10-13") and the browser tab title to v5.0.1 Aurora Glass. Display-only strings; data, sync, and app logic are unchanged.
+- v5.0.0: Definitive polish pass ("Aurora Glass"): unified the navigation, hub, and header icons into one thin-line SVG icon set (replacing the mixed text glyphs); themed Chart.js axes, gridlines, and fonts for the dark UI and switched the doughnut slice separators from white to dark; added a faint grid and a slow aurora drift to the hero, a gentle page-in motion, press feedback on cards and buttons, tabular numerals for amounts, hidden scrollbars, and focus rings. The lock screen's light orbs now drift slowly too. Motion respects prefers-reduced-motion.
+- v5.0.0: Styling and icon markup only — data, sync, and app logic are unchanged; the settlement report still stays white as a printable document.
+- v4.0.0: Full model change ("Liquid Glass"): the fixed bottom bar is now a floating glass pill navigation, the hero metrics became individual glass chips, the aurora lighting is stronger, and the type scale is larger. Builds on the v3.2.0 dark glass theme; all styling still lives in one removable <style id="popoDashCss"> block, and data, sync, and logic are unchanged.
+- v3.2.0: Full dark glass redesign ("Midnight Glass"): the whole app now lives in the lock screen's world — deep #111110 base with soft blue/amber light, frosted glass panels, gradient primary buttons, logo and + button, and light text throughout. Theme variables were redefined and white surfaces flipped to glass; the settlement report stays white on purpose because it is a printable document.
+- v3.2.0: All styling lives in one removable <style id="popoDashCss"> block; markup, logic, and data are unchanged.
+- v3.1.5: Brought the dashboard into the lock screen's world: soft blue/amber light over a light gradient backdrop, a deeper glass hero with glowing orbs and a gradient balance figure, gradient logo and + button, pill-shaped month switcher, rounder panels with softer shadows, and gradient accents on the budget bar and icon chips.
+- v3.1.5: All dashboard styling lives in one removable <style id="popoDashCss"> block; markup, logic, and data are unchanged.
+- v3.1.4: Redesigned the lock screen: frosted-glass card, soft gradient light orbs and faint grid over the #111110 base, thin-line SVG lock icon, gradient wordmark, and a pill-shaped password field with the open button inside and a glowing focus ring.
+- v3.1.4: Lock screen visuals only — token check, storage keys, and all app logic are unchanged.
 - v3.1.3: Unified all five split methods into one tab group.
 - v3.1.3: Standardized selected state, height, spacing, border, and colors for legacy and advanced methods.
 - v3.1.3: Applied the same tab arrangement to new-entry and edit screens.
@@ -49,7 +59,7 @@ Change Log
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>kakeibo v3.1.3</title>
+<title>kakeibo v5.0.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -110,7 +120,7 @@ const _v3openFixedForm=openFixedForm;openFixedForm=function(idx=null){_v3openFix
 // Cloud payload extensions
 const _v3cloudPush=cloudPush;cloudPush=async function(){localStorage.setItem(SP+'kakeibo_v3_meta',JSON.stringify({categories:v3Categories,templates:v3LoadTemplates(),specialTags:v3GetSpecialTags()}));return _v3cloudPush()};
 // UI installation
-function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v3.1.3 Unified Split Tabs・2026-10-13</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon">◈</div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
+function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v5.0.1 Aurora Glass・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
 // dashboard budget warnings + normal expense
 const _v3renderP2C=renderP2C;renderP2C=function(){_v3renderP2C();const tx=monthTx(),normal=v3RealExp(tx,true),special=v3RealExp(tx)-normal;const trend=document.getElementById('p2cTrend');if(trend)trend.textContent=`通常支出 ${fmt(normal)}${special?`・臨時 ${fmt(special)}`:''}`;const bd=loadBudget(viewYear,viewMonth),warns=Object.entries(bd.cats||{}).map(([cat,budget])=>{const used=tx.filter(t=>t.category===cat&&!v3IsSpecial(t)).reduce((s,t)=>s+v3ExpenseValue(t),0);return{cat,used,budget:Number(budget),pct:budget?Math.round(used/budget*100):0}}).filter(x=>x.pct>=80).sort((a,b)=>b.pct-a.pct);const actions=document.getElementById('p2cActions');if(actions&&warns.length&&!actions.querySelector('.v3-budget-warning')){actions.insertAdjacentHTML('afterbegin',warns.slice(0,3).map(x=>`<div class="p2c-action v3-budget-warning" onclick="p2cGo('budget')"><div class="p2c-ai">!</div><div class="p2c-am"><div class="p2c-at">${v3Esc(catLabel(x.cat))} ${x.pct>=100?'予算超過':x.pct+'%'}</div><div class="p2c-as">${fmt(x.used)} / ${fmt(x.budget)}</div></div><span>›</span></div>`).join(''))}}
 const _v3p2cGo=p2cGo;p2cGo=function(n){_v3p2cGo(n);if(n==='insights')v3RenderInsights()};
@@ -388,24 +398,147 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
 <style id="advancedSplitCss">
 .adv-split-panel{border:1px solid var(--p-line,var(--border));border-radius:14px;background:var(--p-soft,#f7f7f4);padding:11px;margin:8px 0}.adv-split-tabs{display:none}.adv-five-tabs{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:5px!important;background:transparent!important}.adv-five-tabs .toggle-btn{grid-column:span 2;min-height:38px;height:auto;padding:7px 4px;line-height:1.2;white-space:normal;border-radius:9px!important}.adv-five-tabs .toggle-btn:nth-child(4),.adv-five-tabs .toggle-btn:nth-child(5){grid-column:span 3}.adv-five-tabs .toggle-btn.active,.adv-five-tabs .toggle-btn.sel{box-shadow:0 1px 3px rgba(0,0,0,.12)}.adv-seg{border:1px solid var(--p-line,var(--border));background:#fff;border-radius:12px;padding:10px;margin:8px 0}.adv-seg-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}.adv-seg-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:7px}.adv-seg-result{display:flex;justify-content:space-between;font-size:11px;color:var(--p-sub,var(--text2));margin-top:7px;background:var(--p-soft,#f7f7f4);border-radius:8px;padding:6px 8px}.adv-mini{width:auto!important;padding:6px 9px!important;font-size:11px!important;margin:0!important}.adv-valid{font-size:11px;border-radius:9px;padding:10px;margin-top:8px}.adv-summary-main,.adv-summary-shares{display:flex;justify-content:space-between;gap:8px}.adv-summary-main{font-size:12px}.adv-summary-shares{margin-top:6px}.adv-summary-check{margin-top:6px;padding-top:6px;border-top:1px solid currentColor;opacity:.8}.adv-valid.ok{background:var(--green-bg);color:var(--green-dark)}.adv-valid.ng{background:var(--red-bg);color:var(--red-dark)}.adv-detail{margin-top:6px;padding:7px 9px;border-left:2px solid var(--purple,#7F77DD);background:var(--p-soft,#f7f7f4);border-radius:0 8px 8px 0}.adv-detail-row{display:flex;justify-content:space-between;gap:8px;font-size:10px;padding:3px 0}.rep-segment{font-size:10px;color:#555;padding:3px 0 3px 10px;border-left:2px solid #ddd}.rep-segment b{color:#222}.adv-cat-summary{display:grid;grid-template-columns:1fr auto auto;gap:7px;font-size:11px;padding:6px 0;border-bottom:1px solid #e8e6e2}.adv-hidden{display:none!important}
 </style>
+<style id="lockScreenCss">
+#lockScreen .lk-orb{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none}
+#lockScreen .lk-orb-a{width:420px;height:420px;top:-120px;right:-80px;background:radial-gradient(circle,rgba(120,180,255,.28),transparent 65%)}
+#lockScreen .lk-orb-b{width:380px;height:380px;bottom:-140px;left:-90px;background:radial-gradient(circle,rgba(255,190,90,.20),transparent 65%)}
+#lockScreen .lk-grid{position:absolute;inset:0;pointer-events:none;opacity:.35;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 45%,black 30%,transparent 75%);mask-image:radial-gradient(ellipse 90% 70% at 50% 45%,black 30%,transparent 75%)}
+#lockScreen .lk-card{position:relative;z-index:1;box-sizing:border-box;width:min(92vw,380px);padding:44px 32px 32px;text-align:center;border-radius:28px;background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;color:#f2f1ec;-webkit-font-smoothing:antialiased}
+#lockScreen .lk-lock{width:64px;height:64px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(150deg,rgba(120,180,255,.22),rgba(255,190,90,.14));border:1px solid rgba(255,255,255,.16);box-shadow:0 0 0 8px rgba(255,255,255,.03),0 10px 30px rgba(0,0,0,.4)}
+#lockScreen .lk-lock svg{width:28px;height:28px;stroke:#e8e6df}
+#lockScreen .lk-title{font-size:34px;font-weight:700;letter-spacing:.04em;line-height:1.1}
+#lockScreen .lk-title span{background:linear-gradient(90deg,#a8c8ff,#f2f1ec 55%,#ffd9a0);-webkit-background-clip:text;background-clip:text;color:transparent}
+#lockScreen .lk-sub{margin-top:8px;font-size:13px;letter-spacing:.28em;color:#a9a79e}
+#lockScreen .lk-hint{margin-top:22px;font-size:13px;color:#c9c7bf;line-height:1.7}
+#lockScreen .lk-field{margin-top:22px;box-sizing:border-box;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 6px 6px 18px;transition:border-color .2s,box-shadow .2s}
+#lockScreen .lk-field:focus-within{border-color:rgba(140,185,255,.7);box-shadow:0 0 0 4px rgba(140,185,255,.15),0 0 24px rgba(140,185,255,.12)}
+#lockScreen .lk-field input{flex:1;min-width:0;box-sizing:border-box;background:transparent;border:0;outline:0;color:#f2f1ec;font-size:17px;letter-spacing:.12em}
+#lockScreen .lk-field input::placeholder{color:#7d7b74;letter-spacing:.05em}
+#lockScreen .lk-field button{flex:none;border:0;cursor:pointer;padding:11px 20px;border-radius:999px;font-size:15px;font-weight:700;color:#141412;background:linear-gradient(90deg,#a8c8ff,#ffd9a0)}
+#lockScreen .lk-field button:active{transform:scale(.97)}
+#lockScreen .lk-error{margin-top:14px;font-size:12px;color:#FF8A70;min-height:16px}
+</style>
+<style id="popoDashCss">
+/* v5.0.0 "Aurora Glass" — ぽぽ's definitive edition.
+   Full model change of the app's look: floating glass navigation, aurora-lit hero,
+   unified line-icon set, themed charts, and micro-interactions throughout.
+   All styling lives in this one block; data, sync and app logic are untouched.
+   The settlement report (#reportOverlay .report) intentionally stays white: it is a printable document. */
+:root{
+  color-scheme:dark;
+  --p-bg:#0E0E0D;--p-card:#1B1B19;--p-soft:#242422;--p-soft2:#2C2C29;
+  --p-text:#F2F1EC;--p-sub:#B8BAB3;--p-muted:#8B8E86;--p-line:rgba(255,255,255,.11);
+  --p-green:#7FBF9E;--p-red:#E08A84;--p-bronze:#C9A25F;--p-metal:#A7ABA6;
+  --p-nav-h:84px;
+  --bg:#131311;--bg2:#1B1B19;--border:rgba(255,255,255,.11);
+  --text:#F2F1EC;--text2:#B8BAB3;--text3:#8B8E86;--accent:#F2F1EC;
+}
+*{-webkit-tap-highlight-color:transparent}
+::selection{background:rgba(140,185,255,.35);color:#fff}
+html{background:#0B0B0A}
+body{background:radial-gradient(720px 400px at 110% -80px,rgba(120,180,255,.20),transparent 60%),radial-gradient(620px 380px at -14% -60px,rgba(255,190,90,.13),transparent 60%),radial-gradient(500px 500px at 50% 115%,rgba(120,180,255,.07),transparent 65%),linear-gradient(180deg,#141412,#0E0E0D 60%,#0B0B0A)}
+.container{background:transparent}
+.page{scrollbar-width:none}
+.page::-webkit-scrollbar{width:0;height:0}
+.page.active{animation:popoPageIn .26s ease both}
+@keyframes popoPageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+button:focus-visible,a:focus-visible{outline:2px solid rgba(140,185,255,.65);outline-offset:2px}
+input,textarea{caret-color:#A8C8FF}
+.p2c-safe{background:rgba(13,13,12,.78)}
+.p2c-header{background:rgba(13,13,12,.78);box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.p2c-logo{background:linear-gradient(135deg,#A8C8FF,#FFD9A0);color:#141412;border-radius:11px;box-shadow:0 6px 18px rgba(140,160,190,.4)}
+.p2c-logo .p2c-line{display:none}
+.p2c-name{font-size:15px;font-weight:700}
+.p2c-month{border-radius:999px}
+.p2c-bell{border-radius:50%;background:var(--p-soft)}
+.p2c-bell svg{width:18px;height:18px;display:block;margin:auto}
+.p2c-hero{border-radius:26px;padding:24px 20px 20px;background:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px),radial-gradient(430px 300px at 90% -12%,rgba(120,180,255,.38),transparent 62%),radial-gradient(390px 290px at -10% 115%,rgba(255,190,90,.25),transparent 62%),linear-gradient(150deg,#262B28,#131615 58%,#0C0E0D);background-size:56px 56px,56px 56px,auto,auto,auto;border:1px solid rgba(255,255,255,.16);box-shadow:0 26px 54px rgba(0,0,0,.5),0 0 90px rgba(120,180,255,.07),inset 0 1px 0 rgba(255,255,255,.12)}
+.p2c-hero::before{content:'';position:absolute;inset:-30%;background:radial-gradient(40% 40% at 80% 20%,rgba(120,180,255,.20),transparent 70%),radial-gradient(35% 35% at 15% 85%,rgba(255,190,90,.14),transparent 70%);animation:popoAurora 18s ease-in-out infinite alternate;pointer-events:none}
+.p2c-hero>*{position:relative;z-index:1}
+@keyframes popoAurora{from{transform:translate3d(-2%,-1%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.07)}}
+.p2c-kicker{letter-spacing:2.6px;color:rgba(255,255,255,.65)}
+.p2c-bal{font-size:45px;margin-top:12px;font-variant-numeric:tabular-nums}
+#p2cBalance{background:linear-gradient(92deg,#A8C8FF,#FFFFFF 48%,#FFD9A0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.p2c-metrics{border-top:0;padding-top:0;margin-top:18px;gap:8px}
+.p2c-metrics>div{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px 11px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.p2c-mv,.p2c-big,.p2c-ra,.v3-stat b{font-variant-numeric:tabular-nums}
+.p2c-panel{background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border-radius:22px;border-color:rgba(255,255,255,.10);box-shadow:0 14px 34px rgba(0,0,0,.35);padding:16px;transition:transform .16s ease,box-shadow .25s ease}
+.p2c-prog{background:rgba(255,255,255,.10)}
+.p2c-prog i{background:linear-gradient(90deg,#7FB0F5,#E9BC72)}
+.card,.metric{border-radius:20px;box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.p2c-hub-card{background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border-radius:22px;border-color:rgba(255,255,255,.10);box-shadow:0 14px 34px rgba(0,0,0,.35);min-height:132px;padding:16px;transition:transform .16s ease,box-shadow .25s ease}
+.p2c-panel:active,.p2c-hub-card:active{transform:scale(.975)}
+.p2c-hub-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(150deg,rgba(120,180,255,.20),rgba(255,190,90,.15));border-color:rgba(255,255,255,.10)}
+.p2c-hub-icon svg{width:20px;height:20px;display:block}
+.p2c-hub-title{font-size:15px;margin-top:17px}
+.p2c-ai,.p2c-ri{background:linear-gradient(150deg,rgba(120,180,255,.20),rgba(255,190,90,.15));border-color:rgba(255,255,255,.10)}
+.p2c-action{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09);border-radius:14px}
+.p2c-nav{left:50%;transform:translateX(-50%);width:min(calc(100% - 20px),410px);bottom:calc(10px + env(safe-area-inset-bottom));height:64px;padding:5px 8px;border:1px solid rgba(255,255,255,.13);border-radius:26px;background:rgba(20,20,19,.78);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 22px 48px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.10)}
+.p2c-nb{min-height:52px;border-radius:18px;transition:background .2s,color .2s,transform .15s}
+.p2c-nb:active{transform:scale(.94)}
+.p2c-nb.active{color:#F2F1EC;font-weight:700;background:rgba(255,255,255,.07)}
+.p2c-nb svg{width:22px;height:22px;display:block}
+.p2c-plus{width:48px;height:48px;margin-top:-24px;border-radius:16px;background:linear-gradient(135deg,#A8C8FF,#FFD9A0);color:#141412;box-shadow:0 16px 32px rgba(130,160,205,.45)}
+.p2c-plus svg{width:24px;height:24px;display:block}
+.p2c-plus .p2c-line{display:none}
+.btn{transition:transform .15s ease,filter .2s ease}
+.btn:active{transform:scale(.98)}
+.btn.primary,.p2c-settle-btn,.p2c-prov-confirm{background:linear-gradient(135deg,#A8C8FF,#FFD9A0);color:#141412;border-color:transparent}
+.p2c-footer .btn{background:linear-gradient(135deg,#A8C8FF,#FFD9A0);color:#141412;border-color:transparent}
+.p2c-footer{background:rgba(13,13,12,.92)}
+.p2c-settle-btn.done{background:var(--p-soft);color:var(--p-green);border-color:var(--p-line)}
+.toggle-btn.active.sel,.toggle-btn.active.income,.toggle-btn.active.expense{background:#EDECE8;color:#141412}
+input:focus,select:focus,textarea:focus{background:#2E2E2B;border-color:rgba(140,185,255,.55);color:#F2F1EC}
+#page-home.p2c-input>.p2c-input-card{background:linear-gradient(180deg,#1D1D1B,#141412)}
+.p2c-sheet-head{background:rgba(19,19,18,.94)}
+.p2c-details{background:var(--p-card)}
+.modal{background:linear-gradient(170deg,#232320,#1A1A18);border:1px solid rgba(255,255,255,.10);border-radius:22px}
+.p2c-banner{background:rgba(30,30,28,.95);box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.p2c-prov-modal-actions{background:var(--p-card)}
+.v3-template{background:var(--p-card)}
+.v3-chip{background:rgba(255,255,255,.05)}
+.v3-color{border-color:rgba(255,255,255,.18)}
+.adv-seg{background:var(--p-card)}
+.adv-cat-summary{border-color:var(--p-line)}
+.modal-overlay{background:rgba(5,6,5,.62)}
+#lockScreen .lk-orb-a{animation:lkDriftA 16s ease-in-out infinite alternate}
+#lockScreen .lk-orb-b{animation:lkDriftB 20s ease-in-out infinite alternate}
+@keyframes lkDriftA{from{transform:translate(0,0)}to{transform:translate(-26px,20px)}}
+@keyframes lkDriftB{from{transform:translate(0,0)}to{transform:translate(22px,-16px)}}
+@media (prefers-reduced-motion:reduce){.page.active,.p2c-hero::before,#lockScreen .lk-orb-a,#lockScreen .lk-orb-b{animation:none}}
+</style>
 </head>
 
 
 <body>
-<div id="lockScreen" style="display:none;position:fixed;inset:0;background:var(--hdr);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px">
-  <div style="font-size:44px">🔐</div>
-  <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px">kakeibo</div>
-  <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:.3px">パスワードを入力してください</div>
-  <input id="tokenInput" type="password" placeholder="パスワード" style="width:100%;max-width:300px;padding:13px 16px;border:1px solid rgba(255,255,255,.15);border-radius:12px;font-size:16px;background:rgba(255,255,255,.08);color:#fff;outline:none" onkeydown="if(event.key==='Enter')submitToken()">
-  <button onclick="submitToken()" style="width:100%;max-width:300px;padding:13px;background:#fff;color:#111110;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.3px">ログイン</button>
-  <div id="tokenError" style="font-size:12px;color:#FF8A70;min-height:16px"></div>
+<div id="lockScreen" style="display:none;position:fixed;inset:0;background:#111110;z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow:hidden">
+  <div class="lk-orb lk-orb-a"></div>
+  <div class="lk-orb lk-orb-b"></div>
+  <div class="lk-grid"></div>
+  <div class="lk-card">
+    <div class="lk-lock" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="10" width="16" height="10" rx="2.5"></rect>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        <circle cx="12" cy="15" r="1.4" fill="currentColor" stroke="none"></circle>
+      </svg>
+    </div>
+    <div class="lk-title"><span>kakeibo</span></div>
+    <div class="lk-sub">家 計 簿</div>
+    <div class="lk-hint">パスワードを入力して開く</div>
+    <div class="lk-field">
+      <input id="tokenInput" type="password" placeholder="パスワード" aria-label="パスワード" onkeydown="if(event.key==='Enter')submitToken()">
+      <button type="button" onclick="submitToken()">開く</button>
+    </div>
+    <div id="tokenError" class="lk-error"></div>
+  </div>
 </div>
 <div class="container">
 
-<div class="p2c-safe no-print"><header class="p2c-header"><div class="p2c-row"><div class="p2c-brand"><div class="p2c-logo">¥<i class="p2c-line"></i></div><div><div class="p2c-name">kakeibo</div><div class="p2c-sub">PERSONAL LEDGER</div></div></div><div class="p2c-month"><button onclick="changeMonth(-1)">‹</button><span id="p2cMonth">2026年8月</span><button onclick="changeMonth(1)">›</button></div><button type="button" class="p2c-bell has" id="p2cBell" aria-label="確認項目を表示" onclick="p2cOpenNotifications()">♧</button></div></header></div>
+<div class="p2c-safe no-print"><header class="p2c-header"><div class="p2c-row"><div class="p2c-brand"><div class="p2c-logo">¥<i class="p2c-line"></i></div><div><div class="p2c-name">kakeibo</div><div class="p2c-sub">PERSONAL LEDGER</div></div></div><div class="p2c-month"><button onclick="changeMonth(-1)">‹</button><span id="p2cMonth">2026年8月</span><button onclick="changeMonth(1)">›</button></div><button type="button" class="p2c-bell has" id="p2cBell" aria-label="確認項目を表示" onclick="p2cOpenNotifications()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg></button></div></header></div>
 <div id="page-dashboard" class="page active"><main class="p2c-main"><section class="p2c-hero"><i class="p2c-line"></i><div class="p2c-kicker">NET BALANCE</div><div class="p2c-bal"><span style="font-size:21px;color:rgba(255,255,255,.55)">¥</span><span id="p2cBalance">0</span></div><div class="p2c-trend" id="p2cTrend"></div><div class="p2c-metrics"><div><div class="p2c-ml">収入</div><div class="p2c-mv" style="color:#9ADBC3" id="p2cIncome">¥0</div></div><div><div class="p2c-ml">支出</div><div class="p2c-mv" style="color:#ECAAA2" id="p2cExpense">¥0</div></div><div><div class="p2c-ml">貯蓄率</div><div class="p2c-mv" style="color:#D9C7A4" id="p2cSavings">-</div></div></div></section><section class="p2c-grid"><button class="p2c-panel" onclick="p2cGo('budget')"><div class="p2c-pt">予算進捗</div><div class="p2c-big" id="p2cBudget">未設定</div><div class="p2c-prog"><i id="p2cBudgetBar"></i></div><div class="p2c-as" id="p2cBudgetLeft">予算を設定</div></button><button class="p2c-panel" onclick="p2cGo('analysis')"><div class="p2c-pt">月末支出予測</div><div class="p2c-big" id="p2cForecast">-</div><div class="p2c-as" id="p2cForecastSub">データ集計中</div></button></section><section class="p2c-panel" id="p2cActionPanel"><div class="p2c-head"><div><div class="p2c-pt" style="letter-spacing:1.6px">ACTION CENTER</div><h2>確認が必要です</h2></div><span id="p2cActionCount"></span></div><div id="p2cActions"></div></section><section class="p2c-panel"><div class="p2c-head"><div><div class="p2c-pt" style="letter-spacing:1.6px">LATEST ENTRIES</div><h2>今日の明細</h2></div><span onclick="p2cGo('history')">すべて見る</span></div><div id="p2cRecent"></div></section></main></div>
-<div id="page-analysis-hub" class="page"><div class="p2c-hub"><div class="p2c-hub-grid"><button class="p2c-hub-card" onclick="p2cGo('chart')"><div class="p2c-hub-icon">▥</div><div class="p2c-hub-title">グラフ</div><div class="p2c-hub-sub">カテゴリ・月別推移</div></button><button class="p2c-hub-card" onclick="p2cGo('budget')"><div class="p2c-hub-icon">◎</div><div class="p2c-hub-title">予算</div><div class="p2c-hub-sub">進捗と残り予算</div></button><button class="p2c-hub-card" onclick="p2cGo('annual')"><div class="p2c-hub-icon">▣</div><div class="p2c-hub-title">年次</div><div class="p2c-hub-sub">年間収支・累積</div></button></div></div></div>
-<div id="page-more-hub" class="page"><div class="p2c-hub"><div class="p2c-hub-grid"><button class="p2c-hub-card" onclick="p2cGo('split')"><div class="p2c-hub-icon">♧</div><div class="p2c-hub-title">割り勘</div><div class="p2c-hub-sub">精算・PDF</div></button><button class="p2c-hub-card" onclick="p2cGo('fixed')"><div class="p2c-hub-icon">♢</div><div class="p2c-hub-title">固定費</div><div class="p2c-hub-sub">管理・確定</div></button><button class="p2c-hub-card" onclick="p2cGo('history')"><div class="p2c-hub-icon">▤</div><div class="p2c-hub-title">明細見直し</div><div class="p2c-hub-sub">カード会社別確認</div></button><button class="p2c-hub-card" onclick="p2cGo('settings')"><div class="p2c-hub-icon">⚙</div><div class="p2c-hub-title">設定</div><div class="p2c-hub-sub">表示・データ・同期</div></button></div></div></div>
+<div id="page-analysis-hub" class="page"><div class="p2c-hub"><div class="p2c-hub-grid"><button class="p2c-hub-card" onclick="p2cGo('chart')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V7M18 17v-8"/></svg></div><div class="p2c-hub-title">グラフ</div><div class="p2c-hub-sub">カテゴリ・月別推移</div></button><button class="p2c-hub-card" onclick="p2cGo('budget')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></div><div class="p2c-hub-title">予算</div><div class="p2c-hub-sub">進捗と残り予算</div></button><button class="p2c-hub-card" onclick="p2cGo('annual')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></div><div class="p2c-hub-title">年次</div><div class="p2c-hub-sub">年間収支・累積</div></button></div></div></div>
+<div id="page-more-hub" class="page"><div class="p2c-hub"><div class="p2c-hub-grid"><button class="p2c-hub-card" onclick="p2cGo('split')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M16 5.2a3.5 3.5 0 0 1 0 5.9M17.8 15.4c1.5.7 2.4 2.1 2.7 4.1"/></svg></div><div class="p2c-hub-title">割り勘</div><div class="p2c-hub-sub">精算・PDF</div></button><button class="p2c-hub-card" onclick="p2cGo('fixed')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.5 21 6.5l-4 4"/><path d="M3 12.5v-1a5 5 0 0 1 5-5h13"/><path d="M7 21.5 3 17.5l4-4"/><path d="M21 11.5v1a5 5 0 0 1-5 5H3"/></svg></div><div class="p2c-hub-title">固定費</div><div class="p2c-hub-sub">管理・確定</div></button><button class="p2c-hub-card" onclick="p2cGo('history')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 6.5 1.8 1.8L8.5 5"/><path d="m3.5 12.5 1.8 1.8 3.2-3.3"/><path d="m3.5 18.5 1.8 1.8 3.2-3.3"/><path d="M12 7h9M12 13h9M12 19h9"/></svg></div><div class="p2c-hub-title">明細見直し</div><div class="p2c-hub-sub">カード会社別確認</div></button><button class="p2c-hub-card" onclick="p2cGo('settings')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M19 7h1M4 12h3M13 12h7M4 17h11M19 17h1"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="12" r="2.2"/><circle cx="16.5" cy="17" r="2.2"/></svg></div><div class="p2c-hub-title">設定</div><div class="p2c-hub-sub">表示・データ・同期</div></button></div></div></div>
 
   <div class="app-header no-print">
     <div class="header">
@@ -824,7 +957,7 @@ body.p2c-sheet-open .p2c-safe{visibility:hidden}body.p2c-sheet-open #fixedRemind
       <button class="btn danger" onclick="resetAll()">&#128465;&#65039; 全データを削除する</button>
     </div>
   </div>
-<nav class="p2c-nav no-print"><button class="p2c-nb active" data-p2c="dashboard" onclick="p2cGo('dashboard')"><span>⌂</span><span>ホーム</span></button><button class="p2c-nb" data-p2c="history" onclick="p2cGo('history')"><span>▤</span><span>明細</span></button><button class="p2c-nb" data-p2c="input" onclick="p2cOpenInput()"><span class="p2c-plus">＋<i class="p2c-line"></i></span></button><button class="p2c-nb" data-p2c="analysis" onclick="p2cGo('analysis')"><span>▥</span><span>分析</span></button><button class="p2c-nb" data-p2c="more" onclick="p2cGo('more')"><span>•••</span><span>その他</span></button></nav><div class="p2c-toast" id="p2cNoticeToast" role="status" aria-live="polite"></div><div class="p2c-banner" id="p2cTopBanner"><span class="p2c-banner-icon" id="p2cBannerIcon">○</span><span class="p2c-banner-text" id="p2cBannerText"></span><button class="p2c-banner-action" id="p2cBannerAction"></button></div></div>
+<nav class="p2c-nav no-print"><button class="p2c-nb active" data-p2c="dashboard" onclick="p2cGo('dashboard')"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg></span><span>ホーム</span></button><button class="p2c-nb" data-p2c="history" onclick="p2cGo('history')"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6H21M9.5 12H21M9.5 18H21"/><circle cx="4.5" cy="6" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.15" fill="currentColor" stroke="none"/></svg></span><span>明細</span></button><button class="p2c-nb" data-p2c="input" onclick="p2cOpenInput()"><span class="p2c-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span></button><button class="p2c-nb" data-p2c="analysis" onclick="p2cGo('analysis')"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V7M18 17v-8"/></svg></span><span>分析</span></button><button class="p2c-nb" data-p2c="more" onclick="p2cGo('more')"><span><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></span><span>その他</span></button></nav><div class="p2c-toast" id="p2cNoticeToast" role="status" aria-live="polite"></div><div class="p2c-banner" id="p2cTopBanner"><span class="p2c-banner-icon" id="p2cBannerIcon">○</span><span class="p2c-banner-text" id="p2cBannerText"></span><button class="p2c-banner-action" id="p2cBannerAction"></button></div></div>
 <div class="modal-overlay" id="fixedReminderModal" style="display:none" onclick="if(event.target.id==='fixedReminderModal')closeFixedReminderModal()">
   <div class="modal">
     <div class="modal-title"><span id="fixedReminderTitle">今月の固定費</span><button class="modal-close" onclick="closeFixedReminderModal()">&#10005;</button></div>
@@ -1962,7 +2095,7 @@ function renderMyCharts(){
   const total=vals.reduce((a,b)=>a+b,1);
   document.getElementById('myPieLegend').innerHTML=cats.length?cats.map((c,i)=>`<span class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${c.slice(2)||c} ${Math.round(vals[i]/total*100)}%</span>`).join(''):'<span style="font-size:12px;color:var(--text3)">データなし</span>';
   destroyChart('myPie');
-  if(cats.length) charts['myPie']=new Chart(document.getElementById('myPieChart'),{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  if(cats.length) charts['myPie']=new Chart(document.getElementById('myPieChart'),{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#151513'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
   const months=getMonthRange(6);
   const incomes=[],exps=[];
   months.forEach(({m,y})=>{const mtx=transactions.filter(t=>{const d=parseLocalDate(t.date);return d.getFullYear()===y&&d.getMonth()===m;});incomes.push(mtx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0));exps.push(realExp(mtx));});
@@ -1985,7 +2118,7 @@ function renderCoupleCharts(){
   const total=vals.reduce((a,b)=>a+b,1);
   document.getElementById('couplePieLegend').innerHTML=cats.length?cats.map((c,i)=>`<span class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${c.slice(2)} ${Math.round(vals[i]/total*100)}%</span>`).join(''):'<span style="font-size:12px;color:var(--text3)">データなし</span>';
   destroyChart('couplePie');
-  if(cats.length) charts['couplePie']=new Chart(document.getElementById('couplePieChart'),{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  if(cats.length) charts['couplePie']=new Chart(document.getElementById('couplePieChart'),{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#151513'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
   const months=getMonthRange(6);
   const totals=[];
   months.forEach(({m,y})=>{const mtx=transactions.filter(t=>t.isSplit&&t.type==='expense'&&parseLocalDate(t.date).getFullYear()===y&&parseLocalDate(t.date).getMonth()===m);totals.push(mtx.reduce((s,t)=>s+t.amount,0));});
@@ -2305,5 +2438,5 @@ const _advExportCSV=exportCSV;exportCSV=function(){if(!transactions.length)retur
 const _advParseCSV=parseCSVLine;importCSV=function(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{const lines=ev.target.result.replace(/\r/g,'').split('\n').filter(l=>l.trim());if(lines.length<2)return alert('データが見つかりません');const headers=lines[0].replace(/^\uFEFF/,'').split(','),existing=new Set(transactions.map(t=>String(t.id)));let added=0,skipped=0;for(let i=1;i<lines.length;i++){const cols=_advParseCSV(lines[i]);if(cols.length<2)continue;const obj={};headers.forEach((h,j)=>{const v=cols[j];if(v===''||v==null){obj[h]=null;return}if(['amount','myShare','herShare','myRate','fixedAmount','restRate'].includes(h))obj[h]=Number(v);else if(['isSplit','isAdj','isProvisional'].includes(h))obj[h]=v==='true';else if(h==='id')obj[h]=/^\d+$/.test(v)?Number(v):v;else if(h==='splitSegments'){try{obj[h]=JSON.parse(v)}catch(_){obj[h]=null}}else obj[h]=v});if(existing.has(String(obj.id))){skipped++;continue}if(Array.isArray(obj.splitSegments)){const r=advTotals(obj.splitSegments,obj.payer);obj.splitSegments=r.segments;obj.myShare=r.myShare;obj.herShare=r.herShare;obj.splitMethod='segments';obj.shareMode='segments'}transactions.push(obj);added++}save();updateHeader();renderHistory();renderSplit();renderReviews();updateFixedReminders();alert(`完了: ${added}件追加、${skipped}件スキップ`);e.target.value=''};reader.readAsText(file,'UTF-8')}
 advInstallAll();
 </script>
-</body>
+<script>if(window.Chart){Chart.defaults.color='#A9ABA2';Chart.defaults.borderColor='rgba(255,255,255,.07)';Chart.defaults.font.family="'Noto Sans JP','Hiragino Sans',sans-serif";}</script></body>
 </html>
