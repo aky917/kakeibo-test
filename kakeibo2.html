@@ -8,12 +8,13 @@ Kakeibo delivery requirements (must be retained)
 - Do not require separate source files from the user.
 
 Kakeibo
-Version  : v8.1.2
+Version  : v8.1.3
 Codename : Dualité
 Updated  : 2026-11-19
 Author   : 秋山伊織 + Microsoft Copilot
 
 Change Log
+- v8.1.3: The browser status-bar area stayed black in Maison because the file's theme-color meta was still the dark theme's #111110; it now defaults to the ivory tone and the theme toggle script switches it with the theme. Display only.
 - v8.1.2: Fixed the yen sign beside the balance being nearly invisible in Maison — it carries an inline near-white colour from the dark theme; it is now quiet gold and serif in the light theme. Display only.
 - v8.1.1: Removed the film-grain overlay and the header backdrop blur after the user reported the top of the screen looking blurry on iPhone (the fixed noise layer and the frosted header are the likely causes on iOS); headers are now solid in both themes. Display only.
 - v8.1.0: Polish pass on Dualité: a numeral-only serif (unicode-range font-face, so digits and the yen sign render in Mincho while Japanese text stays in the clean sans), a faint film grain over the whole app, staggered rise-in motion for page panels, a slow gold ring pulse on the + button, larger balance numerals, and gold text selection. Display only.
@@ -69,11 +70,11 @@ Change Log
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>kakeibo v8.1.2</title>
+<title>kakeibo v8.1.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#111110">
+<meta name="theme-color" content="#F3EFE6">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
 /* ===== Kakeibo v3.0.0 Insight Update ===== */
 const APP_INFO={name:'Kakeibo',version:'3.0.0',codename:'Insight Update',updated:'2026-09-16',storageVersion:8};
@@ -130,7 +131,7 @@ const _v3openFixedForm=openFixedForm;openFixedForm=function(idx=null){_v3openFix
 // Cloud payload extensions
 const _v3cloudPush=cloudPush;cloudPush=async function(){localStorage.setItem(SP+'kakeibo_v3_meta',JSON.stringify({categories:v3Categories,templates:v3LoadTemplates(),specialTags:v3GetSpecialTags()}));return _v3cloudPush()};
 // UI installation
-function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v8.1.2 Dualité・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
+function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v8.1.3 Dualité・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
 // dashboard budget warnings + normal expense
 const _v3renderP2C=renderP2C;renderP2C=function(){_v3renderP2C();const tx=monthTx(),normal=v3RealExp(tx,true),special=v3RealExp(tx)-normal;const trend=document.getElementById('p2cTrend');if(trend)trend.textContent=`通常支出 ${fmt(normal)}${special?`・臨時 ${fmt(special)}`:''}`;const bd=loadBudget(viewYear,viewMonth),warns=Object.entries(bd.cats||{}).map(([cat,budget])=>{const used=tx.filter(t=>t.category===cat&&!v3IsSpecial(t)).reduce((s,t)=>s+v3ExpenseValue(t),0);return{cat,used,budget:Number(budget),pct:budget?Math.round(used/budget*100):0}}).filter(x=>x.pct>=80).sort((a,b)=>b.pct-a.pct);const actions=document.getElementById('p2cActions');if(actions&&warns.length&&!actions.querySelector('.v3-budget-warning')){actions.insertAdjacentHTML('afterbegin',warns.slice(0,3).map(x=>`<div class="p2c-action v3-budget-warning" onclick="p2cGo('budget')"><div class="p2c-ai">!</div><div class="p2c-am"><div class="p2c-at">${v3Esc(catLabel(x.cat))} ${x.pct>=100?'予算超過':x.pct+'%'}</div><div class="p2c-as">${fmt(x.used)} / ${fmt(x.budget)}</div></div><span>›</span></div>`).join(''))}}
 const _v3p2cGo=p2cGo;p2cGo=function(n){_v3p2cGo(n);if(n==='insights')v3RenderInsights()};
@@ -2609,6 +2610,8 @@ advInstallAll();
     function isMaison(){ return document.documentElement.classList.contains('maison'); }
     function apply(t){
       document.documentElement.classList.toggle('maison', t==='maison');
+      var meta=document.querySelector('meta[name="theme-color"]');
+      if(meta) meta.setAttribute('content', t==='maison' ? '#F3EFE6' : '#0B0B0A');
       if(window.Chart){
         if(t==='maison'){ Chart.defaults.color='#8A8378'; Chart.defaults.borderColor='rgba(29,26,21,.08)'; }
         else{ Chart.defaults.color='#A9ABA2'; Chart.defaults.borderColor='rgba(255,255,255,.07)'; }
