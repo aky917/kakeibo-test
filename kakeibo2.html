@@ -8,12 +8,13 @@ Kakeibo delivery requirements (must be retained)
 - Do not require separate source files from the user.
 
 Kakeibo
-Version  : v8.1.0
+Version  : v8.1.1
 Codename : Dualité
 Updated  : 2026-11-19
 Author   : 秋山伊織 + Microsoft Copilot
 
 Change Log
+- v8.1.1: Removed the film-grain overlay and the header backdrop blur after the user reported the top of the screen looking blurry on iPhone (the fixed noise layer and the frosted header are the likely causes on iOS); headers are now solid in both themes. Display only.
 - v8.1.0: Polish pass on Dualité: a numeral-only serif (unicode-range font-face, so digits and the yen sign render in Mincho while Japanese text stays in the clean sans), a faint film grain over the whole app, staggered rise-in motion for page panels, a slow gold ring pulse on the + button, larger balance numerals, and gold text selection. Display only.
 - v8.0.0: Dualité (user gave free rein on the test build): Maison (light) and Avant (dark) are now both in the file and switchable — a half-circle button in the header toggles the theme and the choice is remembered on the device. The balance figure now counts up when it changes, the cumulative-balance chart line is gold, and Chart.js colours follow the active theme. Everything is display-layer: the theme lives in a class on <html> plus one guarded script; data, sync and app logic are untouched.
 - v7.0.1: Kept the serif only on the big balance numerals and returned Japanese display text (panel figures) to the clean sans, at the user's feedback that the Japanese serif felt off. CSS only.
@@ -67,7 +68,7 @@ Change Log
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>kakeibo v8.1.0</title>
+<title>kakeibo v8.1.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -128,7 +129,7 @@ const _v3openFixedForm=openFixedForm;openFixedForm=function(idx=null){_v3openFix
 // Cloud payload extensions
 const _v3cloudPush=cloudPush;cloudPush=async function(){localStorage.setItem(SP+'kakeibo_v3_meta',JSON.stringify({categories:v3Categories,templates:v3LoadTemplates(),specialTags:v3GetSpecialTags()}));return _v3cloudPush()};
 // UI installation
-function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v8.1.0 Dualité・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
+function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v8.1.1 Dualité・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
 // dashboard budget warnings + normal expense
 const _v3renderP2C=renderP2C;renderP2C=function(){_v3renderP2C();const tx=monthTx(),normal=v3RealExp(tx,true),special=v3RealExp(tx)-normal;const trend=document.getElementById('p2cTrend');if(trend)trend.textContent=`通常支出 ${fmt(normal)}${special?`・臨時 ${fmt(special)}`:''}`;const bd=loadBudget(viewYear,viewMonth),warns=Object.entries(bd.cats||{}).map(([cat,budget])=>{const used=tx.filter(t=>t.category===cat&&!v3IsSpecial(t)).reduce((s,t)=>s+v3ExpenseValue(t),0);return{cat,used,budget:Number(budget),pct:budget?Math.round(used/budget*100):0}}).filter(x=>x.pct>=80).sort((a,b)=>b.pct-a.pct);const actions=document.getElementById('p2cActions');if(actions&&warns.length&&!actions.querySelector('.v3-budget-warning')){actions.insertAdjacentHTML('afterbegin',warns.slice(0,3).map(x=>`<div class="p2c-action v3-budget-warning" onclick="p2cGo('budget')"><div class="p2c-ai">!</div><div class="p2c-am"><div class="p2c-at">${v3Esc(catLabel(x.cat))} ${x.pct>=100?'予算超過':x.pct+'%'}</div><div class="p2c-as">${fmt(x.used)} / ${fmt(x.budget)}</div></div><span>›</span></div>`).join(''))}}
 const _v3p2cGo=p2cGo;p2cGo=function(n){_v3p2cGo(n);if(n==='insights')v3RenderInsights()};
@@ -547,7 +548,7 @@ input:focus,select:focus,textarea:focus{background:#1E1E1C;border-color:rgba(255
    frosted nav, spring motion. CSS only. */
 :root{--popo-accent:#C8A96E}
 body{background:radial-gradient(640px 340px at 50% -120px,rgba(255,255,255,.045),transparent 65%),#0A0A09}
-.p2c-header{background:rgba(10,10,9,.82);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);border-bottom:1px solid rgba(255,255,255,.05)}
+.p2c-header{background:rgba(10,10,9,.96);backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:1px solid rgba(255,255,255,.05)}
 .p2c-logo{background:#1B1B1A;color:var(--popo-accent);border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
 .p2c-hero{background:radial-gradient(420px 240px at 96% -30%,rgba(200,169,110,.13),transparent 60%),#121211;border-color:rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);border-radius:22px}
 .p2c-kicker{letter-spacing:3.2px;color:rgba(255,255,255,.55)}
@@ -585,7 +586,7 @@ html.maison{background:#EFE9DC}
 html.maison body{background:radial-gradient(700px 360px at 50% -140px,rgba(255,255,255,.75),transparent 65%),#F3EFE6}
 html.maison ::selection{background:rgba(169,139,84,.28);color:#1D1A15}
 html.maison .p2c-safe{background:rgba(247,243,234,.92)}
-html.maison .p2c-header{background:rgba(247,243,234,.88);box-shadow:none;border-bottom:1px solid rgba(29,26,21,.06);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%)}
+html.maison .p2c-header{background:rgba(247,243,234,.97);box-shadow:none;border-bottom:1px solid rgba(29,26,21,.06);backdrop-filter:none;-webkit-backdrop-filter:none}
 html.maison .p2c-logo{background:#1D1A15;color:#C8A96E;border:0;box-shadow:none}
 html.maison .p2c-bell{background:#FFFFFF;border:1px solid var(--p-line);color:var(--p-text)}
 html.maison .p2c-hero{background:#FFFFFF;border:1px solid #E7DFC9;border-radius:22px;box-shadow:0 18px 40px rgba(93,77,43,.09);color:var(--p-text)}
@@ -647,7 +648,7 @@ html.maison #lockScreen .lk-field input::placeholder{color:#B4AB97}
 @font-face{font-family:'PopoSerifNum';src:local('Hiragino Mincho ProN'),local('Yu Mincho'),local('Noto Serif JP'),local('Georgia');unicode-range:U+0025,U+002B-002F,U+0030-0039,U+00A5,U+FFE5}
 .p2c-big,.p2c-mv,.v3-stat b{font-family:'PopoSerifNum','Noto Sans JP','Hiragino Sans',sans-serif}
 .p2c-bal{font-size:56px}
-body::after{content:'';position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:.032;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter><rect width="160" height="160" filter="url(%23n)" opacity="0.6"/></svg>')}
+/* grain overlay removed in v8.1.1 */
 ::selection{background:rgba(200,169,110,.35)}
 .page.active>*{animation:popoRise .55s cubic-bezier(.22,1,.36,1) both}
 .page.active>*:nth-child(2){animation-delay:.05s}
