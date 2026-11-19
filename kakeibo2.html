@@ -8,12 +8,13 @@ Kakeibo delivery requirements (must be retained)
 - Do not require separate source files from the user.
 
 Kakeibo
-Version  : v8.0.0
+Version  : v8.1.0
 Codename : Dualité
 Updated  : 2026-11-19
 Author   : 秋山伊織 + Microsoft Copilot
 
 Change Log
+- v8.1.0: Polish pass on Dualité: a numeral-only serif (unicode-range font-face, so digits and the yen sign render in Mincho while Japanese text stays in the clean sans), a faint film grain over the whole app, staggered rise-in motion for page panels, a slow gold ring pulse on the + button, larger balance numerals, and gold text selection. Display only.
 - v8.0.0: Dualité (user gave free rein on the test build): Maison (light) and Avant (dark) are now both in the file and switchable — a half-circle button in the header toggles the theme and the choice is remembered on the device. The balance figure now counts up when it changes, the cumulative-balance chart line is gold, and Chart.js colours follow the active theme. Everything is display-layer: the theme lives in a class on <html> plus one guarded script; data, sync and app logic are untouched.
 - v7.0.1: Kept the serif only on the big balance numerals and returned Japanese display text (panel figures) to the clean sans, at the user's feedback that the Japanese serif felt off. CSS only.
 - v7.0.0: Maison (user gave free rein for a complete change): the whole app moves from the dark glass world to a warm ivory light theme — paper-white surfaces, ink text, quiet gold, and serif display numerals, like a private bank or a watch maison. The lock screen joins the same world (its faint grid stays, recoloured), charts are rethemed for light, and the doughnut separators return to white. CSS plus display-only chart colour strings; data, sync and logic are untouched.
@@ -66,7 +67,7 @@ Change Log
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>kakeibo v8.0.0</title>
+<title>kakeibo v8.1.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -127,7 +128,7 @@ const _v3openFixedForm=openFixedForm;openFixedForm=function(idx=null){_v3openFix
 // Cloud payload extensions
 const _v3cloudPush=cloudPush;cloudPush=async function(){localStorage.setItem(SP+'kakeibo_v3_meta',JSON.stringify({categories:v3Categories,templates:v3LoadTemplates(),specialTags:v3GetSpecialTags()}));return _v3cloudPush()};
 // UI installation
-function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v8.0.0 Dualité・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
+function v3InstallUI(){const settings=document.getElementById('page-settings');if(settings&&!document.getElementById('v3CategoryCard')){settings.insertAdjacentHTML('afterbegin',v3CategorySection()+v3TemplateSection()+v3SpecialSection());settings.insertAdjacentHTML('beforeend',`<div class="v3-version">Kakeibo v8.1.0 Dualité・2026-11-19</div>`)}const tags=document.getElementById('v3SpecialTags');if(tags)tags.value=v3GetSpecialTags().join(' ');const cycle=document.getElementById('fixedCycle');if(cycle&&!cycle.querySelector('[value="multiYear"]'))cycle.insertAdjacentHTML('beforeend','<option value="multiYear">複数年ごと</option>');const payWrap=document.getElementById('fixedPayMonthWrap');if(payWrap&&!document.getElementById('v3EveryYearsWrap'))payWrap.insertAdjacentHTML('beforebegin','<div id="v3EveryYearsWrap" style="display:none"><label>何年ごと</label><input id="v3EveryYears" type="number" min="2" max="20" value="2" inputmode="numeric"></div>');const fixedPage=document.getElementById('page-fixed');if(fixedPage&&!document.getElementById('v3FutureFixed'))fixedPage.insertAdjacentHTML('afterbegin','<div class="card"><div class="section-title">将来の固定費予定</div><div id="v3FutureFixed"></div></div>');const analysis=document.getElementById('page-analysis-hub');if(analysis&&!document.getElementById('page-insights')){analysis.querySelector('.p2c-hub-grid')?.insertAdjacentHTML('beforeend','<button class="p2c-hub-card" onclick="p2cGo(\'insights\')"><div class="p2c-hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z"/></svg></div><div class="p2c-hub-title">インサイト</div><div class="p2c-hub-sub">タグ・前月比較・レビュー</div></button>');analysis.insertAdjacentHTML('afterend','<div id="page-insights" class="page"><div id="v3InsightsBody"></div></div>');p2cPages.insights='page-insights'}v3RenderCategoryManager();v3RenderTemplates();v3RenderTemplateStrip();v3RenderFutureFixed();v3RenderInsights()}
 // dashboard budget warnings + normal expense
 const _v3renderP2C=renderP2C;renderP2C=function(){_v3renderP2C();const tx=monthTx(),normal=v3RealExp(tx,true),special=v3RealExp(tx)-normal;const trend=document.getElementById('p2cTrend');if(trend)trend.textContent=`通常支出 ${fmt(normal)}${special?`・臨時 ${fmt(special)}`:''}`;const bd=loadBudget(viewYear,viewMonth),warns=Object.entries(bd.cats||{}).map(([cat,budget])=>{const used=tx.filter(t=>t.category===cat&&!v3IsSpecial(t)).reduce((s,t)=>s+v3ExpenseValue(t),0);return{cat,used,budget:Number(budget),pct:budget?Math.round(used/budget*100):0}}).filter(x=>x.pct>=80).sort((a,b)=>b.pct-a.pct);const actions=document.getElementById('p2cActions');if(actions&&warns.length&&!actions.querySelector('.v3-budget-warning')){actions.insertAdjacentHTML('afterbegin',warns.slice(0,3).map(x=>`<div class="p2c-action v3-budget-warning" onclick="p2cGo('budget')"><div class="p2c-ai">!</div><div class="p2c-am"><div class="p2c-at">${v3Esc(catLabel(x.cat))} ${x.pct>=100?'予算超過':x.pct+'%'}</div><div class="p2c-as">${fmt(x.used)} / ${fmt(x.budget)}</div></div><span>›</span></div>`).join(''))}}
 const _v3p2cGo=p2cGo;p2cGo=function(n){_v3p2cGo(n);if(n==='insights')v3RenderInsights()};
@@ -639,6 +640,30 @@ html.maison #lockScreen .lk-error{color:#B4453C}
 html.maison #lockScreen .lk-title span{background:none;-webkit-background-clip:initial;background-clip:initial;color:#1D1A15}
 html.maison #lockScreen .lk-field:focus-within{border-color:rgba(169,139,84,.65);box-shadow:0 0 0 4px rgba(169,139,84,.14)}
 html.maison #lockScreen .lk-field input::placeholder{color:#B4AB97}
+</style>
+<style id="popoPolishCss">
+/* v8.1.0 polish: numeral-only serif via unicode-range, film grain,
+   staggered entrance, living details. Display only. */
+@font-face{font-family:'PopoSerifNum';src:local('Hiragino Mincho ProN'),local('Yu Mincho'),local('Noto Serif JP'),local('Georgia');unicode-range:U+0025,U+002B-002F,U+0030-0039,U+00A5,U+FFE5}
+.p2c-big,.p2c-mv,.v3-stat b{font-family:'PopoSerifNum','Noto Sans JP','Hiragino Sans',sans-serif}
+.p2c-bal{font-size:56px}
+body::after{content:'';position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:.032;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter><rect width="160" height="160" filter="url(%23n)" opacity="0.6"/></svg>')}
+::selection{background:rgba(200,169,110,.35)}
+.page.active>*{animation:popoRise .55s cubic-bezier(.22,1,.36,1) both}
+.page.active>*:nth-child(2){animation-delay:.05s}
+.page.active>*:nth-child(3){animation-delay:.1s}
+.page.active>*:nth-child(4){animation-delay:.15s}
+.page.active>*:nth-child(5){animation-delay:.2s}
+.page.active>*:nth-child(6){animation-delay:.25s}
+@keyframes popoRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.p2c-pt{letter-spacing:1.8px}
+.p2c-nb svg{transition:transform .25s ease}
+.p2c-nb.active svg{transform:translateY(-1.5px)}
+.p2c-plus{position:relative}
+.p2c-plus::after{content:'';position:absolute;inset:-5px;border-radius:20px;border:1px solid var(--popo-accent);opacity:0;animation:popoRing 3.2s ease-out infinite;pointer-events:none}
+@keyframes popoRing{0%{transform:scale(.92);opacity:.55}70%{transform:scale(1.08);opacity:0}100%{transform:scale(1.08);opacity:0}}
+.p2c-panel,.p2c-hub-card{transition:transform .16s ease,box-shadow .3s ease,border-color .3s ease}
+@media (prefers-reduced-motion:reduce){.page.active>*,.p2c-plus::after{animation:none}}
 </style>
 </head>
 
